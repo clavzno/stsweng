@@ -1,0 +1,88 @@
+# Proof of Concept Notes
+
+Last updated: May 31, 2025
+
+## GUIDE: Commit Message
+`<type>/<scope> - <brief description>`
+- `feat` - introduces a new feature (if includes docs put it under feat)
+- `fix` - patches a bug
+- `docs` - documentation only changes
+- `style` - does not affect meaning of the code (formatting, white-space, etc.)
+- `refactor` - code change that doesn't fix a bug nor add a feature
+- `perf` - improves performance, optimization
+- `test` - adds missing tests or corrects existing tests
+- `chore` - changes to the build process or auxiliary tools and libraries such as documentation generation.
+
+## GUIDE: Naming Conventions
+Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/project-structure)
+- `lowercase`: for commit messages
+- `lowercase + kebab-case`: for file and folder names
+- `UPPERCASE`: strictly for global variables and environment variables
+- `PascalCase`: for components (js/jsx), function names
+- `camelCase`: for variables, consts, let vars
+- `_camelCase`: private folders (means it should not be considered by the hierarchical routing system of NextJS)
+- `(camelCase)`: for route groups (means the folder is for organizational purposes and should not be included in the router's URL path)
+
+## GUIDE: Folder Conventions
+Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/project-structure)
+```
+/stsweng
+|-- .next/ (generated)
+|-- node_modules/ (generated)
+|-- public/ (generated, static assets to be served)
+|-- src/ (generated, application source folder)
+|   |-- sample-student-page/ (domain/sample-student-page)
+|   |   |-- page.js or .jsx (would serve as the page for domain/sample-student-page)
+|   |   |-- layout.js or .jsx (would serve as the individual layout for)
+|   |   |-- /my-settings (domain/sample-student-page/my-settings)
+|   |   |   |-- page.js
+|   |-- sample-courses-page/ 
+|   |   |-- /[courseId] (dynamic page) (domain/courses/54321 or domain/courses/12345)
+|   |   |-- page.js
+|   |   |-- layout.js
+|   |-- page.js or .jsx (generated, this would serve as the index)
+|   |-- layout.js or .jsx (generated, layout page that would apply to all children routes or pages)
+|-- .gitgnore (generated)
+|-- jsconfig.json (generated, config for javascript, will be tsconfig.json if using typescript)
+|-- package.json (generated)
+|-- package-lock.json (generated)
+|-- eslint.config.mjs (generated)
+|-- next.config.mjs (generated)
+|-- postcss.config.mjs (generated)
+|-- .env (environment vars)
+|-- .env.local (manual, local environment vars)
+|-- .env.production (manual, production environment vars)
+|-- .env.development (manual, development environment vars)
+|-- middleware.ts or middleware.js (manual)
+```
+
+---
+
+## REQUIREMENTS for working.js
+1. `npm.cmd install dotenv`
+2. `npm.cmd install form-data`
+3. Fill in ACCESS_TOKEN in .env
+4. Fill in DOMAIN=dlsu.instructure.com in .env
+
+## PREREQUISITES
+- Node.js must be installed and npm
+- check using the commands:
+`node -v`
+`npm.cmd -v` or simply `npm -v`
+`npx.cmd -v` or simply `npx -v`
+
+## To install all dependencies for the project
+/node_modules is ignored 
+- run `npm install`
+
+## Setup for create-next-app/NextJS
+`npx.cmd create-next-app@latest ./`
+- What is your project named? proof
+- Would you like to use TypeScript? **No** / Yes
+- Would you like to use ESLint? No / **Yes**
+- Would you like to use Tailwind CSS? No / **Yes**
+- Would you like your code inside a `src/` directory? No / **Yes**
+- Would you like to use App Router? (recommended) No / **Yes**
+- Would you like to use Turbopack for `next dev`?  **No** / Yes
+- Would you like to customize the import alias (`@/*` by default)? **No** / Yes
+- What import alias would you like configured? @/* **This is blank** 
