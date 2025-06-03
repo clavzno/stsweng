@@ -13,11 +13,14 @@ Last updated: May 31, 2025
 - `test` - adds missing tests or corrects existing tests
 - `chore` - changes to the build process or auxiliary tools and libraries such as documentation generation.
 
+`scope`: indicates the specific component or functionality affected by the commits.
+This provides context and helps the team identify what area the branch is targeting, examples like login, ui, api, etc. 
+
 ## GUIDE: Naming Conventions
 Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/project-structure)
 - `lowercase`: for commit messages
 - `lowercase + kebab-case`: for file and folder names
-- `UPPERCASE`: strictly for global variables and environment variables
+- `UPPERCASE_UPPERCASE2`: strictly for global variables and environment variables
 - `PascalCase`: for components (js/jsx), function names
 - `camelCase`: for variables, consts, let vars
 - `_camelCase`: private folders (means it should not be considered by the hierarchical routing system of NextJS)
@@ -63,6 +66,7 @@ Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/proje
 2. `npm.cmd install form-data`
 3. Fill in ACCESS_TOKEN in .env
 4. Fill in DOMAIN=dlsu.instructure.com in .env
+5. Download all files `npm.cmd install`
 
 ## PREREQUISITES
 - Node.js must be installed and npm
