@@ -34,14 +34,22 @@ const API_USER_FOLDERS = `https://${DOMAIN}/api/v1/users/self/folders`
 
 //wip
 export class Student {
-    ACCESS_TOKEN = process.env.ACCESS_TOKEN;
+    ACCESS_TOKEN = "";
 
     constructor(json = {}) {
-        this.id = json.id || this.FetchUserId();
+        this.id = json.id;
         this.firstName = json.first_name;
         this.lastName = json.last_name;
         this.shortName = json.short_name || null;
         this.courses = []
+        this.ACCESS_TOKEN = process.env.ACCESS_TOKEN || "";
+    }
+
+    SetAccessToken(token) {
+        if (typeof token !== 'string' || !token.trim()) {
+            throw new Error("Invalid access token");
+        }
+        this.ACCESS_TOKEN = token;
     }
 
     async FetchUserId() {
@@ -69,7 +77,7 @@ export class Student {
         })
             .then(coursesData => {
                 // console.log('Canvas API Response:', coursesData);
-                this.printCourseNames(coursesData);
+                // this.printCourseNames(coursesData);
                 return coursesData;
             })
             .catch(error => {
@@ -94,7 +102,7 @@ export class Student {
             })
             .then(userData => {
                 // console.log('Canvas API Response:', userData);
-                console.log("User Name:", getUserName(userData));
+                console.log("FetchUserCredentials User Name:", getUserName(userData));
                 return userData;
             })
             .catch(error => {
@@ -109,6 +117,7 @@ export class Student {
             return;
         }
 
+        console.log("printCourseNames:")
         coursesArray.forEach((course, idx) => {
             console.log(`Course ${idx}: ${course.name}, ID: ${course.id}`);
         });
@@ -118,13 +127,12 @@ export class Student {
         return this?.name || 'User name not available';
     }
 
-    // STEP 0. Get user's folders
     async GetOrCreateFolder(folderName = "test") {
         try {
             // First, get the list of folders
             const response = await fetch(API_USER_FOLDERS, {
                 headers: {
-                    'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                    'Authorization': `Bearer ${this.ACCESS_TOKEN}`,
                     ...CORS
                 }
             });
@@ -134,37 +142,47 @@ export class Student {
             }
 
             const folders = await response.json();
-            console.log(folders);
+            // console.log("Folders:", folders);
 
-            // Check if folderName already exists
-            const folderLocation = folders.find((f) => f.full_name.endsWith(`/${folderName}`));
-            if (folderLocation) return folderLocation;
-            console.log(folderLocation);
+            // Check if folder already exists (case-insensitive comparison)
+            const existingFolder = folders.find(f =>
+                f.name.toLowerCase() === folderName.toLowerCase() &&
+                f.parent_folder_id !== null // Ensure it's not a root folder
+            );
 
-            // Find the root folder (users_)
-            const root = folders.find((f) => f.full_name === `users_${String(this.id).replace("users_", "")}`);
-            if (!root) throw new Error("Root user folder not found");
+            if (existingFolder) {
+                console.log("Folder already exists:", existingFolder);
+                return existingFolder;
+            }
+
+            // Find the root folder (typically named "my files")
+            const rootFolder = folders.find(f => f.full_name.toLowerCase().includes('my files'));
+            if (!rootFolder) {
+                throw new Error("Root user folder ('my files') not found");
+            }
 
             // Create new folder
             const createRes = await fetch(API_USER_FOLDERS, {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${ACCESS_TOKEN}`,
+                    'Authorization': `Bearer ${this.ACCESS_TOKEN}`,
                     ...CORS,
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     name: folderName,
-                    parent_folder_id: root.id,
+                    parent_folder_id: rootFolder.id,
                 })
             });
 
             if (!createRes.ok) {
-                throw new Error(`Failed to create folder: ${createRes.status}`);
+                const errorData = await createRes.json().catch(() => ({}));
+                throw new Error(`Failed to create folder: ${createRes.status} - ${JSON.stringify(errorData)}`);
             }
 
-            console.log("Create response: ", createRes);
-            return await createRes.json();
+            const newFolder = await createRes.json();
+            console.log("Folder created successfully:", newFolder);
+            return newFolder;
 
         } catch (error) {
             console.error("Error in GetOrCreateFolder:", error);
@@ -174,52 +192,86 @@ export class Student {
 
     // STEP 1. Begin request for file upload
     async StartFileUpload(folderId, fileMeta) {
-        const params = new URLSearchParams({
-            name: fileMeta.name,
-            size: fileMeta.size.toString(),
-            content_type: fileMeta.type
-        });
+        try {
+            const params = new URLSearchParams({
+                name: fileMeta.name,
+                size: fileMeta.size.toString(),
+                content_type: fileMeta.type,
+                parent_folder_id: folderId.toString(), //added
+                on_duplicate: 'rename' //added
+            });
 
-        const res = await fetch(`https://${DOMAIN}/api/v1/folders/${folderId}/files`, {
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${ACCESS_TOKEN}`,
-                ...CORS
-            },
-            body: params,
-        });
+            const res = await fetch(`https://${DOMAIN}/api/v1/folders/${folderId}/files`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.ACCESS_TOKEN}`,
+                    ...CORS
+                },
+                body: params,
+            });
 
-        return await res.json(); // contains upload_url and upload_params
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(`Failed to start file upload: ${res.status} - ${JSON.stringify(errorData)}`);
+            }
+
+            return await res.json();
+        } catch (error) {
+            console.error("Error in StartFileUpload:", error);
+            throw error;
+        }
     }
 
     async UploadFile(uploadUrl, uploadParams, fileStream, fileMeta) {
-        const formData = new FormData();
+        try {
+            const formData = new FormData();
 
-        for (const key in uploadParams) {
-            formData.append(key, uploadParams[key]);
+            for (const key in uploadParams) {
+                formData.append(key, uploadParams[key]);
+            }
+
+            formData.append("file", fileStream, {
+                filename: fileMeta.name,
+                contentType: fileMeta.type,
+            });
+
+            const uploadRes = await fetch(uploadUrl, {
+                method: "POST",
+                body: formData,
+                headers: formData.getHeaders(),
+            });
+
+            if (!uploadRes.ok) {
+                const errorData = await uploadRes.json().catch(() => ({}));
+                throw new Error(`Upload failed: ${uploadRes.status} - ${JSON.stringify(errorData)}`);
+            }
+
+            return await uploadRes.json();
+        } catch (error) {
+            console.error("Error in UploadFile:", error);
+            throw error;
         }
-
-        formData.append("file", fileStream, {
-            filename: fileMeta.name,
-            contentType: fileMeta.type,
-        });
-
-        const uploadRes = await fetch(uploadUrl, {
-            method: "POST",
-            body: formData,
-            headers: formData.getHeaders(),
-        });
-
-        return await uploadRes.json();
     }
 
     async GetFilesInFolder(folderId) {
-        const res = await fetch(`${BASE_URL}/api/v1/folders/${folderId}/files`, {
-            headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-            ...CORS
-        });
-        if (!res.ok) throw new Error(`Error fetching files: ${res.status}`);
-        return await res.json(); // array of files
+        try {
+            const res = await fetch(`${BASE_URL}/api/v1/folders/${folderId}/files`, {
+                headers: {
+                    Authorization: `Bearer ${this.ACCESS_TOKEN}`,
+                    ...CORS
+                },
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json().catch(() => ({}));
+                throw new Error(`Error fetching files: ${res.status} - ${JSON.stringify(errorData)}`);
+            }
+
+            return await res.json();
+        } catch (error) {
+            console.error("Error in GetFilesInFolder:", error);
+            throw error;
+        }
     }
 
     getUniqueFileName(originalName, existingFiles) {
@@ -246,33 +298,45 @@ export class Student {
     }
 
     async ExecuteUpload() {
-        const filePath = path.resolve(FILE_PATH);
-        const fileStats = fs.statSync(filePath);
-        const folder = await this.GetOrCreateFolder(FOLDER);
-        const existingFiles = await this.GetFilesInFolder(folder.id);
+        try {
+            const filePath = path.resolve(FILE_PATH);
+            const fileStats = fs.statSync(filePath);
+            const folder = await this.GetOrCreateFolder(FOLDER);
+            const existingFiles = await this.GetFilesInFolder(folder.id);
 
-        const originalName = path.basename(filePath);
-        const uniqueName = this.GetUniqueFileName(originalName, existingFiles);
+            const originalName = path.basename(filePath);
+            const uniqueName = this.getUniqueFileName(originalName, existingFiles);
 
-        // Create a new read stream for the upload
-        const fileStream = fs.createReadStream(filePath);
+            // Create a new read stream for the upload
+            const fileStream = fs.createReadStream(filePath);
 
-        const fileMeta = {
-            name: uniqueName,
-            size: fileStats.size,
-            type: "application/pdf", // Adjust if needed
-        };
+            const fileMeta = {
+                name: uniqueName,
+                size: fileStats.size,
+                type: "application/pdf", // Adjust if needed
+            };
 
-        const initUpload = await this.StartFileUpload(folder.id, fileMeta);
-        const result = await this.UploadFile(initUpload.upload_url, initUpload.upload_params, fileStream, fileMeta);
+            const initUpload = await this.StartFileUpload(folder.id, fileMeta);
+            const result = await this.UploadFile(
+                initUpload.upload_url,
+                initUpload.upload_params,
+                fileStream,
+                fileMeta
+            );
 
-        console.log("File uploaded as:", result.display_name);
+            console.log("File uploaded successfully:", result);
+            return result;
+        } catch (error) {
+            console.error("Error in ExecuteUpload:", error);
+            throw error;
+        }
     }
 }
 
 export async function GetUser() {
     const res = await fetch(`${BASE_URL}/api/v1/users/self`, {
         headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        ...CORS
     });
     if (!res.ok) throw new Error(`Failed to fetch user info: ${res.status}`);
     const userData = await res.json();

@@ -33,6 +33,7 @@ async function main() {
     try {
         const json = await GetUser();
         const activeStudent = new Student(json);
+        activeStudent.SetAccessToken(ACCESS_TOKEN);
         await activeStudent.ExecuteUpload()
     } catch (error) {
         console.error('Error:', error);
