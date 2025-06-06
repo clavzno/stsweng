@@ -25,6 +25,16 @@ canvasService.FetchUser()
     .then(() => {
         console.log("Uploading example.pdf to root");
         return canvasService.MakeFileUploadRequestToRoot();
+        //stsweng: 215192
+    })
+    .then(() => {
+        console.log("Listing Assignments in STSWENG");
+        return canvasService.GetAssignmentsInCourse("215192");
+    })
+    .then(() => {
+        console.log("SKIPPING: Adding comment to an assignment in STSWENG.");
+        //console.log("Adding comment to an assignment in STSWENG.");
+        //return canvasService.AddCommentToAssignment("215192", "2099596", "If you're seeing this then the API call to add comments has worked!");
     })
     .catch(error => {
         console.error("An error occurred:", error);

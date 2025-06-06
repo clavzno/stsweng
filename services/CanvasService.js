@@ -349,8 +349,64 @@ export class CanvasService {
         }
     }
 
+    async GetAssignmentsInCourse(courseId) {
+        const url = `${BASE_URL}/api/v1/courses/${courseId}/assignments?${PARAMS_PAGINATION.toString()}`;
+        console.log("Fetching assignments for course ID: ", courseId, " from: ", url);
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...HEADER_CORS
+                }
+            });
+
+            if (!res.ok) throw new Error(`Failed to fetch assignments: ${res.status}`);
+            const responseJson = await res.json();
+            console.log("GetAssignmentsInCourse > Assignments fetched successfully: ", responseJson);
+            this.PrintCourseNames(responseJson); // testing lang
+            return responseJson;
+        } catch (error) {
+            console.error("Error in GetCourseAssignments: ", error);
+            throw error;
+        }
+    }
+
     /**
-     * TODO
+     * Grade or Comment on a submission: https://canvas.instructure.com/doc/api/submissions.html#method.submissions_api.update
+     * Submissions API: https://www.canvas.instructure.com/doc/api/submissions.html
+     *  PUT /api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id 
+     * @param {*} assignmentId 
+     * @param {*} comment 
+     */
+    async AddCommentToAssignment(courseId, assignmentId, comment) {
+        const url = `${BASE_URL}/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions/${this.activeStudent.id}`;
+        console.log("Attempting to make a comment at: ", url);
+        const params = new URLSearchParams({
+            "comment[text_comment]": comment
+        })
+
+        try {
+            const res = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...HEADER_CORS,
+                },
+                body: params,
+            });
+
+            if (!res.ok) throw new Error(`Failed to add comment: ${res.status}`);
+            const responseJson = await res.json();
+            console.log("AddCommentToAssignment > Comment added successfully: ", responseJson);
+            return responseJson;
+        } catch (error) {
+            console.error("Error in AddCommentToAssignment: ", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Would have a similar process to 
      * Requires Submission API: https://canvas.instructure.com/doc/api/submissions.html
      */
     async MakeFileUploadRequestAsSubmission() {
