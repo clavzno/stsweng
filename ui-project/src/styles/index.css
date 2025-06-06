@@ -1,0 +1,48 @@
+/* src/styles/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* (Any other global overrides you need) */
+html {
+  scroll-behavior: smooth;
+}
+
+/* -------------------------------
+   2. Your existing scrollbar + animation CSS
+   ------------------------------- */
+.scrollable-content {
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;    /* IE 10+ */
+}
+.scrollable-content::-webkit-scrollbar {
+  display: none;               /* Chrome, Safari, Opera */
+}
+@keyframes roll-horizontal {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+.custom-scrollbar-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border-top: 1px solid rgba(0,0,0,0.05);
+}
+.custom-scrollbar-bottom .block {
+  flex: none;
+  width: 40px;
+  height: 12px;
+  margin-right: 8px;
+  animation: roll-horizontal 2s linear infinite;
+}
+.custom-scrollbar-bottom .block:nth-child(1) { background: #526DF3; animation-delay: 0s; }
+.custom-scrollbar-bottom .block:nth-child(2) { background: #4BD148; animation-delay: 0.3s; }
+.custom-scrollbar-bottom .block:nth-child(3) { background: #FFFAF7; animation-delay: 0.6s; }
+.custom-scrollbar-bottom .block:nth-child(4) { background: #FF5757; animation-delay: 0.9s; }
+.custom-scrollbar-bottom .block:nth-child(5) { background: #FEBD59; animation-delay: 1.2s; }
+.custom-scrollbar-bottom .block:nth-child(6) { background: #287BA0; animation-delay: 1.5s; }
