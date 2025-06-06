@@ -299,7 +299,7 @@ export class CanvasService {
 
             // Step 3: Confirm the upload's success
             console.log("MakeFileUploadRequestToRoot > Upload success response:", uploadSuccess);
-
+            return uploadSuccess; // returns the response from the upload
         } catch (error) {
             console.error("Error in MakeFileUploadRequestToRoot: ", error);
             throw error;
@@ -406,11 +406,74 @@ export class CanvasService {
     }
 
     /**
-     * Would have a similar process to 
-     * Requires Submission API: https://canvas.instructure.com/doc/api/submissions.html
+     * NOTE: SET TO RETURN THE FIRST ASSIGNMENT
+     * @returns 
      */
-    async MakeFileUploadRequestAsSubmission() {
-        pass;
+    async GetOneAssignmentInCourse() {
+        const url = `${BASE_URL}/api/v1/courses/${courseId}/assignments?${PARAMS_PAGINATION.toString()}`;
+        console.log("Fetching assignments for course ID: ", courseId, " from: ", url);
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...HEADER_CORS
+                }
+            });
+
+            if (!res.ok) throw new Error(`Failed to fetch assignments: ${res.status}`);
+            const responseJson = await res.json();
+            console.log("GetAssignmentsInCourse > Assignments fetched successfully: ", responseJson);
+            this.PrintCourseNames(responseJson); // testing lang
+            return responseJson[0]; // returns the first assignment
+        } catch (error) {
+            console.error("Error in GetCourseAssignments: ", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Would have a similar process to MakeFileUploadRequestToRoot
+     * will use submission[file_ids][] so we can use the file ID from the previous upload
+     * https://www.canvas.instructure.com/doc/api/submissions.html#method.submissions.create
+     * Submit Assignment: https://www.canvas.instructure.com/doc/api/submissions.html#method.submissions.create
+     * POST /api/v1/courses/:course_id/assignments/:assignment_id/submissions 
+     */
+    async MakeFileUploadRequestToAssignment(courseId, assignmentId) {
+        try {
+            // Step 1: Upload the file to user's root folder
+            const uploadedFile = await this.MakeFileUploadRequestToRoot();
+            const uploadedFileId = uploadedFile.id;
+            
+            // Step 2: Submit the assignment with the file ID
+            const url = `${BASE_URL}/api/v1/courses/${courseId}/assignments/${assignmentId}/submissions`;
+            console.log("MakeFileUploadRequestToAssignment > Submitting assignment at: ", url);
+            
+            const params = new URLSearchParams({
+                "comment[text_comment]": "If a new file has been uploaded, then the API call to upload files to submissions has worked!",
+                "submission[submission_type]": "online_upload",
+                "submission[file_ids][]": uploadedFileId,
+                "attempt": ""
+            });
+
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...HEADER_CORS,
+                },
+                body: params,
+            });
+
+            const responseJson = await res.json();
+            if (!res.ok) throw new Error(`Failed to submit assignment: ${res.status}`);
+
+            console.log("MakeFileUploadRequestToAssignment > File uploaded as submission: ", responseJson);
+            return responseJson; // returns the first assignment
+        } catch (error) {
+            console.error("Error in MakeFileUploadRequestToRoot: ", error);
+            throw error;
+        }
+
     }
 
 }

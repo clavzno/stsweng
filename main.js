@@ -23,8 +23,8 @@ canvasService.FetchUser()
         return canvasService.GetFilesInFolder(canvasService.activeStudent.studentRootFolderId);
     })
     .then(() => {
-        console.log("Uploading example.pdf to root");
-        return canvasService.MakeFileUploadRequestToRoot();
+        //console.log("Uploading example.pdf to root");
+        //return canvasService.MakeFileUploadRequestToRoot();
         //stsweng: 215192
     })
     .then(() => {
@@ -35,6 +35,10 @@ canvasService.FetchUser()
         console.log("SKIPPING: Adding comment to an assignment in STSWENG.");
         //console.log("Adding comment to an assignment in STSWENG.");
         //return canvasService.AddCommentToAssignment("215192", "2099596", "If you're seeing this then the API call to add comments has worked!");
+    })
+    .then(() => {
+        console.log("Attempting to upload example.pdf to STSWENG MCO1");
+        return canvasService.MakeFileUploadRequestToAssignment("215192", "2099596");
     })
     .catch(error => {
         console.error("An error occurred:", error);
