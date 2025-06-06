@@ -20,7 +20,7 @@ canvasService.FetchUser()
     })
     .then(() => {
         console.log("Listing Files in root folder");
-        return canvasService.GetFilesInFolder().id;
+        return canvasService.GetFilesInFolder(canvasService.activeStudent.studentRootFolderId);
     })
     .then(() => {
         console.log("Uploading example.pdf to root");
