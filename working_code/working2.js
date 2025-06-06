@@ -19,6 +19,7 @@ const CORS = {
     'Access-Control-Allow-Methods': "GET,DELETE,PATCH,POST,PUT",
     'Access-Control-Allow-Headers': "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
 }
+const HEADER_AUTHORIZATION = { Authorization: `Bearer ${ACCESS_TOKEN}` }
 
 // API ENDPOINTS
 const PARAMS_COURSES_ACTIVE = new URLSearchParams({
@@ -35,6 +36,7 @@ const API_USER_FOLDERS = `https://${DOMAIN}/api/v1/users/self/folders`
 //wip
 export class Student {
     ACCESS_TOKEN = "";
+    studentRootFolder = "";
 
     constructor(json = {}) {
         this.id = json.id;
@@ -127,6 +129,87 @@ export class Student {
         return this?.name || 'User name not available';
     }
 
+    /**
+     * Must be above GetUserRootFolder(), this lists the files only in my_files
+     * Returns the paginated list of files for the folder or course.
+     * GET /api/v1/folders/:id/files 
+     * https://canvas.instructure.com/doc/api/files.html#method.files.api_index
+     * @param {*} folderIdJson 
+     */
+    async ListFilesInAFolder(folderIdJson) {
+        let rootFolderId = folderIdJson.id;
+        this.studentRootFolder = rootFolderId;
+        const params = new URLSearchParams({
+            'per_page': 100
+        });
+        const url = `https://${DOMAIN}/api/v1/folders/${rootFolderId}/files`;
+        console.log("ListFilesInAFolder URL: ", url);
+
+        try {
+            const response = await fetch(url, {
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...CORS
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const responseJson = await response.json();
+            console.log(responseJson);
+
+            /* responseJson.forEach(file => {
+                console.log("File name: ", file.display_name); 
+            }) */
+
+            return responseJson;
+        } catch (error) {
+            console.error('Error fetching user folders in ListFilesInAFolder:', error);
+            throw error; // rethrow to handle it in the calling function
+        }
+    }
+
+    /**
+     * Gets the root folder of the user
+     * Returns my_files folder
+     * https://canvas.instructure.com/doc/api/files.html#method.folders.show
+     */
+    async GetUserRootFolder() {
+        const params = new URLSearchParams({
+            'per_page': 100
+        })
+        const url = `https://${DOMAIN}/api/v1/users/${this.id}/folders/root/`;
+        console.log("GetUserFolders URL:", url);
+        const response = await fetch(url, {
+            headers: {
+                'Authorization': `Bearer ${this.ACCESS_TOKEN}`,
+                ...CORS
+            }
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        }).then(responseJson => {
+            console.log(responseJson);
+            console.log("Files in root folder:")
+            this.ListFilesInAFolder(responseJson);
+            return responseJson;
+        }).catch(error => {
+            console.error('Error fetching user folders in GetUserRootFolder:', error);
+            throw error; // rethrow to handle it in the calling function
+        })
+    }
+
+
+    /************************************* */
+
+    /**
+     * Existing bug: If the folder "Test" doesn't exist, then it will say we're unauthorized.
+     * Attempting bug fix in GetFolders()
+     * @param {*} folderName 
+     * @returns 
+     */
     async GetOrCreateFolder(folderName = "test") {
         try {
             // First, get the list of folders
@@ -154,6 +237,8 @@ export class Student {
                 console.log("Folder already exists:", existingFolder);
                 return existingFolder;
             }
+
+            print(folders);
 
             // Find the root folder (typically named "my files")
             const rootFolder = folders.find(f => f.full_name.toLowerCase().includes('my files'));
