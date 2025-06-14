@@ -8,26 +8,26 @@ import AssignmentList from '../components/AssignmentList';
 export default function CoursePage() {
   const course = {
     id: 1,
-    title: 'Introduction to Web Development',
-    description: 'Learn the fundamentals of HTML, CSS, and JavaScript.',
-    instructor: 'John Doe',
+    title: '1243 STSWENG SS1',
+    description: 'Advanced Software Engineering',
+    instructor: 'Jordan Aiko Deja',
     imageUrl: 'https://via.placeholder.com/600x400',
   };
 
   const modules = [
-    { id: 1, title: 'Module 1: HTML Basics', link: '#' },
-    { id: 2, title: 'Module 2: CSS Styling', link: '#' },
-    { id: 3, title: 'Module 3: JavaScript Fundamentals', link: '#' },
+    { id: 1, title: 'Module 1: Course Introduction', link: '#' },
+    { id: 2, title: 'Module 2: Unit Testing and Continuous Integration', link: '#' },
+    { id: 3, title: 'Module 3: Quality Assurance', link: '#' },
   ];
 
   const announcements = [
     { id: 1, title: 'Welcome to the course!', content: 'We are excited to have you here.', date: '2025-03-30' },
-    { id: 2, title: 'Assignment 1 Due', content: 'Please submit your first assignment by April 5th.', date: '2025-04-01' },
+    { id: 2, title: 'Assignment 1 Due', content: 'Please submit your MCO3 by April 5th.', date: '2025-04-01' },
   ];
 
   const assignments = [
-    { id: 1, title: 'HTML Structure Challenge', instructions: 'Create a basic HTML page with a header, main content, and footer.' },
-    { id: 2, title: 'CSS Styling Task', instructions: 'Style the HTML page you created with CSS. Add colors, fonts, and layout.' },
+    { id: 1, title: 'MCO1 - Project Proposal', instructions: 'Upload a PDF file outlining your project idea.' },
+    { id: 2, title: 'MCO2 - Project Update', instructions: 'Upload a PDF file with an update on your progress.' },
   ];
 
   return (

@@ -5,17 +5,17 @@ export default function CoursesList() {
   const courses = [
     {
       id: 1,
-      title: 'Introduction to Web Development',
-      description: 'Learn the fundamentals of HTML, CSS, and JavaScript.',
-      instructor: 'John Doe',
-      imageUrl: 'https://via.placeholder.com/600x400',
+      title: '1243 STSWENG SS1',
+      description: 'Advanced Software Engineering.',
+      instructor: 'Jordan Aiko Deja',
+      imageUrl: '../assets/images/profilepic.png',
     },
     {
       id: 2,
-      title: 'Advanced React',
-      description: 'Take your React skills to the next level.',
-      instructor: 'Jane Smith',
-      imageUrl: 'https://via.placeholder.com/600x400',
+      title: '1243 STCLOUD S14',
+      description: 'Introduction to Cloud Computing.',
+      instructor: 'Fritz Kevin Flores',
+      imageUrl: '../assets/images/profilepic.png',
     },
   ];
 
