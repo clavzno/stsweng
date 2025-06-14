@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function Pomodoro() {
-  const [mode, setMode] = useState('pomodoro'); // pomodoro, shortBreak, longBreak
+  const [mode, setMode] = useState('pomodoro');
   const [time, setTime] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
   const [settings, setSettings] = useState({
@@ -42,24 +42,24 @@ export default function Pomodoro() {
   const seconds = time % 60;
 
   return (
-    <div className="bg-pink-200 dark:bg-pink-800 p-4 rounded-lg shadow-md text-center">
+    <div className="bg-monochrome p-4 rounded-lg shadow-md text-center">
       <div className="flex justify-center space-x-2 mb-4">
-        <button onClick={() => setMode('pomodoro')} className={`py-1 px-3 rounded-lg ${mode === 'pomodoro' ? 'bg-primary text-white' : ''}`}>Pomodoro</button>
-        <button onClick={() => setMode('shortBreak')} className={`py-1 px-3 rounded-lg ${mode === 'shortBreak' ? 'bg-primary text-white' : ''}`}>Short Break</button>
-        <button onClick={() => setMode('longBreak')} className={`py-1 px-3 rounded-lg ${mode === 'longBreak' ? 'bg-primary text-white' : ''}`}>Long Break</button>
+        <button onClick={() => setMode('pomodoro')} className={`py-1 px-3 rounded-lg ${mode === 'pomodoro' ? 'bg-primary text-white' : 'text-monochrome'}`}>Pomodoro</button>
+        <button onClick={() => setMode('shortBreak')} className={`py-1 px-3 rounded-lg ${mode === 'shortBreak' ? 'bg-primary text-white' : 'text-monochrome'}`}>Short Break</button>
+        <button onClick={() => setMode('longBreak')} className={`py-1 px-3 rounded-lg ${mode === 'longBreak' ? 'bg-primary text-white' : 'text-monochrome'}`}>Long Break</button>
       </div>
-      <div className="text-6xl font-bold text-gray-800 dark:text-white mb-4">
+      <div className="text-6xl font-bold text-white mb-4">
         {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
       </div>
       <div className="space-x-4 mb-4">
-        <button onClick={toggle} className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+        <button onClick={toggle} className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-[#4059e8] transition-colors">
           {isActive ? 'Pause' : 'Start'}
         </button>
-        <button onClick={reset} className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors">
+        <button onClick={reset} className="bg-red text-white py-2 px-4 rounded-lg hover:bg-[#ff4444] transition-colors">
           Reset
         </button>
       </div>
-      <div className="flex justify-around text-gray-800 dark:text-white">
+      <div className="flex justify-around text-white">
         <div>
           <label>Pomodoro</label>
           <input type="number" name="pomodoro" value={settings.pomodoro} onChange={handleSettingsChange} className="w-16 ml-2 bg-transparent border-b-2 border-gray-400" />
