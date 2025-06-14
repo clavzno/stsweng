@@ -58,7 +58,7 @@ export default function Sidebar() {
 
       {/* NAVIGATION */}
       <nav className="flex-1 relative">
-        <div className="scrollable-content overflow-y-hidden overflow-x-hidden pr-4 pt-4 pb-24">
+        <div className="scrollable-content overflow-y-hidden overflow-x-hidden pr-4 pt-4 pb-20">
           <ul className="space-y-1">
             {/* Dashboard Link */}
             <li>
@@ -229,66 +229,77 @@ export default function Sidebar() {
           </ul>
         </div>
 
-        {/* Profile Section */}
+        {/* Profile Section - Fixed positioning and spacing */}
         <div className="
-          absolute left-0 right-0 flex items-center px-4 py-3
+          absolute left-0 right-0 bottom-0
           border-t border-gray-200 dark:border-gray-700
           bg-white dark:bg-gray-900
-          bottom-3
+          px-4 py-3 pb-6
         ">
-          <img
-            src={profilePic}
-            alt="Profile"
-            className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-primary"
-          />
-          <div className="ml-3 flex-1 font-roboto">
-            <p className="text-gray-800 dark:text-gray-100 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
-              Aza Velasquez
-            </p>
-            <p className="text-gray-500 dark:text-gray-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
-              almira_velasquez@dlsu.edu.ph
-            </p>
+          <div className="flex items-center">
+            <img
+              src={profilePic}
+              alt="Profile"
+              className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-primary"
+            />
+            <div className="ml-3 flex-1 font-roboto min-w-0">
+              <p className="text-gray-800 dark:text-gray-100 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity truncate">
+                Aza Velasquez
+              </p>
+              <p className="text-gray-500 dark:text-gray-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity truncate">
+                almira_velasquez@dlsu.edu.ph
+              </p>
+            </div>
+            
+            {/* Button container with proper spacing */}
+            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button
+                onClick={toggleDarkMode}
+                className="
+                  flex items-center justify-center
+                  w-8 h-8 rounded-lg text-gray-700 dark:text-gray-200
+                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  transition-colors
+                "
+                title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+              >
+                {isDarkMode ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                  </svg>
+                )}
+              </button>
+              
+              <button
+                onClick={logout}
+                className="
+                  flex items-center justify-center
+                  w-8 h-8 rounded-lg text-gray-700 dark:text-gray-200
+                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  transition-colors
+                "
+                title="Logout"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
+            </div>
           </div>
-          <button
-            onClick={toggleDarkMode}
-            className="
-              p-2 rounded-lg text-gray-700 dark:text-gray-200
-              hover:bg-gray-100 dark:hover:bg-gray-800
-              opacity-0 group-hover:opacity-100 transition-opacity
-            "
-          >
-            {isDarkMode ? (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
-            ) : (
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-              </svg>
-            )}
-          </button>
-          <button
-            onClick={logout}
-            className="
-              p-2 rounded-lg text-gray-700 dark:text-gray-200
-              hover:bg-gray-100 dark:hover:bg-gray-800
-              opacity-0 group-hover:opacity-100 transition-opacity
-            "
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          </button>
         </div>
 
         {/* Bottom rolling blocks */}
