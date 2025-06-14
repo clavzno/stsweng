@@ -12,15 +12,15 @@ const FormButton = ({
 
 const commonButtonClasses =
         'w-full py-3 px-6 text-white font-medium transition-all duration-200 transform ' +
-        'hover:scale-[1.02] active:scale-[0.98] font-["Roboto"] text-sm tracking-wide';
+        'hover:scale-[1.02] active:scale-[0.98] font-roboto text-sm tracking-wide';
 
 const variantClassMap = {
-        blue: 'bg-[#526CF4] hover:bg-[#4059e8] shadow-lg hover:shadow-xl',
-        green: 'bg-[#4AD147] hover:bg-[#3bc63a] shadow-lg hover:shadow-xl',
-        red: 'bg-[#FF5757] hover:bg-[#ff4444] shadow-lg hover:shadow-xl',
+        blue: 'bg-primary hover:bg-[#4059e8] shadow-lg hover:shadow-xl',
+        green: 'bg-green hover:bg-[#3bc63a] shadow-lg hover:shadow-xl',
+        red: 'bg-red hover:bg-[#ff4444] shadow-lg hover:shadow-xl',
         orange: 'bg-[#F38735] hover:bg-[#e07829] shadow-lg hover:shadow-xl',
         dark:
-        'bg-[#0D122C] hover:bg-[#1a1f3a] border border-[#526CF4] shadow-lg hover:shadow-xl',
+        'bg-[#0D122C] hover:bg-[#1a1f3a] border border-primary shadow-lg hover:shadow-xl',
     };
 
 const chosenVariantClasses =

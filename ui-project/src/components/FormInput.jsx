@@ -15,15 +15,15 @@ const FormInput = ({
     // Base classes shared by every input instance
 const baseInputClasses =
         'w-full px-4 py-3 bg-[#0D122C] border border-gray-600 text-white ' +
-        'placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#526CF4] ' +
-        'focus:border-transparent transition-all duration-200 font-["Roboto"] text-sm ' +
-        'hover:border-[#526CF4] hover:border-opacity-50';
+        'placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary ' +
+        'focus:border-transparent transition-all duration-200 font-roboto text-sm ' +
+        'hover:border-primary hover:border-opacity-50';
 
 return (
         <div className="mb-4">
         <label
             htmlFor={id}
-            className="block text-sm font-medium text-gray-300 mb-2 font-['Roboto'] tracking-wide"
+            className="block text-sm font-medium text-gray-300 mb-2 font-roboto tracking-wide"
         >
             {label}
         </label>

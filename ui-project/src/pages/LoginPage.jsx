@@ -44,53 +44,24 @@ export default function LoginPage() {
 
   const backgroundStyle = {
     backgroundImage: `url(${bgImage})`,
-    backgroundColor: '#0D122C',
   };
 
   const glassCardClasses =
-    'max-w-md w-full p-8 shadow-2xl bg-[#0D122C]/80 border border-[#526CF4]/20 backdrop-blur-md rounded-xl';
+    'max-w-md w-full p-8 shadow-2xl bg-dark-bg/80 border border-primary/20 backdrop-blur-md rounded-xl';
 
   const headingClasses =
-    'text-3xl text-white text-center mb-8 orbitron';
+    'text-3xl text-white text-center mb-8 font-orbitron';
 
   const signupTextClasses =
-    'mt-6 text-center text-sm text-gray-300 roboto';
+    'mt-6 text-center text-sm text-gray-300 font-roboto';
 
   const signupLinkClasses =
-    'text-[#F38735] hover:text-[#FF5757] transition-colors duration-200';
-
-  // for fonts and animation
-  const loginStyles = `
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@400;500&display=swap');
-
-    .login-container {
-      opacity: 1;
-      transform: translateY(-30px);
-      transition: all 0.8s ease-out;
-    }
-
-    .login-container.loaded {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .orbitron {
-      font-family: 'Orbitron', monospace;
-      font-weight: 600;
-    }
-
-    .roboto {
-      font-family: 'Roboto', sans-serif;
-    }
-  `;
+    'text-orange hover:text-red transition-colors duration-200';
 
   return (
     <>
-      {/* Embedded font imports and animation styles */}
-      <style>{loginStyles}</style>
-
       {/* Main Container with dynamic "loaded" class */}
-      <div className={loginContainerClasses} style={backgroundStyle}>
+      <div className={`${loginContainerClasses} bg-dark-bg`} style={backgroundStyle}>
         {/* Glassmorphic Login Card */}
         <div className={glassCardClasses}>
           <h2 className={headingClasses}>Login</h2>
