@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import FormButton from '../components/FormButton';
 import bgImage from '../assets/images/background.png';
-import logo from '../assets/images/logo_full.png';
+import logoDark from '../assets/images/logo_full.png';
+import logoLight from '../assets/images/logo_full_light.png';
 
 /**
  * LandingPage component
@@ -48,7 +49,7 @@ export default function LandingPage() {
     <div className={`${landingContainerClasses} bg-off-white dark:bg-dark-bg text-gray-800 dark:text-white`} style={backgroundStyle}>
       <header className="sticky top-0 w-full p-4 bg-off-white/50 dark:bg-dark-bg/50 backdrop-blur-sm z-10">
         <nav className="flex justify-between items-center max-w-7xl mx-auto">
-          <img src={logo} alt="Logo" className="h-10" />
+          <img src={theme === 'dark' ? logoLight : logoDark} alt="Logo" className="h-10" />
           <div className="space-x-6 flex items-center">
             <button onClick={toggleTheme} className="p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary text-gray-800 dark:text-white">
               {theme === 'dark' ?

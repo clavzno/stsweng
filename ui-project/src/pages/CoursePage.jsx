@@ -4,6 +4,7 @@ import CourseCard from '../components/CourseCard';
 import ModuleList from '../components/ModuleList';
 import Announcements from '../components/Announcements';
 import AssignmentList from '../components/AssignmentList';
+import placeholderImage from '../assets/images/placeholder.png';
 
 export default function CoursePage() {
   const course = {
@@ -11,7 +12,7 @@ export default function CoursePage() {
     title: '1243 STSWENG SS1',
     description: 'Advanced Software Engineering',
     instructor: 'Jordan Aiko Deja',
-    imageUrl: 'https://via.placeholder.com/600x400',
+    imageUrl: placeholderImage,
   };
 
   const modules = [

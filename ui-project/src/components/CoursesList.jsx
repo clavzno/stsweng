@@ -1,5 +1,6 @@
 import React from 'react';
 import CourseCard from './CourseCard';
+import placeholderImage from '../assets/images/placeholder.png';
 
 export default function CoursesList() {
   const courses = [
@@ -8,14 +9,14 @@ export default function CoursesList() {
       title: '1243 STSWENG SS1',
       description: 'Advanced Software Engineering.',
       instructor: 'Jordan Aiko Deja',
-      imageUrl: '../assets/images/profilepic.png',
+      imageUrl: placeholderImage, // Use the imported image for this course
     },
     {
       id: 2,
       title: '1243 STCLOUD S14',
       description: 'Introduction to Cloud Computing.',
       instructor: 'Fritz Kevin Flores',
-      imageUrl: '../assets/images/profilepic.png',
+      imageUrl: placeholderImage, // 2. Set to null to use the placeholder from CourseCard
     },
   ];
 

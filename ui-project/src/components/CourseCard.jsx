@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import placeholderImage from '../assets/images/placeholder.png';
 
 export default function CourseCard({ course, onImageChange }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -31,7 +32,7 @@ export default function CourseCard({ course, onImageChange }) {
           <input type="file" accept="image/*" onChange={handleImageChange} className="text-white" />
         </div>
       )}
-      <img src={newImageUrl} alt={course.title} className="w-full h-32 object-cover" />
+      <img src={newImageUrl || placeholderImage} alt={course.title} className="w-full h-32 object-cover" />
       <div className="p-4">
         <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">{course.title}</h3>
         <p className="text-xs text-gray-600 dark:text-gray-400 truncate">{course.instructor}</p>
