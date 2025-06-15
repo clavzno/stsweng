@@ -368,7 +368,7 @@ export class CanvasService {
             if (!res.ok) throw new Error(`Failed to fetch assignments: ${res.status}`);
             const responseJson = await res.json();
             console.log("GetAssignmentsInCourse > Assignments fetched successfully: ", responseJson);
-            this.PrintCourseNames(responseJson); // testing lang
+            //this.PrintCourseNames(responseJson); // testing lang
             return responseJson;
         } catch (error) {
             console.error("Error in GetCourseAssignments: ", error);

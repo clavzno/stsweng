@@ -29,7 +29,7 @@ canvasService.FetchUser()
     })
     .then(() => {
         console.log("Listing Assignments in STSWENG");
-        return canvasService.GetAssignmentsInCourse("215192");
+        return canvasService.GetAssignmentsInCourse("12237636");
     })
     .then(() => {
         console.log("SKIPPING: Adding comment to an assignment in STSWENG.");
@@ -38,7 +38,7 @@ canvasService.FetchUser()
     })
     .then(() => {
         console.log("Attempting to upload example.pdf to STSWENG MCO1");
-        return canvasService.MakeFileUploadRequestToAssignment("215192", "2099596");
+        return canvasService.MakeFileUploadRequestToAssignment("12237636", "56130526");
     })
     .catch(error => {
         console.error("An error occurred:", error);

@@ -1,7 +1,8 @@
 import { CanvasService } from './services/CanvasService.js';
-import readline from 'readline/promises'
-import { stdin as input, stdout as output } from 'process';
-const rl = readline.createInterface({ input, output });
+// import readline from 'readline/promises'
+// import { stdin as input, stdout as output } from 'process';
+// NOTE: readline not compatible with inquirer, use inquirer instead
+import inquirer from 'inquirer';
 
 //const DOMAIN = process.env.DOMAIN;
 //const ACCESS_TOKEN = process.env.ACCESS_TOKEN;
@@ -29,27 +30,34 @@ const rl = readline.createInterface({ input, output });
  * 7. Upload a submission to an assignment. (1 must be done first)
  */
 
+
+
 async function promptMenu(canvasService) {
-    const menu = `
-        Canvas API Demo Menu:
-
-        1. Create Student
-        2. Fetch Courses
-        3. Get User Root Folder
-        4. List Files in Root Folder
-        5. Get assignments in chosen course
-        6. Upload a Submission to an Assignment
-        x. Exit
-
-        Enter your choice: `;
-
-    rl.question(menu, async (choice) => {
+    let running = true;
+    // const rl = readline.createInterface({ input, output });
+    while (running) {
+        var { choice } = await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'choice',
+                message: 'Canvas API Demo Menu: (1 and 3 must be done first)',
+                choices: [
+                    { name: '1. Create Student', value: '1' },
+                    { name: '2. Fetch Courses', value: '2' },
+                    { name: '3. Get User Root Folder', value: '3' },
+                    { name: '4. List Files in Root Folder', value: '4' },
+                    { name: '5. Get assignments in chosen course', value: '5' },
+                    { name: '6. Upload a Submission to an Assignment', value: '6' },
+                    { name: 'Exit', value: '0' }
+                ]
+            }
+        ]);
 
         switch (choice.trim()) {
             case '1':
                 try {
-                    const student = await canvasService.CreateStudent();
-                    console.log('Student created:', student);
+                    await canvasService.CreateStudent();
+                    console.log('Student created:', canvasService.activeStudent);
                 } catch (err) {
                     console.error('Error creating student:', err.message);
                 }
@@ -71,33 +79,52 @@ async function promptMenu(canvasService) {
                 break;
             case '4':
                 try {
-                    const files = await canvasService.GetFilesInFolder(canvasService.activeStudent.studentRootFolder);
+                    console.log("folder id: ", canvasService.activeStudent.studentRootFolderId);
+                    const files = await canvasService.GetFilesInFolder(canvasService.activeStudent.studentRootFolderId);
+                    console.log(files);
                 } catch (err) {
                     console.error('Error getting files from root folder:', err.message);
                 }
                 break;
             case '5':
-                try{
-                    const assignments = await canvasService.GetAssignmentsInCourse(12237625);
+                try {
+                    // should print published assignments
+                    const assignments = await canvasService.GetAssignmentsInCourse("12237625");
+                    //console.log(assignments);
+                    // should print only unlocked assignments
+                    for (const assignment of assignments) {
+                        if (assignment.locked_for_user == false) {
+                            console.log(`Assignments Unlocked:`);
+                            console.log(`- ${assignment.name} (ID: ${assignment.id})`);
+                            console.log(`${assignment.description}`)
+                        }
+                        else {
+                            console.log(`Assignments Locked:`);
+                            console.log(`- ${assignment.name} (ID: ${assignment.id})`);
+                            console.log(`${assignment.lock_explanation}`)
+                        }
+                    }
                 } catch (error) {
                     console.error("Error listing assignments in chosen course: ", error);
                 }
+                break;
             case '6':
                 try {
-                    const submission = await canvasService.MakeFileUploadRequestToAssignment("12237625", "56130506")
+                    //makes a submission to COURSE02 - ASSIGNMENT01
+                    const submission = await canvasService.MakeFileUploadRequestToAssignment("12237636", "56130526")
                     console.log("Submission uploaded.")
                 } catch (err) {
                     console.error("Error trying to make a submission request:", err.message)
                 }
                 break;
-            case 'x':
+            case '0':
                 console.log('Exiting...');
-                rl.close();
+                //rl.close();
                 return;
             default:
                 console.log('Invalid choice. Please try again.');
         }
-    });
+    }
 }
 
 async function main() {
