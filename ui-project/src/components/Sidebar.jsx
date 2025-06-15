@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import singleLogo from '../assets/images/logo_single.png';
 import blockiLogo from '../assets/images/logo_full.png';
+import blockiLogoLight from '../assets/images/logo_full_light.png';
 import profilePic from '../assets/images/profilepic.png';
 
 export default function Sidebar() {
@@ -47,9 +48,9 @@ export default function Sidebar() {
             alt="blocki icon"
             className="h-8 w-auto block group-hover:hidden"
           />
-          {/* Full logo (expanded) */}
+          {/* Full logo (expanded) - changes based on dark/light mode */}
           <img
-            src={blockiLogo}
+            src={isDarkMode ? blockiLogoLight : blockiLogo}
             alt="blocki full logo"
             className="h-8 w-auto hidden group-hover:block"
           />
