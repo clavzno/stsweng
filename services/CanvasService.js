@@ -349,6 +349,11 @@ export class CanvasService {
         }
     }
 
+    /**
+     * Gets the assignments in a course given the course ID.
+     * @param {*} courseId 
+     * @returns 
+     */
     async GetAssignmentsInCourse(courseId) {
         const url = `${BASE_URL}/api/v1/courses/${courseId}/assignments?${PARAMS_PAGINATION.toString()}`;
         console.log("Fetching assignments for course ID: ", courseId, " from: ", url);
@@ -407,6 +412,8 @@ export class CanvasService {
 
     /**
      * NOTE: SET TO RETURN THE FIRST ASSIGNMENT
+     * If you want to get another assignment, you have to change the return responseJson[n]
+     * where n = the index of the assignment you want to get.
      * @returns 
      */
     async GetOneAssignmentInCourse() {
