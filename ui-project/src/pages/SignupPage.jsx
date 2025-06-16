@@ -60,10 +60,10 @@ export default function SignupPage() {
             <FormInput
               id="signup-username"
               type="text"
-              label="Username"
+              label="Email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. aza_velasquez"
+              placeholder="Email Address"
             />
 
             <FormInput
@@ -72,7 +72,7 @@ export default function SignupPage() {
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Confirm Password"
             />
 
             <FormInput
@@ -81,7 +81,7 @@ export default function SignupPage() {
               label="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Password"
             />
 
             <FormButton variant="green">Create Account</FormButton>

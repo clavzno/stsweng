@@ -70,10 +70,10 @@ export default function LoginPage() {
             <FormInput
               id="username"
               type="text"
-              label="Username"
+              label="Email"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="e.g. aza_velasquez"
+              placeholder="Email Address"
             />
 
             <FormInput
@@ -82,7 +82,7 @@ export default function LoginPage() {
               label="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
+              placeholder="Password"
             />
 
             <FormButton variant="blue">Log In</FormButton>
