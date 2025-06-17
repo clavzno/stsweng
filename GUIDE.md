@@ -22,8 +22,28 @@ Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/proje
 - `_camelCase`: private folders (means it should not be considered by the hierarchical routing system of NextJS)
 - `(camelCase)`: for route groups (means the folder is for organizational purposes and should not be included in the router's URL path)
 
+## GUIDE: Branch Structure/Branching Environment
+- `prod` – For production-ready code. Only merged via approved pull requests after QA and review by our PO.
+- `hotfix/<issue-desc>` – Urgent fixes for production.
+- `test/<feature>` – For extended QA testing.
+- `dev` – For all **finished features**. Internal testing and integration by developers or QA
+- `feature/<feature-name>` – One branch per feature or user story.
+    - `feature/ui`
+        - `feature/ui/login` (example)
+            - `test/feature/ui/login` (example)
+    - `feature/interactive-calendar`
+    - `feature/academic-tracker`
+    - `feature/advanced-todo`
+
+Not to be used when development actually starts:
+- `proof` - For proof of concept, mainly for the devs to figure out and make sure the main features of the application that involves the Canvas API can work and will work.
+
+
+
 ## GUIDE: Folder Conventions
 Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/project-structure)
+
+Example:
 ```
 /stsweng
 |-- .next/ (generated)
