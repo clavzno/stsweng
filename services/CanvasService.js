@@ -123,6 +123,27 @@ export class CanvasService {
         }
     }
 
+    async FetchCourseTabs(courseId) {
+        const url = `${BASE_URL}/api/v1/courses/${courseId}/tabs`;
+        console.log("FetchCourseTabs > Fetching course tabs from: ", url);
+        try {
+            const res = await fetch(url, {
+                headers: {
+                    ...HEADER_AUTHORIZATION,
+                    ...HEADER_CORS
+                }
+            })
+
+            if (!res.ok) throw new Error(`Failed to fetch course tabs: ${res.status}`);
+            const responseJson = await res.json();
+            console.log("Course tabs: ", responseJson);
+            return responseJson;
+        } catch (error) {
+            console.error("Error in FetchCourseTabs: ", error);
+            throw error;
+        }
+    }
+
     /**
      * Fixed version of GetUserRootFolder() in working2.js
      * @returns {Promise<Object>} - Returns the root folder of the user.

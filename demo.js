@@ -48,6 +48,7 @@ async function promptMenu(canvasService) {
                     { name: '4. List Files in Root Folder', value: '4' },
                     { name: '5. Get assignments in chosen course', value: '5' },
                     { name: '6. Upload a Submission to an Assignment', value: '6' },
+                    { name: '7. List Tabs in Chosen Course', value: '7' },
                     { name: 'Exit', value: '0' }
                 ]
             }
@@ -115,6 +116,16 @@ async function promptMenu(canvasService) {
                     console.log("Submission uploaded.")
                 } catch (err) {
                     console.error("Error trying to make a submission request:", err.message)
+                }
+                break;
+
+            case '7':
+                try {
+                    const courseId = "12237636"; // Replace with dynamic course ID as needed
+                    const tabs = await canvasService.FetchCourseTabs(courseId);
+                    console.log("Course Tabs:", tabs);
+                } catch (error) {
+                    console.error("Error fetching course tabs: ", error);
                 }
                 break;
             case '0':
