@@ -18,10 +18,45 @@ export default function CoursesList() {
       instructor: 'Fritz Kevin Flores',
       imageUrl: placeholderImage, // 2. Set to null to use the placeholder from CourseCard
     },
+    {
+      id: 3,
+      title: 'CSCI-ART S12',
+      description: 'Introduction to Artificial Intelligence.',
+      instructor: 'Macario Cordel II',
+      imageUrl: placeholderImage,
+    },
+    {
+      id: 4,
+      title: 'BASPHYS S11',
+      description: 'Basic Physics for IT.',
+      instructor: 'Rene P. Gumba',
+      imageUrl: placeholderImage,
+    },
+    {
+      id: 5,
+      title: 'WEBDEVT S15',
+      description: 'Introduction to Web Development.',
+      instructor: 'Patricia Liana',
+      imageUrl: placeholderImage,
+    },
+    {
+      id: 6,
+      title: 'DATANLS S11',
+      description: 'Data Analytics Fundamentals.',
+      instructor: 'Ryan Dimaunahan',
+      imageUrl: placeholderImage,
+    },
+    {
+      id: 7,
+      title: 'MOBAPDE S13',
+      description: 'Mobile App Development.',
+      instructor: 'Aundrea Chan',
+      imageUrl: placeholderImage,
+    },
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-6 p-2">
       {courses.map((course) => (
         <CourseCard key={course.id} course={course} />
       ))}

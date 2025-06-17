@@ -38,9 +38,9 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="group relative flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-16 hover:w-64 transition-all duration-200 ease-in-out overflow-hidden">
+    <aside className="group relative flex flex-col bg-background dark:bg-text border-r border-text/10 dark:border-background/10 w-16 hover:w-64 transition-all duration-200 ease-in-out overflow-hidden">
       {/* LOGO */}
-      <div className="flex items-center justify-center h-16 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-center h-16 border-b border-text/10 dark:border-background/10">
         <div className="relative flex items-center">
           {/* Blocki icon (collapsed) */}
           <img
@@ -66,12 +66,12 @@ export default function Sidebar() {
               <a
                 href="#!"
                 className="
-                  flex items-center px-4 py-2
-                  hover:bg-gray-100 dark:hover:bg-gray-800
-                  rounded-lg text-gray-700 dark:text-gray-200 font-roboto
+                  flex items-center px-4 py-2 text-text dark:text-background
+                  hover:bg-primary/10 dark:hover:bg-primary/20
+                  rounded-lg font-roboto
                 "
               >
-                {/* Dashboard icon (fill changed to #526CF4) */}
+                {/* Dashboard icon */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -95,11 +95,11 @@ export default function Sidebar() {
             <li>
               <details className="group">
                 <summary className="
-                  flex items-center px-4 py-2
-                  hover:bg-gray-100 dark:hover:bg-gray-800
-                  rounded-lg cursor-pointer text-gray-700 dark:text-gray-200 font-roboto
+                  flex items-center px-4 py-2 text-text dark:text-background
+                  hover:bg-primary/10 dark:hover:bg-primary/20
+                  rounded-lg cursor-pointer font-roboto
                 ">
-                  {/* Courses icon (fill changed to #526CF4) */}
+                  {/* Courses icon */}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -116,7 +116,7 @@ export default function Sidebar() {
                     Courses
                   </span>
                   <svg
-                    className="ml-auto h-4 w-4 text-gray-500 dark:text-gray-400 transition-transform group-open:rotate-180"
+                    className="ml-auto h-4 w-4 text-text/60 dark:text-background/60 transition-transform group-open:rotate-180"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -133,9 +133,9 @@ export default function Sidebar() {
                     <a
                       href="#!"
                       className="
-                        flex items-center px-4 py-2
-                        hover:bg-gray-100 dark:hover:bg-gray-800
-                        rounded-lg text-gray-600 dark:text-gray-300 font-roboto
+                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
+                        hover:bg-primary/10 dark:hover:bg-primary/20
+                        rounded-lg font-roboto
                       "
                     >
                       <svg
@@ -161,9 +161,9 @@ export default function Sidebar() {
                     <a
                       href="#!"
                       className="
-                        flex items-center px-4 py-2
-                        hover:bg-gray-100 dark:hover:bg-gray-800
-                        rounded-lg text-gray-600 dark:text-gray-300 font-roboto
+                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
+                        hover:bg-primary/10 dark:hover:bg-primary/20
+                        rounded-lg font-roboto
                       "
                     >
                       <svg
@@ -189,9 +189,9 @@ export default function Sidebar() {
                     <a
                       href="#!"
                       className="
-                        flex items-center px-4 py-2
-                        hover:bg-gray-100 dark:hover:bg-gray-800
-                        rounded-lg text-gray-600 dark:text-gray-300 font-roboto
+                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
+                        hover:bg-primary/10 dark:hover:bg-primary/20
+                        rounded-lg font-roboto
                       "
                     >
                       <svg
@@ -217,7 +217,11 @@ export default function Sidebar() {
             </li>
 
             <li>
-              <a href="#!" className="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg text-gray-700 dark:text-gray-200 font-roboto">
+              <a href="#!" className="
+                  flex items-center px-4 py-2 text-text dark:text-background
+                  hover:bg-primary/10 dark:hover:bg-primary/20
+                  rounded-lg font-roboto
+                ">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="flex-shrink-0 text-primary">
                   <path d="M19.5 12.5c0-5.24-4.26-9.5-9.5-9.5s-9.5 4.26-9.5 9.5 4.26 9.5 9.5 9.5 9.5-4.26 9.5-9.5zm-17 0c0-4.13 3.37-7.5 7.5-7.5s7.5 3.37 7.5 7.5-3.37 7.5-7.5 7.5-7.5-3.37-7.5-7.5z"/>
                   <path d="M12 10.5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 2.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5z"/>
@@ -233,21 +237,21 @@ export default function Sidebar() {
         {/* Profile Section - Fixed positioning and spacing */}
         <div className="
           absolute left-0 right-0 bottom-0
-          border-t border-gray-200 dark:border-gray-700
-          bg-white dark:bg-gray-900
+          border-t border-text/10 dark:border-background/10
+          bg-background dark:bg-text
           px-4 py-3 pb-6
         ">
           <div className="flex items-center">
             <img
               src={profilePic}
               alt="Profile"
-              className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-primary"
+              className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-accent"
             />
             <div className="ml-3 flex-1 font-roboto min-w-0">
-              <p className="text-gray-800 dark:text-gray-100 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity truncate">
+              <p className="text-text dark:text-background text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity truncate">
                 Aza Velasquez
               </p>
-              <p className="text-gray-500 dark:text-gray-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity truncate">
+              <p className="text-text/70 dark:text-background/70 text-xs opacity-0 group-hover:opacity-100 transition-opacity truncate">
                 almira_velasquez@dlsu.edu.ph
               </p>
             </div>
@@ -257,15 +261,15 @@ export default function Sidebar() {
               <button
                 onClick={toggleDarkMode}
                 className="
-                  flex items-center justify-center
-                  w-8 h-8 rounded-lg text-gray-700 dark:text-gray-200
-                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  flex items-center justify-center text-text dark:text-background
+                  w-8 h-8 rounded-lg
+                  hover:bg-primary/10 dark:hover:bg-primary/20
                   transition-colors
                 "
                 title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               >
                 {isDarkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
                     <circle cx="12" cy="12" r="5"></circle>
                     <line x1="12" y1="1" x2="12" y2="3"></line>
                     <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -286,14 +290,13 @@ export default function Sidebar() {
               <button
                 onClick={logout}
                 className="
-                  flex items-center justify-center
-                  w-8 h-8 rounded-lg text-gray-700 dark:text-gray-200
-                  hover:bg-gray-100 dark:hover:bg-gray-800
+                  flex items-center justify-center text-text dark:text-background
+                  w-8 h-8 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20
                   transition-colors
                 "
                 title="Logout"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"> {/* Kept red-500 for logout, can be changed to text-secondary */}
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                   <polyline points="16 17 21 12 16 7"></polyline>
                   <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -303,7 +306,7 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Bottom rolling blocks */}
+        {/* Bottom rolling blocks - Assuming this styling is in global CSS and uses 'primary' color */}
         <div className="custom-scrollbar-bottom">
           <div className="block"></div>
           <div className="block"></div>
