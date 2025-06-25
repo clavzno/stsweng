@@ -3,7 +3,9 @@ module.exports = {
   darkMode: 'class',
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
-    "./public/index.html"
+    "./pages/**/*.{js,jsx,ts,tsx}",
+    "./public/index.html",
+    "./app/**/*.{js,jsx,ts,tsx}"
   ],
   theme: {
     extend: {
@@ -32,4 +34,3 @@ module.exports = {
   },
   plugins: [],
 }
-

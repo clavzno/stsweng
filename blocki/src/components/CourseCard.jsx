@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+import Image from 'next/image';
 import placeholderImage from '../assets/images/placeholder.png';
 
 // Function to generate a random hex color
@@ -59,10 +62,11 @@ export default function CourseCard({ course, onImageChange }) {
       
      {/* Container for the image and the random color overlay */}
       <div className="relative w-full h-32">
-        <img
+        <Image
           src={newImageUrl || placeholderImage}
           alt={course.title}
-          className="w-full h-full object-cover" 
+          fill
+          className="object-cover"
         />
         {/* Random color overlay on top of the image */}
         <div
@@ -83,7 +87,7 @@ export default function CourseCard({ course, onImageChange }) {
             ></div>
           </div>
         </div>
-        <Link to={`/course/${course.id}`} className="text-xs text-secondary hover:text-orange-700 dark:hover:text-orange-400 mt-2 inline-block transition-colors">
+        <Link href={`/course/${course.id}`} className="text-xs text-secondary hover:text-orange-700 dark:hover:text-orange-400 mt-2 inline-block transition-colors">
           View Course
         </Link>
       </div>

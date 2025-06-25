@@ -1,29 +1,25 @@
+"use client"; // Add this directive for client-side hooks
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useRouter } from 'next/navigation'; // CHANGE: Import from next/navigation
+import Link from 'next/link'; // CHANGE: Import from next/link
 import { useAuth } from '../context/AuthContext';
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
 import bgImage from '../assets/images/background.png';
 
-/**
- * LoginPage component
- */
 export default function LoginPage() {
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
 
   const { login } = useAuth();
-  const navigate = useNavigate();
+  const router = useRouter(); // CHANGE: Use useRouter
 
   useEffect(() => {
     setHasLoadedAnimation(true);
   }, []);
 
-  /**
-   * Handles form submission
-   */
   const handleLoginSubmit = (event) => {
     event.preventDefault();
 
@@ -33,8 +29,10 @@ export default function LoginPage() {
     }
 
     login(username);
-    navigate('/dashboard');
+    router.push('/dashboard'); // CHANGE: Use router.push
   };
+
+  // ... (rest of your component's style constants)
 
   const loginContainerBaseClasses =
     'min-h-screen flex items-center justify-center login-container bg-cover bg-center';
@@ -43,7 +41,7 @@ export default function LoginPage() {
     : loginContainerBaseClasses;
 
   const backgroundStyle = {
-    backgroundImage: `url(${bgImage})`,
+    backgroundImage: `url(${bgImage.src})`, // Add .src for Next.js Image import
   };
 
   const glassCardClasses =
@@ -59,43 +57,36 @@ export default function LoginPage() {
     'text-orange hover:text-red transition-colors duration-200';
 
   return (
-    <>
-      {/* Main Container with dynamic "loaded" class */}
-      <div className={`${loginContainerClasses} bg-dark-bg`} style={backgroundStyle}>
-        {/* Glassmorphic Login Card */}
-        <div className={glassCardClasses}>
-          <h2 className={headingClasses}>Login</h2>
-
-          <form onSubmit={handleLoginSubmit} className="space-y-6">
-            <FormInput
-              id="username"
-              type="text"
-              label="Email"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Email Address"
-            />
-
-            <FormInput
-              id="password"
-              type="password"
-              label="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
-            />
-
-            <FormButton variant="blue">Log In</FormButton>
-          </form>
-
-          <p className={signupTextClasses}>
-            Don't have an account?{' '}
-            <Link to="/signup" className={signupLinkClasses}>
-              Sign Up
-            </Link>
-          </p>
-        </div>
+    <div className={`${loginContainerClasses} bg-dark-bg`} style={backgroundStyle}>
+      <div className={glassCardClasses}>
+        <h2 className={headingClasses}>Login</h2>
+        <form onSubmit={handleLoginSubmit} className="space-y-6">
+          <FormInput
+            id="username"
+            type="text"
+            label="Email"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            placeholder="Email Address"
+          />
+          <FormInput
+            id="password"
+            type="password"
+            label="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+          />
+          <FormButton variant="blue">Log In</FormButton>
+        </form>
+        <p className={signupTextClasses}>
+          Don't have an account?{' '}
+          {/* CHANGE: Use href prop for Next.js Link */}
+          <Link href="/signup" className={signupLinkClasses}>
+            Sign Up
+          </Link>
+        </p>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import singleLogo from '../assets/images/logo_single.png';
@@ -44,13 +46,13 @@ export default function Sidebar() {
         <div className="relative flex items-center">
           {/* Blocki icon (collapsed) */}
           <img
-            src={singleLogo}
+            src={singleLogo.src}
             alt="blocki icon"
             className="h-8 w-auto block group-hover:hidden"
           />
           {/* Full logo (expanded) - changes based on dark/light mode */}
           <img
-            src={isDarkMode ? blockiLogoLight : blockiLogo}
+            src={isDarkMode ? blockiLogoLight.src : blockiLogo.src}
             alt="blocki full logo"
             className="h-8 w-auto hidden group-hover:block"
           />
@@ -243,7 +245,7 @@ export default function Sidebar() {
         ">
           <div className="flex items-center">
             <img
-              src={profilePic}
+              src={profilePic.src}
               alt="Profile"
               className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-accent"
             />

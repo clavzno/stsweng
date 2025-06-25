@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Image from 'next/image';
+import Link from 'next/link'; // Assuming you've already changed this from react-router-dom
 import { useInView } from 'react-intersection-observer';
 
 // Component Imports
@@ -26,7 +29,7 @@ import {
 export default function LandingPage() {
   // State Management
   const [theme, setTheme] = useState('dark');
-  const [isLoaded, setIsLoaded] = useState(false); // State for initial fade-in
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Theme Management Effects
   useEffect(() => {
@@ -41,12 +44,10 @@ export default function LandingPage() {
       setTheme('light');
     }
 
-    // Trigger initial fade-in after component mounts
     const loadTimer = setTimeout(() => {
       setIsLoaded(true);
-    }, 100); // Small delay to ensure CSS is applied before transition
+    }, 100);
 
-    // Clean up the timer if component unmounts
     return () => clearTimeout(loadTimer);
   }, []);
 
@@ -80,16 +81,27 @@ export default function LandingPage() {
     <div
       className={`min-h-screen flex flex-col justify-between text-gray-800 dark:text-white transition-colors duration-300 relative overflow-x-hidden`}
     >
-      {/* Static Background Image Layer */}
-      <div
-        style={{ backgroundImage: `url(${landingPageBg})` }}
-        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-[-1]"
-      ></div>
+      {/* Static Background Image Layer - Path points to /public/images/ */}
+    <div
+      className="fixed inset-0 z-[-1]"
+      style={{
+        backgroundImage: `url(${landingPageBg.src})`,
+        backgroundSize: 'cover', // This is the key property
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+      }}
+    ></div>
 
       {/* Header */}
       <header className="sticky top-0 w-full p-4 bg-off-white/50 dark:bg-dark-bg/50 backdrop-blur-sm z-10">
         <nav className="flex justify-between items-center max-w-7xl mx-auto">
-          <img src={theme === 'dark' ? logoLight : logoDark} alt="Logo" className="h-10" />
+          {/* Image paths point to /public/images/ */}
+          <img
+            src={theme === 'dark' ? logoLight.src : logoDark.src}
+            alt="Logo"
+            className="h-10"
+          /> {/* Using <img> here is fine for a small, non-critical logo that changes dynamically */}
           <div className="space-x-6 flex items-center">
             <button
               onClick={toggleTheme}
@@ -98,11 +110,11 @@ export default function LandingPage() {
             >
               {theme === 'dark' ? <FiSun size={24} /> : <FiMoon size={24} />}
             </button>
-            <Link to="/login" className="hover:text-orange transition-colors">
-              Login
+            <Link href="/login">
+              <FormButton variant="dark" type="button" className="w-auto py-2 px-4">Login</FormButton>
             </Link>
-            <Link to="/signup">
-              <FormButton variant="primary">Get Started</FormButton>
+            <Link href="/signup">
+              <FormButton variant="primary" type="button" className="w-auto py-2 px-4">Get Started</FormButton>
             </Link>
           </div>
         </nav>
@@ -114,7 +126,7 @@ export default function LandingPage() {
         <div className={`transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
           {/* Hero Section */}
           <section
-            ref={heroRef} // Attach ref for intersection observer
+            ref={heroRef}
             className={`text-center py-20 md:py-32 transition-all duration-700 ease-out ${
               heroInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
             }`}
@@ -126,7 +138,7 @@ export default function LandingPage() {
                 workspace with customizable building blocks, track your academic progress, and stay
                 organized.
               </p>
-              <Link to="/signup">
+              <Link href="/signup">
                 <FormButton variant="primary" size="lg" className="px-10 py-4 text-lg">
                   Try Blocki Today
                 </FormButton>
@@ -136,8 +148,8 @@ export default function LandingPage() {
 
           {/* "Why Blocki?" Section */}
           <section
-            ref={whyRef} // Attach ref for intersection observer
-            className={`py-20 md:py-32 bg-gray-50 dark:bg-gray-900/50 dark:backdrop-blur-sm transition-all duration-700 ease-out border-t border-gray-200 dark:border-gray-700/50 ${
+            ref={whyRef}
+            className={`py-20 md:py-32 bg-gray-50 dark:bg-gray-900/50 ... ${
               whyInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
             }`}
           >
@@ -212,8 +224,8 @@ export default function LandingPage() {
 
           {/* Call to Action */}
           <section
-            ref={ctaRef} // Attach ref for intersection observer
-            className={`py-20 md:py-28 transition-all duration-700 ease-out border-t border-gray-200/60 dark:border-gray-700/40 ${
+            ref={ctaRef}
+            className={`py-20 md:py-28 transition-all duration-700 ease-out ... ${
               ctaInView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
             }`}
           >
@@ -225,7 +237,7 @@ export default function LandingPage() {
                 Join thousands of students who are already transforming their academic life with
                 Blocki.
               </p>
-              <Link to="/signup">
+              <Link href="/signup">
                 <FormButton variant="primary" size="lg" className="px-12 py-4 text-xl">
                   Sign Up for Free
                 </FormButton>
@@ -233,13 +245,14 @@ export default function LandingPage() {
             </div>
           </section>
         </div>
-        {/* End of Initial Fade-in Wrapper */}
       </main>
 
-      {/* Footer */}
+      {/* Footer - Path points to /public/images/ */}
       <footer
         className="w-full p-16 bg-gray-50 dark:bg-gray-900 bg-cover bg-center bg-no-repeat border-t border-gray-200 dark:border-gray-700/50 z-0"
-        style={{ backgroundImage: `url(${theme === 'dark' ? footerBgLight : footerBg})` }}
+        style={{
+          backgroundImage: `url(${theme === 'dark' ? footerBgLight.src : footerBg.src})`,
+        }}
       >
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-6 gap-8 mb-8">
@@ -257,7 +270,6 @@ export default function LandingPage() {
                     Facebook
                   </a>
                 </li>
-                {/* Add other social links here if needed */}
               </ul>
             </div>
 
@@ -275,7 +287,6 @@ export default function LandingPage() {
                     Email Us
                   </a>
                 </li>
-                {/* Add other contact methods here */}
               </ul>
             </div>
 
@@ -285,21 +296,19 @@ export default function LandingPage() {
               <ul className="space-y-2 text-sm">
                 <li>
                   <Link
-                    to="/privacy-policy"
+                    href="/privacy-policy"
                     className="hover:text-orange dark:hover:text-primary-hover font-roboto text-gray-600 dark:text-gray-400"
                   >
                     Privacy Policy
                   </Link>
                 </li>
-                {/* Add other policies like Terms of Service here */}
               </ul>
             </div>
           </div>
-          {/* End of grid grid-cols-1 md:grid-cols-6 */}
-
+          
           {/* Copyright section */}
           <div className="text-center text-sm text-gray-500 dark:text-gray-400 font-roboto">
-            {/* You can add a copyright notice here if desired, e.g., &copy; {new Date().getFullYear()} Blocki */}
+            &copy; {new Date().getFullYear()} Blocki
           </div>
         </div>
       </footer>

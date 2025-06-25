@@ -1,4 +1,5 @@
-    // MainContent.jsx
+"use client"; 
+
 import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import CoursesList from './CoursesList';
@@ -10,15 +11,25 @@ import AddComponentModal from './AddComponentModal';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function MainContent() {
-    const [layout, setLayout] = useState(() => {
-        const savedLayout = localStorage.getItem('dashboardLayout');
-        return savedLayout ? JSON.parse(savedLayout) : [];
-    });
+    // 1. Initialize state with a default, non-browser value (an empty array).
+    const [layout, setLayout] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
 
+    // 2. Use useEffect to safely access localStorage only on the client-side.
     useEffect(() => {
-        localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+        const savedLayout = localStorage.getItem('dashboardLayout');
+        if (savedLayout) {
+            setLayout(JSON.parse(savedLayout));
+        }
+    }, []); // The empty dependency array [] ensures this runs only once on mount.
+
+    // This useEffect to save the layout is correct and can remain.
+    useEffect(() => {
+        // To avoid saving the initial empty layout, check if the layout has items.
+        if (layout.length > 0) {
+            localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+        }
     }, [layout]);
 
     const handleAddComponent = (componentId) => {
