@@ -65,7 +65,7 @@ export default function CourseCard({ course, onImageChange }) {
         <Image
           src={newImageUrl || placeholderImage}
           alt={course.title}
-          fill
+          fill="true"
           className="object-cover"
         />
         {/* Random color overlay on top of the image */}
