@@ -1,5 +1,3 @@
-// studentView.test.js
-
 const request = require('supertest');
 const app = require('../app'); // Express app
 const { setupMockStudentData, teardown } = require('./testHelpers');
