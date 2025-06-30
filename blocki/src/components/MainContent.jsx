@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 
 import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -7,6 +7,10 @@ import Calendar from './Calendar';
 import StudyTracker from './StudyTracker';
 import Pomodoro from './Pomodoro';
 import AddComponentModal from './AddComponentModal';
+
+// NEW: Import Settings and SaveLayoutButton
+import Settings from './Settings';
+import SaveLayoutButton from './SaveLayoutButton';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -22,7 +26,6 @@ export default function MainContent() {
         if (savedLayout) {
             setLayout(JSON.parse(savedLayout));
         }
-    }, []); // The empty dependency array [] ensures this runs only once on mount.
 
     // This useEffect to save the layout is correct and can remain.
     useEffect(() => {
@@ -36,7 +39,7 @@ export default function MainContent() {
         const newItem = {
             i: componentId,
             x: (layout.length * 4) % 12,
-            y: Infinity, // places item at the bottom
+            y: Infinity,
             w: 4,
             h: 2,
         };
@@ -73,6 +76,12 @@ export default function MainContent() {
         );
     };
 
+    // NEW: Save handler (connected to SaveLayoutButton)
+    const handleSaveLayout = () => {
+        localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+        alert('Layout saved!');
+    };
+
     return (
         <main className="flex-1 overflow-y-auto p-6 relative">
             <div className="flex justify-between items-center mb-6">
@@ -84,12 +93,22 @@ export default function MainContent() {
                         Today is March 30, 2025 10:21 PM
                     </h3>
                 </div>
-                <button
-                    onClick={() => setIsEditMode(!isEditMode)}
-                    className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    {isEditMode ? 'Done' : 'Edit Layout'}
-                </button>
+                <div className="flex gap-4 items-center">
+                    <button
+                        onClick={() => setIsEditMode(!isEditMode)}
+                        className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                        {isEditMode ? 'Done' : 'Edit Layout'}
+                    </button>
+
+                    {/* NEW: Save Layout Button */}
+                    <SaveLayoutButton onSave={handleSaveLayout} />
+                </div>
+            </div>
+
+            {/* NEW: Settings panel */}
+            <div className="mb-6">
+                <Settings />
             </div>
 
             <ResponsiveGridLayout
@@ -106,14 +125,12 @@ export default function MainContent() {
             </ResponsiveGridLayout>
 
             {layout.length === 0 && (
-                 <div
+                <div
                     onClick={() => setIsModalOpen(true)}
-                    className="
-                        border-2 border-dashed border-gray-300 dark:border-gray-600
+                    className="border-2 border-dashed border-gray-300 dark:border-gray-600
                         rounded-lg h-48 flex justify-center items-center cursor-pointer
                         hover:bg-gray-50 dark:hover:bg-gray-700
-                        select-none font-roboto text-gray-400 dark:text-gray-300
-                    "
+                        select-none font-roboto text-gray-400 dark:text-gray-300"
                 >
                     <div className="text-center">
                         <svg
