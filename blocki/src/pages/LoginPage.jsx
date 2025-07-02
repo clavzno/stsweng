@@ -5,36 +5,23 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import FormButton from '../components/FormButton';
-import FormInput from '../components/FormInput';
 import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
+import logoSingle from '../assets/images/logo_single.png';
 
 export default function LoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const { login } = useAuth();
-  const router = useRouter(); // CHANGE: Use useRouter
+  const router = useRouter();
 
   useEffect(() => {
     setHasLoadedAnimation(true);
   }, []);
 
-  const handleLoginSubmit = (event) => {
-    event.preventDefault();
-
-    if (username.trim() === '' || password.trim() === '') {
-      alert('Please enter a username and password.');
-      return;
-    }
-
-    login(username);
-    router.push('/dashboard'); // CHANGE: Use router.push
-  };
-
   const loginContainerBaseClasses =
-    'min-h-screen flex items-center justify-center login-container bg-cover bg-center';
+    'min-h-screen flex items-center justify-center login-container bg-cover bg-center relative overflow-hidden px-4';
   const loginContainerClasses = hasLoadedAnimation
     ? `${loginContainerBaseClasses} loaded`
     : loginContainerBaseClasses;
@@ -43,71 +30,112 @@ export default function LoginPage() {
     backgroundImage: `url(${bgImage.src})`,
   };
 
-  const glassCardClasses =
-    'max-w-md w-full p-8 shadow-2xl bg-dark-bg/80 border border-primary/20 backdrop-blur-md rounded-xl';
+  const glassCardClasses = `
+    max-w-md w-full p-8 shadow-2xl bg-dark-bg/85 border border-primary/30 
+    backdrop-blur-lg rounded-2xl relative z-10 transition-all duration-500 ease-out
+    hover:bg-dark-bg/90 hover:border-primary/40 hover:shadow-3xl hover:scale-[1.02]
+    ${hasLoadedAnimation ? 'animate-fade-in-up' : 'opacity-0 translate-y-8'}
+  `;
 
-  const headingClasses =
-    'text-3xl text-white text-center mb-8 font-orbitron';
+  const headingClasses = `
+    text-3xl text-white text-center mb-2 font-orbitron font-bold
+    bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent
+    transition-all duration-300 ease-out
+  `;
 
-  const signupTextClasses =
-    'mt-6 text-center text-sm text-gray-300 font-roboto';
+  const subheadingClasses = `
+    text-base text-primary/80 text-center mb-6 font-orbitron font-light tracking-wide
+  `;
 
-  const signupLinkClasses =
-    'text-orange hover:text-red transition-colors duration-200';
+  const encouragementTextClasses = `
+    text-center text-gray-200/90 mb-8 font-roboto leading-relaxed text-sm
+    transition-all duration-300 ease-out
+  `;
 
   return (
     <div className={`${loginContainerClasses} bg-dark-bg`} style={backgroundStyle}>
+      {/* Animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-32 h-32 bg-primary/10 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-10 w-48 h-48 bg-accent/10 rounded-full blur-xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-2xl animate-pulse delay-500"></div>
+      </div>
+
       <div className={glassCardClasses}>
-        <h2 className={headingClasses}>Login</h2>
-        <form onSubmit={handleLoginSubmit} className="space-y-6">
-          <FormInput
-            id="username"
-            type="text"
-            label="Email"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Email Address"
-          />
-          <FormInput
-            id="password"
-            type="password"
-            label="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
-          />
-          <FormButton variant="blue">Log In</FormButton>
-        </form>
-        <div className="my-6 flex items-center">
-          <div className="flex-grow border-t border-primary/20" />
-          <span className="mx-4 flex-shrink font-roboto text-sm text-gray-300">
-            OR
-          </span>
-          <div className="flex-grow border-t border-primary/20" />
-        </div>
-        <FormButton
-          type="button"
-          variant="canvas-login"
-          onClick={() => {
-            // Simulate a successful Canvas login for now
-            login('canvas_user');
-            router.push('/dashboard');
-          }}
-          className="flex justify-center items-center"
-        >
+        {/* Logo */}
+        <div className="text-center mb-4">
           <img
-            src={canvasLogo.src}
-            alt="Canvas logo"
-            className="mr-2 h-5 w-5"
+            src={logoSingle.src}
+            alt="Blocki Logo"
+            className={`mx-auto h-20 w-20 object-contain mb-3 transition-all duration-1000 ease-out
+              ${hasLoadedAnimation
+                ? 'opacity-100 translate-y-0 rotate-0'
+                : 'opacity-0 -translate-y-12 rotate-12'
+              }
+              hover:scale-110 hover:rotate-6 cursor-pointer filter drop-shadow-lg
+            `}
           />
-          Log In with Canvas
-        </FormButton>
-        <p className={signupTextClasses}>
-          Don't have an account?{' '}
-          <Link href="/signup" className={signupLinkClasses}>
-            Sign Up
-          </Link>
+        </div>
+
+        {/* Heading */}
+        <h1 className={headingClasses}>Welcome to Blocki.</h1>
+        <h2 className={subheadingClasses}>All-in-one productivity tool.</h2>
+
+        {/* Description */}
+        <p className={encouragementTextClasses}>
+          Transform your academic workflow with Canvas integration. 
+          Connect once, access everything!
         </p>
+
+        {/* Login button */}
+        <div className="space-y-4">
+          <FormButton
+            type="button"
+            variant="canvas-login"
+            onClick={() => {
+              // This is a simulation so it'll be push to dashboard.
+              login('canvas_user');
+              router.push('/dashboard');
+            }}
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            className={`
+              flex justify-center items-center w-full py-3 px-6 text-base font-semibold
+              transition-all duration-300 ease-out transform
+              hover:scale-105 hover:shadow-xl hover:shadow-primary/25
+              focus:scale-105 focus:shadow-xl focus:shadow-primary/25
+              active:scale-95
+            `}
+          >
+            <img
+              src={canvasLogo.src}
+              alt="Canvas logo"
+              className={`mr-3 h-5 w-5 transition-transform duration-300 ${
+                isHovering ? 'scale-110 rotate-12' : ''
+              }`}
+            />
+            Log In with Canvas
+            <span className={`ml-2 transition-transform duration-300 ${
+              isHovering ? 'translate-x-1' : ''
+            }`}>
+              →
+            </span>
+          </FormButton>
+
+          {/* For users who dont have access to Canvas */}
+          <div className="text-center pt-2">
+            <p className="text-gray-400 text-xs mb-1">
+              Don't have Canvas access?
+            </p>
+            <Link 
+              href="/dashboard" 
+              className="text-primary hover:text-primary/80 text-xs underline transition-colors duration-200"
+            >
+              Try the Demo Version
+            </Link>
+          </div>
+        </div>
+        
       </div>
     </div>
   );
