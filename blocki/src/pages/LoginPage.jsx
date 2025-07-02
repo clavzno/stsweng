@@ -1,12 +1,13 @@
-"use client"; // Add this directive for client-side hooks
+"use client";
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // CHANGE: Import from next/navigation
-import Link from 'next/link'; // CHANGE: Import from next/link
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 import FormButton from '../components/FormButton';
 import FormInput from '../components/FormInput';
 import bgImage from '../assets/images/background.png';
+import canvasLogo from '../assets/images/canvas_logo.png';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -32,8 +33,6 @@ export default function LoginPage() {
     router.push('/dashboard'); // CHANGE: Use router.push
   };
 
-  // ... (rest of your component's style constants)
-
   const loginContainerBaseClasses =
     'min-h-screen flex items-center justify-center login-container bg-cover bg-center';
   const loginContainerClasses = hasLoadedAnimation
@@ -41,7 +40,7 @@ export default function LoginPage() {
     : loginContainerBaseClasses;
 
   const backgroundStyle = {
-    backgroundImage: `url(${bgImage.src})`, // Add .src for Next.js Image import
+    backgroundImage: `url(${bgImage.src})`,
   };
 
   const glassCardClasses =
@@ -79,9 +78,32 @@ export default function LoginPage() {
           />
           <FormButton variant="blue">Log In</FormButton>
         </form>
+        <div className="my-6 flex items-center">
+          <div className="flex-grow border-t border-primary/20" />
+          <span className="mx-4 flex-shrink font-roboto text-sm text-gray-300">
+            OR
+          </span>
+          <div className="flex-grow border-t border-primary/20" />
+        </div>
+        <FormButton
+          type="button"
+          variant="canvas-login"
+          onClick={() => {
+            // Simulate a successful Canvas login for now
+            login('canvas_user');
+            router.push('/dashboard');
+          }}
+          className="flex justify-center items-center"
+        >
+          <img
+            src={canvasLogo.src}
+            alt="Canvas logo"
+            className="mr-2 h-5 w-5"
+          />
+          Log In with Canvas
+        </FormButton>
         <p className={signupTextClasses}>
           Don't have an account?{' '}
-          {/* CHANGE: Use href prop for Next.js Link */}
           <Link href="/signup" className={signupLinkClasses}>
             Sign Up
           </Link>

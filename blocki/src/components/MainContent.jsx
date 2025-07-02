@@ -26,8 +26,8 @@ export default function MainContent() {
         if (savedLayout) {
             setLayout(JSON.parse(savedLayout));
         }
-
-    // This useEffect to save the layout is correct and can remain.
+    }, []);
+    
     useEffect(() => {
         // To avoid saving the initial empty layout, check if the layout has items.
         if (layout.length > 0) {
