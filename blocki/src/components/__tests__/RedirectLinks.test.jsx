@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import QuizAssignmentLinks from '../components/QuizAssignmentLinks'; // your component
+import QuizAssignmentLinks from '../QuizAssignmentLinks'; // change the path as necessary
 import '@testing-library/jest-dom';
 
 describe('QuizAssignmentLinks', () => {
