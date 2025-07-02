@@ -1,7 +1,7 @@
 import {
   getCanvasAccessToken,
   getCanvasUserInfo
-} from '../src/vendor/CanvasService';
+} from '../CanvasService';
 
 describe('CanvasService OAuth2 Login', () => {
   beforeEach(() => {
