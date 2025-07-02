@@ -292,7 +292,7 @@ export default function LandingPage() {
           >
             <div className="max-w-6xl mx-auto px-6">
               <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-orbitron text-white mb-4 bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-orbitron text-white mb-4 bg-gradient-to-r from-white via-primary to-white bg-clip-text">
                   Everything you need to succeed
                 </h2>
                 <p className="text-xl text-gray-200/90 font-roboto max-w-3xl mx-auto">
@@ -340,7 +340,7 @@ export default function LandingPage() {
           >
             <div className="max-w-4xl mx-auto text-center px-6">
               <div className="bg-dark-bg/80 border border-primary/30 backdrop-blur-lg rounded-2xl shadow-2xl p-12 hover:bg-dark-bg/90 hover:border-primary/40 transition-all duration-500">
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-orbitron text-white mb-6 bg-gradient-to-r from-white via-primary to-white bg-clip-text text-transparent">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-orbitron text-white mb-6 bg-gradient-to-r from-white via-primary to-white bg-clip-text">
                   Ready to transform your academic life?
                 </h2>
                 <p className="text-xl text-gray-200/90 mb-8 font-roboto max-w-2xl mx-auto">
