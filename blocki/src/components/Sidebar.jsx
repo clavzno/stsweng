@@ -1,323 +1,230 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
-import singleLogo from '../assets/images/logo_single.png';
-import blockiLogo from '../assets/images/logo_full.png';
-import blockiLogoLight from '../assets/images/logo_full_light.png';
-import profilePic from '../assets/images/profilepic.png';
 
-export default function Sidebar() {
+// For prototyping WIP
+const FiPlus = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+  </svg>
+);
+
+const FiX = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+  </svg>
+);
+
+const FiHome = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
+
+const FiBook = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+  </svg>
+);
+
+const FiBell = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.73 21a2 2 0 01-3.46 0" />
+  </svg>
+);
+
+const FiCalendar = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+  </svg>
+);
+
+const FiTrendingUp = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+  </svg>
+);
+
+const FiSettings = ({ className }) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
+
+// WIP
+const renderIcon = (iconName, className) => {
+  switch (iconName) {
+    case 'home':
+      return <FiHome className={className} />;
+    case 'book':
+      return <FiBook className={className} />;
+    case 'bell':
+      return <FiBell className={className} />;
+    case 'calendar':
+      return <FiCalendar className={className} />;
+    case 'trending-up':
+      return <FiTrendingUp className={className} />;
+    case 'settings':
+      return <FiSettings className={className} />;
+    default:
+      return <FiHome className={className} />;
+  }
+};
+
+const defaultTabs = [
+  { id: 'dashboard', name: 'Dashboard', icon: 'home', href: '#dashboard' },
+  { id: 'courses', name: 'Courses', icon: 'book', href: '#courses', hasDropdown: true },
+  { id: 'announcements', name: 'Announcements', icon: 'bell', href: '#announcements' },
+];
+
+const availableTabs = [
+  { id: 'calendar', name: 'Calendar', icon: 'calendar', href: '#calendar' },
+  { id: 'analytics', name: 'Analytics', icon: 'trending-up', href: '#analytics' },
+  { id: 'settings', name: 'Settings', icon: 'settings', href: '#settings' },
+];
+
+export default function CustomizableSidebar() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const { logout } = useAuth();
+  const [tabs, setTabs] = useState(defaultTabs);
+  const [showAddMenu, setShowAddMenu] = useState(false);
 
-  // Initialize dark mode from localStorage or system preference
   useEffect(() => {
+    const savedTabs = localStorage.getItem('sidebarTabs');
+    if (savedTabs) {
+      setTabs(JSON.parse(savedTabs));
+    }
+
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
       setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
-      setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
     }
   }, []);
 
-  // Toggle dark mode
-  const toggleDarkMode = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
+  const addTab = (tab) => {
+    const newTabs = [...tabs, tab];
+    setTabs(newTabs);
+    localStorage.setItem('sidebarTabs', JSON.stringify(newTabs));
+    setShowAddMenu(false);
+  };
+
+  const removeTab = (tabId) => {
+    const newTabs = tabs.filter(tab => tab.id !== tabId);
+    setTabs(newTabs);
+    localStorage.setItem('sidebarTabs', JSON.stringify(newTabs));
+  };
+
+  const getAvailableTabs = () => {
+    return availableTabs.filter(tab => !tabs.find(t => t.id === tab.id));
   };
 
   return (
-    <aside className="group relative flex flex-col bg-background dark:bg-text border-r border-text/10 dark:border-background/10 w-16 hover:w-64 transition-all duration-200 ease-in-out overflow-hidden">
-      {/* LOGO */}
-      <div className="flex items-center justify-center h-16 border-b border-text/10 dark:border-background/10">
-        <div className="relative flex items-center">
-          {/* Blocki icon (collapsed) */}
-          <img
-            src={singleLogo.src}
-            alt="blocki icon"
-            className="h-8 w-auto block group-hover:hidden"
-          />
-          {/* Full logo (expanded) - changes based on dark/light mode */}
-          <img
-            src={isDarkMode ? blockiLogoLight.src : blockiLogo.src}
-            alt="blocki full logo"
-            className="h-8 w-auto hidden group-hover:block"
-          />
-        </div>
-      </div>
-
+    <aside className="group relative flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 w-16 hover:w-64 transition-all duration-200 ease-in-out overflow-visible">
       {/* NAVIGATION */}
-      <nav className="flex-1 relative">
-        <div className="scrollable-content overflow-y-hidden overflow-x-hidden pr-4 pt-4 pb-20">
+      <nav className="flex-1 relative pt-4">
+        <div className="scrollable-content overflow-y-auto overflow-x-hidden pl-2.5 pr-4 pb-20">
           <ul className="space-y-1">
-            {/* Dashboard Link */}
-            <li>
-              <a
-                href="#!"
-                className="
-                  flex items-center px-4 py-2 text-text dark:text-background
-                  hover:bg-primary/10 dark:hover:bg-primary/20
-                  rounded-lg font-roboto
-                "
+            {tabs.map((tab) => (
+              <li key={tab.id}>
+                {tab.hasDropdown ? (
+                  <details className="group/dropdown">
+                    <summary className="flex items-center px-2 py-2 text-gray-700 dark:text-gray-200 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg cursor-pointer font-roboto">
+                      {renderIcon(tab.icon, "flex-shrink-0 text-primary w-6 h-6")}
+                      <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        {tab.name}
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (tab.id !== 'dashboard') removeTab(tab.id);
+                        }}
+                        className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700"
+                      >
+                        {tab.id !== 'dashboard' && <FiX className="w-4 h-4" />}
+                      </button>
+                    </summary>
+                    <ul className="mt-1 space-y-1 pl-8">
+                      <li>
+                        <a href="#course1" className="flex items-center px-2 py-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg font-roboto">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">Course 1</span>
+                        </a>
+                      </li>
+                      <li>
+                        <a href="#course2" className="flex items-center px-2 py-2 text-gray-600 dark:text-gray-300 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg font-roboto">
+                          <span className="opacity-0 group-hover:opacity-100 transition-opacity">Course 2</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </details>
+                ) : (
+                  <div className="flex items-center">
+                    <a
+                      href={tab.href}
+                      className="flex items-center px-2 py-2 text-gray-700 dark:text-gray-200 hover:bg-primary/10 dark:hover:bg-primary/20 rounded-lg font-roboto flex-1"
+                    >
+                      {renderIcon(tab.icon, "flex-shrink-0 text-primary w-6 h-6")}
+                      <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                        {tab.name}
+                      </span>
+                    </a>
+                    {tab.id !== 'dashboard' && (
+                      <button
+                        onClick={() => removeTab(tab.id)}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700 p-1 mr-2"
+                      >
+                        <FiX className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
+              </li>
+            ))}
+
+            {/* Add Tab Button */}
+            <li className="relative">
+              <button
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                className="w-full flex items-center px-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-roboto transition-colors"
               >
-                {/* Dashboard icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="flex-shrink-0 text-primary"
-                >
-                  <rect x="3" y="3" width="8" height="8" rx="1" />
-                  <rect x="13" y="3" width="8" height="5" rx="1" />
-                  <rect x="3" y="13" width="5" height="8" rx="1" />
-                  <rect x="10" y="13" width="11" height="8" rx="1" />
-                </svg>
+                <FiPlus className="flex-shrink-0 w-6 h-6" />
                 <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                  Dashboard
+                  Add Tab
                 </span>
-              </a>
-            </li>
+              </button>
 
-            {/* Courses Dropdown */}
-            <li>
-              <details className="group">
-                <summary className="
-                  flex items-center px-4 py-2 text-text dark:text-background
-                  hover:bg-primary/10 dark:hover:bg-primary/20
-                  rounded-lg cursor-pointer font-roboto
-                ">
-                  {/* Courses icon */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    className="flex-shrink-0 text-primary"
-                  >
-                    <rect x="3" y="16" width="18" height="3" rx="1" />
-                    <rect x="3" y="11" width="18" height="3" rx="1" />
-                    <rect x="3" y="6" width="18" height="3" rx="1" />
-                  </svg>
-                  <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                    Courses
-                  </span>
-                  <svg
-                    className="ml-auto h-4 w-4 text-text/60 dark:text-background/60 transition-transform group-open:rotate-180"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-
-                <ul className="mt-1 space-y-1 pl-12">
-                  {/* Course 1 */}
-                  <li>
-                    <a
-                      href="#!"
-                      className="
-                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
-                        hover:bg-primary/10 dark:hover:bg-primary/20
-                        rounded-lg font-roboto
-                      "
+              {/* Add Tab Modal - Inside Sidebar */}
+              {showAddMenu && getAvailableTabs().length > 0 && (
+                <div className="mt-2 mx-1 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600 mb-2">
+                    Available Tabs
+                  </div>
+                  {getAvailableTabs().map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => addTab(tab)}
+                      className="w-full flex items-center px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="flex-shrink-0 text-primary"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="1" />
-                        <rect x="6" y="7" width="12" height="2" />
-                        <rect x="6" y="11" width="10" height="2" />
-                        <rect x="6" y="15" width="8" height="2" />
-                      </svg>
-                      <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Course 1
-                      </span>
-                    </a>
-                  </li>
-                  {/* Course 2 */}
-                  <li>
-                    <a
-                      href="#!"
-                      className="
-                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
-                        hover:bg-primary/10 dark:hover:bg-primary/20
-                        rounded-lg font-roboto
-                      "
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="flex-shrink-0 text-primary"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="1" />
-                        <rect x="6" y="7" width="12" height="2" />
-                        <rect x="6" y="11" width="10" height="2" />
-                        <rect x="6" y="15" width="8" height="2" />
-                      </svg>
-                      <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Course 2
-                      </span>
-                    </a>
-                  </li>
-                  {/* Course 3 */}
-                  <li>
-                    <a
-                      href="#!"
-                      className="
-                        flex items-center px-4 py-2 text-text/80 dark:text-background/80
-                        hover:bg-primary/10 dark:hover:bg-primary/20
-                        rounded-lg font-roboto
-                      "
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="flex-shrink-0 text-primary"
-                      >
-                        <rect x="3" y="3" width="18" height="18" rx="1" />
-                        <rect x="6" y="7" width="12" height="2" />
-                        <rect x="6" y="11" width="10" height="2" />
-                        <rect x="6" y="15" width="8" height="2" />
-                      </svg>
-                      <span className="ml-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        Course 3
-                      </span>
-                    </a>
-                  </li>
-                </ul>
-              </details>
-            </li>
-
-            <li>
-              <a href="#!" className="
-                  flex items-center px-4 py-2 text-text dark:text-background
-                  hover:bg-primary/10 dark:hover:bg-primary/20
-                  rounded-lg font-roboto
-                ">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="flex-shrink-0 text-primary">
-                  <path d="M19.5 12.5c0-5.24-4.26-9.5-9.5-9.5s-9.5 4.26-9.5 9.5 4.26 9.5 9.5 9.5 9.5-4.26 9.5-9.5zm-17 0c0-4.13 3.37-7.5 7.5-7.5s7.5 3.37 7.5 7.5-3.37 7.5-7.5 7.5-7.5-3.37-7.5-7.5z"/>
-                  <path d="M12 10.5c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 2.5c-.28 0-.5-.22-.5-.5s.22-.5.5-.5.5.22.5.5-.22.5-.5.5z"/>
-                </svg>
-                <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                  Announcements
-                </span>
-              </a>
+                      {renderIcon(tab.icon, "w-4 h-4 mr-3 text-primary")}
+                      {tab.name}
+                    </button>
+                  ))}
+                </div>
+              )}
             </li>
           </ul>
         </div>
-
-        {/* Profile Section - Fixed positioning and spacing */}
-        <div className="
-          absolute left-0 right-0 bottom-0
-          border-t border-text/10 dark:border-background/10
-          bg-background dark:bg-text
-          px-4 py-3 pb-6
-        ">
-          <div className="flex items-center">
-            <img
-              src={profilePic.src}
-              alt="Profile"
-              className="h-8 w-8 rounded-full flex-shrink-0 border-2 border-accent"
-            />
-            <div className="ml-3 flex-1 font-roboto min-w-0">
-              <p className="text-text dark:text-background text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity truncate">
-                Aza Velasquez
-              </p>
-              <p className="text-text/70 dark:text-background/70 text-xs opacity-0 group-hover:opacity-100 transition-opacity truncate">
-                almira_velasquez@dlsu.edu.ph
-              </p>
-            </div>
-            
-            {/* Button container with proper spacing */}
-            <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button
-                onClick={toggleDarkMode}
-                className="
-                  flex items-center justify-center text-text dark:text-background
-                  w-8 h-8 rounded-lg
-                  hover:bg-primary/10 dark:hover:bg-primary/20
-                  transition-colors
-                "
-                title={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-              >
-                {isDarkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-secondary">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                  </svg>
-                )}
-              </button>
-              
-              <button
-                onClick={logout}
-                className="
-                  flex items-center justify-center text-text dark:text-background
-                  w-8 h-8 rounded-lg hover:bg-primary/10 dark:hover:bg-primary/20
-                  transition-colors
-                "
-                title="Logout"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"> {/* Kept red-500 for logout, can be changed to text-secondary */}
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                  <polyline points="16 17 21 12 16 7"></polyline>
-                  <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom rolling blocks - Assuming this styling is in global CSS and uses 'primary' color */}
-        <div className="custom-scrollbar-bottom">
-          <div className="block"></div>
-          <div className="block"></div>
-          <div className="block"></div>
-          <div className="block"></div>
-          <div className="block"></div>
-          <div className="block"></div>
-        </div>
       </nav>
+
+      {showAddMenu && (
+        <div 
+          className="fixed inset-0 z-10" 
+          onClick={() => setShowAddMenu(false)}
+        />
+      )}
     </aside>
   );
 }

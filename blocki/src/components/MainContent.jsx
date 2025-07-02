@@ -7,20 +7,15 @@ import Calendar from './Calendar';
 import StudyTracker from './StudyTracker';
 import Pomodoro from './Pomodoro';
 import AddComponentModal from './AddComponentModal';
-
-// NEW: Import Settings and SaveLayoutButton
 import Settings from './Settings';
 import SaveLayoutButton from './SaveLayoutButton';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export default function MainContent() {
-    // 1. Initialize state with a default, non-browser value (an empty array).
+export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
     const [layout, setLayout] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
 
-    // 2. Use useEffect to safely access localStorage only on the client-side.
     useEffect(() => {
         const savedLayout = localStorage.getItem('dashboardLayout');
         if (savedLayout) {
@@ -29,19 +24,22 @@ export default function MainContent() {
     }, []);
     
     useEffect(() => {
-        // To avoid saving the initial empty layout, check if the layout has items.
         if (layout.length > 0) {
             localStorage.setItem('dashboardLayout', JSON.stringify(layout));
         }
     }, [layout]);
 
     const handleAddComponent = (componentId) => {
+        // Generates unique ID to prevent duplicates of the components/widgets
+        const timestamp = Date.now();
+        const uniqueId = `${componentId}_${timestamp}`;
         const newItem = {
-            i: componentId,
+            i: uniqueId,
             x: (layout.length * 4) % 12,
             y: Infinity,
             w: 4,
             h: 2,
+            component: componentId,
         };
         setLayout([...layout, newItem]);
         setIsModalOpen(false);
@@ -59,109 +57,134 @@ export default function MainContent() {
             pomodoro: <Pomodoro />,
         };
 
+        const componentType = item.component || item.i.split('_')[0];
+
         return (
-            <div key={item.i} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 relative overflow-hidden">
+            <div key={item.i} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md relative overflow-hidden">
                 {isEditMode && (
-                    <button
-                        onClick={() => handleRemoveComponent(item.i)}
-                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full h-6 w-6 flex items-center justify-center z-10"
-                    >
-                        &times;
-                    </button>
+                    <div className="absolute top-0 right-0 z-50" style={{ pointerEvents: 'auto' }}>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleRemoveComponent(item.i);
+                            }}
+                            onMouseDown={(e) => {
+                                e.stopPropagation();
+                            }}
+                            className="bg-red-500 hover:bg-red-600 text-white rounded-bl-lg rounded-tr-lg h-8 w-8 flex items-center justify-center transition-colors shadow-lg cursor-pointer"
+                            title="Remove component"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
                 )}
-                <div className="h-full w-full overflow-auto">
-                    {componentMap[item.i]}
+                {isEditMode && (
+                    <div className="absolute top-2 left-2 z-40 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium pointer-events-none">
+                        Drag to move
+                    </div>
+                )}
+                <div className={`h-full w-full overflow-auto ${isEditMode ? 'pt-8 pr-8 pl-2 pb-4' : 'p-4'}`}>
+                    {componentMap[componentType]}
                 </div>
             </div>
         );
     };
 
-    // NEW: Save handler (connected to SaveLayoutButton)
     const handleSaveLayout = () => {
         localStorage.setItem('dashboardLayout', JSON.stringify(layout));
         alert('Layout saved!');
     };
 
     return (
-        <main className="flex-1 overflow-y-auto p-6 relative">
-            <div className="flex justify-between items-center mb-6">
-                <div>
-                    <h1 className="text-3xl font-orbitron font-semibold text-gray-800 dark:text-gray-100">
-                        Hello, Almira Velasquez!
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+            {/* Welcome Section */}
+            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-gray-200 dark:border-gray-700 p-6">
+                <div className="max-w-4xl">
+                    <h1 className="text-2xl font-orbitron font-bold text-gray-900 dark:text-white mb-2">
+                        👋 Hi, Almira Velasquez!
                     </h1>
-                    <h3 className="text-2xl font-orbitron text-gray-800 dark:text-gray-200">
-                        Today is March 30, 2025 10:21 PM
-                    </h3>
-                </div>
-                <div className="flex gap-4 items-center">
-                    <button
-                        onClick={() => setIsEditMode(!isEditMode)}
-                        className="bg-primary text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                        {isEditMode ? 'Done' : 'Edit Layout'}
-                    </button>
-
-                    {/* NEW: Save Layout Button */}
-                    <SaveLayoutButton onSave={handleSaveLayout} />
+                    <p className="text-gray-600 dark:text-gray-300 font-roboto">
+                        Today is {new Date().toLocaleDateString('en-US', { 
+                            weekday: 'long', 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric' 
+                        })} • {new Date().toLocaleTimeString('en-US', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                        })}
+                    </p>
                 </div>
             </div>
 
-            {/* NEW: Settings panel */}
-            <div className="mb-6">
-                <Settings />
-            </div>
-
-            <ResponsiveGridLayout
-                className={`layout ${isEditMode ? 'border-2 border-dashed border-gray-400' : ''}`}
-                layouts={{ lg: layout }}
-                onLayoutChange={(newLayout) => setLayout(newLayout)}
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                rowHeight={100}
-                isDraggable={isEditMode}
-                isResizable={isEditMode}
-            >
-                {layout.map(renderComponent)}
-            </ResponsiveGridLayout>
-
-            {layout.length === 0 && (
-                <div
-                    onClick={() => setIsModalOpen(true)}
-                    className="border-2 border-dashed border-gray-300 dark:border-gray-600
-                        rounded-lg h-48 flex justify-center items-center cursor-pointer
-                        hover:bg-gray-50 dark:hover:bg-gray-700
-                        select-none font-roboto text-gray-400 dark:text-gray-300"
-                >
-                    <div className="text-center">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-8 w-8 mx-auto mb-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                        </svg>
-                        <span className="block text-lg font-medium">Get Productive!</span>
+            <div className="p-6">
+                {/* Settings panel */}
+                {isEditMode && (
+                    <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Layout Edit Mode</h3>
+                                <p className="text-blue-700 dark:text-blue-300 text-sm">Drag and resize components to customize your dashboard</p>
+                            </div>
+                            <SaveLayoutButton onSave={handleSaveLayout} />
+                        </div>
+                        <Settings />
                     </div>
-                </div>
-            )}
+                )}
 
-            <button
-                onClick={() => setIsModalOpen(true)}
-                className="fixed bottom-6 right-6 bg-primary text-white p-4 rounded-full shadow-lg hover:bg-blue-700"
-            >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                </svg>
-            </button>
+                <ResponsiveGridLayout
+                    className={`layout ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
+                    layouts={{ lg: layout }}
+                    onLayoutChange={(newLayout) => setLayout(newLayout)}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    rowHeight={100}
+                    isDraggable={isEditMode}
+                    isResizable={isEditMode}
+                >
+                    {layout.map(renderComponent)}
+                </ResponsiveGridLayout>
 
-            <AddComponentModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                onAddComponent={handleAddComponent}
-            />
+                {layout.length === 0 && (
+                    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
+                        <div className="inline-block p-4 bg-primary/10 rounded-full mb-4">
+                            <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </div>
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 font-orbitron">
+                            Hi, I'm your first block!
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-300 mb-6 font-roboto max-w-md mx-auto">
+                            Let's get productive! Click the + button below to add your first component and start building your perfect dashboard.
+                        </p>
+                        <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                        >
+                            Add Your First Component
+                        </button>
+                    </div>
+                )}
+
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-white p-4 rounded-full shadow-lg transition-colors z-50"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                </button>
+
+                <AddComponentModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onAddComponent={handleAddComponent}
+                />
+            </div>
         </main>
     );
 }
