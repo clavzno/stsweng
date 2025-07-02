@@ -81,12 +81,8 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                         </button>
                     </div>
                 )}
-                {isEditMode && (
-                    <div className="absolute top-2 left-2 z-40 bg-blue-500 text-white px-2 py-1 rounded text-xs font-medium pointer-events-none">
-                        Drag to move
-                    </div>
-                )}
-                <div className={`h-full w-full overflow-auto ${isEditMode ? 'pt-8 pr-8 pl-2 pb-4' : 'p-4'}`}>
+                {/* Updated: Added hide-scrollbar-keep-scroll class and better overflow handling */}
+                <div className={`h-full w-full hide-scrollbar-keep-scroll ${isEditMode ? 'pt-8 pr-8 pl-2 pb-4' : 'p-4'}`}>
                     {componentMap[componentType]}
                 </div>
             </div>
@@ -99,12 +95,13 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
     };
 
     return (
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        // Updated: Enhanced hide-scrollbar class usage
+        <main className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50 dark:bg-gray-900">
             {/* Welcome Section */}
             <div className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-gray-200 dark:border-gray-700 p-6">
                 <div className="max-w-4xl">
                     <h1 className="text-2xl font-orbitron font-bold text-gray-900 dark:text-white mb-2">
-                        👋 Hi, Almira Velasquez!
+                    Hi, Almira Velasquez!
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300 font-roboto">
                         Today is {new Date().toLocaleDateString('en-US', { 
@@ -125,18 +122,15 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                 {isEditMode && (
                     <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                         <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">Layout Edit Mode</h3>
-                                <p className="text-blue-700 dark:text-blue-300 text-sm">Drag and resize components to customize your dashboard</p>
-                            </div>
                             <SaveLayoutButton onSave={handleSaveLayout} />
                         </div>
                         <Settings />
                     </div>
                 )}
 
+                {/* Updated: Added hide-scrollbar class to grid layout */}
                 <ResponsiveGridLayout
-                    className={`layout ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
+                    className={`layout hide-scrollbar ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
                     layouts={{ lg: layout }}
                     onLayoutChange={(newLayout) => setLayout(newLayout)}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}

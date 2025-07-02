@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FiSettings, FiSkipForward, FiRotateCcw } from 'react-icons/fi';
+import { Settings, SkipForward, RotateCcw } from 'lucide-react';
 
 export default function Pomodoro() {
   const [mode, setMode] = useState('pomodoro');
@@ -50,7 +50,7 @@ export default function Pomodoro() {
       nextMode = 'shortBreak';
     } else if (mode === 'shortBreak') {
       nextMode = 'pomodoro';
-    } // if longBreak, it will default to pomodoro
+    }
     
     setMode(nextMode);
     setIsActive(false);
@@ -81,12 +81,12 @@ export default function Pomodoro() {
   const progressPercentage = totalTimeForMode > 0 ? ((totalTimeForMode - time) / totalTimeForMode) * 100 : 0;
 
   return (
-    <div className="bg-background dark:bg-text p-6 rounded-lg shadow-md text-center max-w-md mx-auto text-text dark:text-background h-full flex flex-col relative">
-      {/* Settings Panel - positioned at the top when shown */}
+    <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md text-center max-w-md mx-auto text-gray-900 dark:text-gray-100 h-full flex flex-col relative">
+      {/* Settings Panel */}
       {showSettings && (
-        <div className="absolute top-6 left-6 right-6 z-10 bg-gray-100/80 dark:bg-text/80 p-4 rounded-lg">
-          <h3 className="text-text dark:text-background text-lg font-medium mb-4">Timer Settings</h3>
-          <div className="grid grid-cols-3 gap-4 text-text dark:text-background">
+        <div className="absolute top-6 left-6 right-6 z-10 bg-gray-100 dark:bg-gray-800 p-4 rounded-lg shadow-lg">
+          <h3 className="text-gray-900 dark:text-gray-100 text-lg font-medium mb-4">Timer Settings</h3>
+          <div className="grid grid-cols-3 gap-4 text-gray-900 dark:text-gray-100">
             <div>
               <label className="block mb-1 text-sm">Focus</label>
               <input 
@@ -94,11 +94,11 @@ export default function Pomodoro() {
                 name="pomodoro" 
                 value={settings.pomodoro} 
                 onChange={handleSettingsChange} 
-                className="w-full bg-white dark:bg-text/70 border border-gray-300 dark:border-transparent rounded p-2 text-center text-text dark:text-background" 
+                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 text-center text-gray-900 dark:text-gray-100" 
                 min="1"
                 max="60"
               />
-              <span className="text-xs text-gray-500 dark:text-background/70">minutes</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">minutes</span>
             </div>
             <div>
               <label className="block mb-1 text-sm">Short Break</label>
@@ -107,11 +107,11 @@ export default function Pomodoro() {
                 name="shortBreak" 
                 value={settings.shortBreak} 
                 onChange={handleSettingsChange} 
-                className="w-full bg-white dark:bg-text/70 border border-gray-300 dark:border-transparent rounded p-2 text-center text-text dark:text-background" 
+                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 text-center text-gray-900 dark:text-gray-100" 
                 min="1"
                 max="30"
               />
-              <span className="text-xs text-gray-500 dark:text-background/70">minutes</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">minutes</span>
             </div>
             <div>
               <label className="block mb-1 text-sm">Long Break</label>
@@ -120,30 +120,31 @@ export default function Pomodoro() {
                 name="longBreak" 
                 value={settings.longBreak} 
                 onChange={handleSettingsChange} 
-                className="w-full bg-white dark:bg-text/70 border border-gray-300 dark:border-transparent rounded p-2 text-center text-text dark:text-background" 
+                className="w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded p-2 text-center text-gray-900 dark:text-gray-100" 
                 min="1"
                 max="60"
               />
-              <span className="text-xs text-gray-500 dark:text-background/70">minutes</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">minutes</span>
             </div>
           </div>
           <button 
             onClick={toggleSettings}
-            className="mt-4 bg-primary text-white dark:text-background py-2 px-4 rounded-lg hover:bg-blue-700 dark:hover:bg-primary/90 transition-colors w-full"
+            className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors w-full"
           >
             Apply
           </button>
         </div>
       )}
-      <div> {/* Main content wrapper for timer and controls */}
+      
+      <div>
         {/* Mode Selection Tabs */}
         <div className="flex justify-center space-x-2 mb-6">
           <button 
             onClick={() => setMode('pomodoro')} 
             className={`py-1 px-3 rounded-lg transition-colors 
                         ${mode === 'pomodoro' 
-                          ? 'bg-primary text-white dark:text-background' 
-                          : 'bg-transparent text-text hover:bg-primary/10 dark:text-background dark:hover:bg-primary/20'}`}
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-transparent text-gray-700 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-blue-900/30'}`}
           >
             Pomodoro
           </button>
@@ -151,8 +152,8 @@ export default function Pomodoro() {
             onClick={() => setMode('shortBreak')} 
             className={`py-1 px-3 rounded-lg transition-colors 
                         ${mode === 'shortBreak' 
-                          ? 'bg-primary text-white dark:text-background' 
-                          : 'bg-transparent text-text hover:bg-primary/10 dark:text-background dark:hover:bg-primary/20'}`}
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-transparent text-gray-700 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-blue-900/30'}`}
           >
             Short Break
           </button>
@@ -160,8 +161,8 @@ export default function Pomodoro() {
             onClick={() => setMode('longBreak')} 
             className={`py-1 px-3 rounded-lg transition-colors 
                         ${mode === 'longBreak' 
-                          ? 'bg-primary text-white dark:text-background' 
-                          : 'bg-transparent text-text hover:bg-primary/10 dark:text-background dark:hover:bg-primary/20'}`}
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-transparent text-gray-700 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-blue-900/30'}`}
           >
             Long Break
           </button>
@@ -169,19 +170,19 @@ export default function Pomodoro() {
 
         {/* Main Timer Display */}
         <div className="mb-6">
-          <div className="text-7xl font-bold text-text dark:text-background mb-2">
+          <div className="text-7xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
           </div>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 dark:bg-text/70 rounded-full h-1.5 mb-3">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-3">
             <div
-              className="bg-primary h-1.5 rounded-full transition-all duration-300 ease-linear"
+              className="bg-blue-600 h-1.5 rounded-full transition-all duration-300 ease-linear"
               style={{ width: `${progressPercentage}%` }}
             ></div>
           </div>
 
-          <div className="text-xl font-medium text-text/80 dark:text-background/80 mb-4">
+          <div className="text-xl font-medium text-gray-600 dark:text-gray-400 mb-4">
             {getModeDisplayName()}
           </div>
         </div>
@@ -190,10 +191,10 @@ export default function Pomodoro() {
         <div className="flex justify-center items-center space-x-4 mb-6">
           <button 
             onClick={reset} 
-            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-primary/20 dark:text-background dark:hover:bg-primary/30 p-3 rounded-full transition-colors"
+            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
             title="Reset current session"
           >
-            <FiRotateCcw size={20} />
+            <RotateCcw size={20} />
           </button>
           
           <button 
@@ -201,8 +202,8 @@ export default function Pomodoro() {
             className={`
               py-3 px-8 rounded-lg text-lg font-medium transition-colors
               ${isActive 
-                ? 'bg-secondary text-white hover:bg-orange-600 dark:bg-secondary dark:text-text dark:hover:bg-orange-500' // Pause
-                : 'bg-accent text-white hover:bg-green-600 dark:bg-accent dark:text-text dark:hover:bg-green-500' // Start
+                ? 'bg-red-500 text-white hover:bg-red-600' 
+                : 'bg-green-500 text-white hover:bg-green-600'
               }
             `}
           >
@@ -211,18 +212,18 @@ export default function Pomodoro() {
           
           <button 
             onClick={handleNextSession} 
-            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-primary/20 dark:text-background dark:hover:bg-primary/30 p-3 rounded-full transition-colors"
+            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
             title="Skip to next session"
           >
-            <FiSkipForward size={20} />
+            <SkipForward size={20} />
           </button>
           
           <button 
             onClick={toggleSettings} 
-            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-primary/20 dark:text-background dark:hover:bg-primary/30 p-3 rounded-full transition-colors"
+            className="bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600 p-3 rounded-full transition-colors"
             title="Settings"
           >
-            <FiSettings size={20} />
+            <Settings size={20} />
           </button>
         </div>
       </div>
