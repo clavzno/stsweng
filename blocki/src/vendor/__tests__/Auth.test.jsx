@@ -1,7 +1,5 @@
-import {
-  getCanvasAccessToken,
-  getCanvasUserInfo
-} from '../src/vendor/CanvasService';
+import GetCanvasAccessToken from '../auth/OAuth2';
+import GetCanvasUserInfo from '../CanvasService';
 
 describe('CanvasService OAuth2 Login', () => {
   beforeEach(() => {
@@ -24,10 +22,10 @@ describe('CanvasService OAuth2 Login', () => {
       json: async () => mockTokenResponse
     });
 
-    const result = await getCanvasAccessToken('test-auth-code');
+    const result = await GetCanvasAccessToken('test-auth-code');
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://canvas.instructure.com/login/oauth2/token',
+      'https://dlsu.instructure.com/login/oauth2/token',
       expect.objectContaining({
         method: 'POST',
         headers: {
@@ -43,7 +41,7 @@ describe('CanvasService OAuth2 Login', () => {
   test('throws if token exchange fails', async () => {
     fetch.mockResolvedValueOnce({ ok: false });
 
-    await expect(getCanvasAccessToken('bad-code')).rejects.toThrow('Failed to get access token');
+    await expect(GetCanvasAccessToken('bad-code')).rejects.toThrow('Failed to get access token');
   });
 
   test('gets user profile with access token', async () => {
@@ -58,10 +56,10 @@ describe('CanvasService OAuth2 Login', () => {
       json: async () => mockUser
     });
 
-    const result = await getCanvasUserInfo('fake-access-token');
+    const result = await GetCanvasUserInfo('fake-access-token');
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://canvas.instructure.com/api/v1/users/self/profile',
+      'https://dlsu.instructure.com/api/v1/users/self/profile',
       {
         headers: {
           'Authorization': 'Bearer fake-access-token'
@@ -75,6 +73,6 @@ describe('CanvasService OAuth2 Login', () => {
   test('throws if profile fetch fails', async () => {
     fetch.mockResolvedValueOnce({ ok: false });
 
-    await expect(getCanvasUserInfo('bad-token')).rejects.toThrow('Failed to fetch user profile');
+    await expect(GetCanvasUserInfo('bad-token')).rejects.toThrow('Failed to fetch user profile');
   });
 });
