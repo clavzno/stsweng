@@ -51,7 +51,7 @@ FormButton.propTypes = {
     'dark',
     'canvas-login',
     'ghost',
-  ]),
+    ]),
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
     style: PropTypes.object,
     className: PropTypes.string,

@@ -8,6 +8,7 @@ import FormButton from '../components/FormButton';
 import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
 import logoSingle from '../assets/images/logo_single.png';
+import LoginButton from '../components/LoginButton'; 
 
 export default function LoginPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
@@ -92,13 +93,13 @@ export default function LoginPage() {
 
         {/* Login button */}
         <div className="space-y-4">
-          <FormButton
+          {/* <FormButton
             type="button"
             variant="canvas-login"
             onClick={() => {
               // This is a simulation so it'll be push to dashboard.
               login('canvas_user');
-              router.push('/dashboard');
+              router.push('/auth');
             }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
@@ -123,7 +124,10 @@ export default function LoginPage() {
             }`}>
               →
             </span>
-          </FormButton>
+          </FormButton> */}
+          <LoginButton />
+
+          {/* Alternative login options */}
 
           {/* For users who dont have access to Canvas */}
           <div className="text-center pt-2">
