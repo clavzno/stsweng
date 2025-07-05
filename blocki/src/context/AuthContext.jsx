@@ -1,5 +1,7 @@
 "use client"; // Add this directive at the very top of the file
 
+export const dynamic = 'force-dynamic'; // ADDED FOR TESTING ON VERCEL
+
 //for auth state
 import React, { createContext, useContext, useState } from 'react';
 
