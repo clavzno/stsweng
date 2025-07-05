@@ -41,7 +41,7 @@ const FiMoon = ({ className }) => (
 export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const { logout } = useAuth();
+    // const { logout } = useAuth();
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
@@ -144,7 +144,7 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
                                     <p className="text-xs text-gray-500 dark:text-gray-400">almira_velasquez@dlsu.edu.ph</p>
                                 </div>
                                 <button
-                                    onClick={logout}
+                                    onClick={null}
                                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     Logout
