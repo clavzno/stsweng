@@ -1,11 +1,10 @@
-'use client';
 import {AuthPage} from "../pages/AuthPage";
 import {nanoid} from 'nanoid';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const DOMAIN = process.env.DOMAIN;
-const API_KEY = process.env.API_KEY;
+const DOMAIN = process.env.NEXT_PUBLIC_CANVAS_DOMAIN;
+const API_KEY = process.env.NEXT_PUBLIC_CANVAS_CLIENT_ID;
 const API_SECRET = process.env.API_SECRET;
 
 /** 
@@ -20,6 +19,29 @@ export async function CreateStateKey() {
     sessionStorage.setItem('oauth2_state', state);
     return state;
 }
+
+export async function HandleCanvasLogin() {
+        const state = await CreateStateKey();
+
+        const clientId = API_KEY;
+        const redirectUri =
+            process.env.NODE_ENV === 'development'
+            ? 'http://localhost:3000/auth/'
+            : 'https://blocki.vercel.app/auth/';
+        const scope = encodeURIComponent('url:GET|/api/v1/users/self') //can be changed
+        const canvasDomain = DOMAIN;
+        console.log("Canvas Domain: ", canvasDomain);
+
+        const authUrl = `${canvasDomain}/login/oauth2/auth` +
+        `?client_id=${clientId}` +
+        `&response_type=code` +
+        `&state=${state}` +
+        `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+        `&scope=${scope}`;
+
+        console.log("Redirecting to Canvas:", authUrl);
+        window.location.href = authUrl;
+    }
 
 /**
  * After generating the state key, call this function to initiate the OAuth2 flow.
@@ -54,14 +76,18 @@ export async function StepTwo(responseJson) {
     const storedState = sessionStorage.getItem('oauth2_state');
 }
 
-export default async function StepThree() {
+export async function StepThree(code) {
     const tokenUrl = `https://dlsu.instructure.com/login/oauth2/token`;
 
     const params = new URLSearchParams();
     params.append('grant_type', 'authorization_code');
     params.append('client_id', API_KEY);
     params.append('client_secret', API_SECRET);
-    params.append('redirect_uri', 'http://localhost:3000/auth/');
+    const redirectUri = process.env.NODE_ENV === 'development'
+    ? 'http://localhost:3000/auth/'
+    : 'https://blocki.vercel.app/auth/';
+
+    params.append('redirect_uri', redirectUri);
     params.append('code', code);
 
     const response = await fetch(tokenUrl, {

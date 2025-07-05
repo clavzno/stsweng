@@ -1,36 +1,18 @@
 'use client';
 
 import { useState } from 'react';
-import { CreateStateKey } from '@/vendor/Oauth2'; // Adjust path if needed
+import { HandleCanvasLogin } from '@/vendor/Oauth2'; // Adjust path if needed
 import canvasLogo from '../assets/images/canvas_logo.png'; // Adjust if necessary
 import FormButton from '@/components/FormButton'; // Your custom button component
 
 export default function LoginButton() {
     const [isHovering, setIsHovering] = useState(false);
-
-    async function handleCanvasLogin() {
-        const state = await CreateStateKey();
-
-        const clientId = process.env.API_KEY;
-        const redirectUri = encodeURIComponent('https://blocki.vercel.app/auth/');
-        const scope = encodeURIComponent('url:GET|/api/v1/users/self') //can be changed
-        const canvasDomain = process.env.DOMAIN;
-
-        const authUrl = `${canvasDomain}/login/oauth2/auth` +
-        `?client_id=${clientId}` +
-        `&response_type=code` +
-        `&state=${state}` +
-        `&redirect_uri=${redirectUri}` +
-        `&scope=${scope}`;
-
-        window.location.href = authUrl;
-    }
-
+    
     return (
         <FormButton
             type="button"
             variant="canvas-login"
-            onClick={handleCanvasLogin}
+            onClick={HandleCanvasLogin}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
             className={`
