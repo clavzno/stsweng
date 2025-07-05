@@ -74,3 +74,6 @@ Example:
 |-- .env.development (manual, development environment vars)
 |-- middleware.ts or middleware.js (manual)
 ```
+
+
+TRIGGER
