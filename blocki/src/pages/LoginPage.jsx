@@ -8,6 +8,8 @@ import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
 import logoSingle from '../assets/images/logo_single.png';
 
+import LoginButton from '../components/LoginButton'; 
+
 export default function LoginPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -90,37 +92,7 @@ export default function LoginPage() {
 
         {/* Login button */}
         <div className="space-y-4">
-          <FormButton
-            type="button"
-            variant="canvas-login"
-            onClick={() => {
-              // Direct redirect to dashboard
-              router.push('/dashboard');
-            }}
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            className={`
-              flex justify-center items-center w-full py-3 px-6 text-base font-semibold
-              transition-all duration-300 ease-out transform
-              hover:scale-105 hover:shadow-xl hover:shadow-primary/25
-              focus:scale-105 focus:shadow-xl focus:shadow-primary/25
-              active:scale-95
-            `}
-          >
-            <img
-              src={canvasLogo.src}
-              alt="Canvas logo"
-              className={`mr-3 h-5 w-5 transition-transform duration-300 ${
-                isHovering ? 'scale-110 rotate-12' : ''
-              }`}
-            />
-            Log In with Canvas
-            <span className={`ml-2 transition-transform duration-300 ${
-              isHovering ? 'translate-x-1' : ''
-            }`}>
-              →
-            </span>
-          </FormButton>
+          <LoginButton />
 
           {/* For users who dont have access to Canvas */}
           <div className="text-center pt-2">

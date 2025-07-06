@@ -1,3 +1,9 @@
+## ENVIRONMENT VARIABLES:
+```
+API_KEY=
+API_SECRET=
+```
+
 ## GUIDE: Commit Message
 `<type>/<scope> - <brief description>`
 - `feat` - introduces a new feature (if includes docs put it under feat)
