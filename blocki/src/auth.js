@@ -80,7 +80,7 @@ const otherScopes = [
 /**
  * Initialization of the NextAuth.js configuration
  */
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [{
     id: "dlsuinstructure", // signIn("my-provider") and will be part of the callback URL
     name: "DLSU Instructure Canvas", // optional, used on the default login page as the button text.

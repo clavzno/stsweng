@@ -3,6 +3,8 @@
 // /app/api/auth/[...nextauth]/route.ts
 // DO NOT MOVE OR REMOVE THIS FILE
 
-import { handlers } from "../../../../auth"  // "@/auth" Referring to the auth.ts we just created
+import { handlers, signIn, signOut, auth } from "../../../../auth"; // "@/auth" Referring to the auth.ts we just created
+// import { handlers } from "../../../../auth"  
 export const { GET, POST } = handlers
 export { auth as middleware } from "../../../../auth" // Optional middleware export, updates session expiry
+
