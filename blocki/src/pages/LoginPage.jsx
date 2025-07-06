@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '../context/AuthContext';
 import FormButton from '../components/FormButton';
 import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
@@ -13,7 +12,6 @@ export default function LoginPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
-  const { login } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -96,8 +94,7 @@ export default function LoginPage() {
             type="button"
             variant="canvas-login"
             onClick={() => {
-              // This is a simulation so it'll be push to dashboard.
-              login('canvas_user');
+              // Direct redirect to dashboard
               router.push('/dashboard');
             }}
             onMouseEnter={() => setIsHovering(true)}

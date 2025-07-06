@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/navigation';
 import profilePic from '../assets/images/profilepic.png';
 import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
@@ -41,7 +41,7 @@ const FiMoon = ({ className }) => (
 export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
-    const { logout } = useAuth();
+    const router = useRouter();
 
     useEffect(() => {
         const savedTheme = localStorage.getItem('theme');
@@ -63,6 +63,15 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
         }
+    };
+
+    const handleLogout = () => {
+        // Remove any stored user data or tokens if needed
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        
+        // Redirect to login page
+        router.push('/login');
     };
 
     return (
@@ -144,7 +153,7 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
                                     <p className="text-xs text-gray-500 dark:text-gray-400">almira_velasquez@dlsu.edu.ph</p>
                                 </div>
                                 <button
-                                    onClick={logout}
+                                    onClick={handleLogout}
                                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     Logout

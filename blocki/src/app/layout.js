@@ -3,9 +3,6 @@ import "./globals.css";
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
-// AuthProvider
-import { AuthProvider } from '../context/AuthContext';
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -38,9 +35,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${roboto.variable} antialiased`}
       >
-        <AuthProvider>
           {children}
-        </AuthProvider>
       </body>
     </html>
   );
