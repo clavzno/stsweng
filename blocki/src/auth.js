@@ -79,8 +79,9 @@ const otherScopes = [
 
 /**
  * Initialization of the NextAuth.js configuration
+ * removed: const { handlers, signIn, signOut, auth } = NextAuth({})
  */
-const { handlers, signIn, signOut, auth } = NextAuth({
+ export const authOptions = {
   providers: [{
     id: "dlsuinstructure", // signIn("my-provider") and will be part of the callback URL
     name: "DLSU Instructure Canvas", // optional, used on the default login page as the button text.
@@ -101,4 +102,6 @@ const { handlers, signIn, signOut, auth } = NextAuth({
   // overriding the default configuration below:
   debug: true, // Enable debug messages in the console if you are having issues
   //secret: process.env.AUTH_SECRET, // Optional, used to encrypt the session cookie
-})
+}
+
+export default authOptions;
