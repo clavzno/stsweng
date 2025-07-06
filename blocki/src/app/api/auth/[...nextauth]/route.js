@@ -11,7 +11,10 @@
 import NextAuth from "next-auth";
 import authOptions from "../../../../auth";
 
-const handler = NextAuth(authOptions);
+const handlers = NextAuth(authOptions);
 
-export const GET = handler;
-export const POST = handler;
+// export const GET = handler;
+// export const POST = handler;
+
+export const GET = handlers.handlers.GET;
+export const POST = handlers.handlers.POST;
