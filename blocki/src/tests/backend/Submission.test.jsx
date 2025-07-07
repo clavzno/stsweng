@@ -1,4 +1,4 @@
-import { submitAssignment } from '../CanvasService';
+import { submitAssignment } from '../vendor/CanvasService';
 
 describe('CanvasService', () => {
   beforeEach(() => {
