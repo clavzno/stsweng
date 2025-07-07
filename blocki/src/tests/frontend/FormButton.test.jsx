@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import FormButton from '../FormButton' // Adjust path as necessary
+import FormButton from '../../components/FormButton' // Adjust path as necessary
 
 describe('FormButton Component', () => {
   test('renders with default props and children', () => {

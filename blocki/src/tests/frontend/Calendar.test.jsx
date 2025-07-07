@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react'
-import Calendar from '../Calendar'
+import Calendar from '../../components/Calendar'
 
 // Mock current date to March 30, 2025
 beforeAll(() => {

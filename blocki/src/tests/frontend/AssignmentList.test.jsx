@@ -1,9 +1,9 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import AssignmentList from '../AssignmentList'
+import AssignmentList from '../../components/AssignmentList'
 
 // Mock FileUploader to isolate the modal behavior
-jest.mock('../FileUploader', () => () => <div>FileUploader</div>)
+jest.mock('../../components/FileUploader', () => () => <div>FileUploader</div>)
 
 // Sample data for testing
 const sampleAssignments = [

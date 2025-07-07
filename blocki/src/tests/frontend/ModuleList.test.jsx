@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import ModuleList from '../ModuleList';
+import ModuleList from '../../components/ModuleList';
 
 describe('ModuleList component', () => {
   const mockModules = [

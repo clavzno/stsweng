@@ -1,12 +1,12 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import CoursesList from '../CoursesList'
+import CoursesList from '../../components/CoursesList'
 
 // Mock the placeholder image to prevent asset-related errors during testing
 jest.mock('../../assets/images/placeholder.png', () => 'placeholder.png')
 
 // Mock the CourseCard component to isolate CoursesList logic
-jest.mock('../CourseCard', () => (props) => {
+jest.mock('../../components/CourseCard', () => (props) => {
   const { course } = props
   return <div data-testid="course-card">{course.title}</div>
 })

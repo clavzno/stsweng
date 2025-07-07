@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import Announcements from '../Announcements'
+import Announcements from '../../components/Announcements'
 
 test('renders the Announcements header', () => {
   // Render the component with an empty list to isolate the header

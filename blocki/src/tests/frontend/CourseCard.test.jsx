@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { act } from 'react'
-import CourseCard from '../CourseCard'
+import CourseCard from '../../components/CourseCard'
 import placeholderImage from '../../assets/images/placeholder.png'
 
 // Mock next/image so it doesn't throw errors related to `fill`

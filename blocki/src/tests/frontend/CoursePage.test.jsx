@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import CoursePage from '../CoursePage'
+import CoursePage from '../../pages/CoursePage'
 
 // Mock all child components used inside CoursePage to isolate this file's layout logic
 jest.mock('../../components/Sidebar', () => () => <div>Sidebar</div>)
