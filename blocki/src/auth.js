@@ -81,7 +81,7 @@ const otherScopes = [
  * Initialization of the NextAuth.js configuration
  * removed: const { handlers, signIn, signOut, auth } = NextAuth({})
  */
- export const authOptions = {
+export const authOptions = {
   providers: [{
     id: "dlsuinstructure", // signIn("my-provider") and will be part of the callback URL
     name: "DLSU Instructure Canvas", // optional, used on the default login page as the button text.
@@ -100,8 +100,19 @@ const otherScopes = [
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
   }],
   // overriding the default configuration below:
-  //debug: true, // Enable debug messages in the console if you are having issues
-  //secret: process.env.AUTH_SECRET, // Optional, used to encrypt the session cookie
+  debug: true, // Enable debug messages in the console if you are having issues
+  // secret: process.env.AUTH_SECRET,
+  callbacks: {
+    async jwt({ token, account }) {
+      // store the token received
+      return { ...token, accessToken: account.access_token }
+    },
+    async session({ session, token }) {
+      // store the access token in the session object
+      session.accessToken = token.accessToken
+      return session
+    }
+  }
 }
 
 export default authOptions;
