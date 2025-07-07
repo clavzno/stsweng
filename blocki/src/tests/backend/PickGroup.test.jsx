@@ -2,7 +2,7 @@ import {
   createGroup,
   joinGroup,
   getUserGroups,
-} from '../src/vendor/CanvasService';
+} from '../../vendor/CanvasService';
 
 describe('CanvasService - Student Group Selection and Creation', () => {
   afterEach(() => {
