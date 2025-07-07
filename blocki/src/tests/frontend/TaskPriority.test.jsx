@@ -5,7 +5,7 @@ import TaskManager from '../app/components/TaskManager'; // Adjust path if neede
 // Mock task data
 const mockTasks = [
   { id: 1, title: 'Finish CS paper', priority: 'High', dueDate: '2025-07-08' },
-  { id: 2, title: 'Read chapters 3–5', priority: 'Low', dueDate: '2025-07-12' },
+  { id: 2, title: 'Read chapters 3-5', priority: 'Low', dueDate: '2025-07-12' },
   { id: 3, title: 'Group project call', priority: 'Medium', dueDate: '2025-07-07' },
 ];
 
@@ -19,7 +19,7 @@ describe('TaskManager Grouping', () => {
 
     expect(screen.getByText('Finish CS paper')).toBeInTheDocument();
     expect(screen.getByText('Group project call')).toBeInTheDocument();
-    expect(screen.getByText('Read chapters 3–5')).toBeInTheDocument();
+    expect(screen.getByText('Read chapters 3-5')).toBeInTheDocument();
   });
 
   test('allows switching to group by due date', () => {
@@ -48,6 +48,6 @@ describe('TaskManager Grouping', () => {
 
     // Others should appear in "This Week" or "Later"
     expect(screen.getByText('Finish CS paper')).toBeInTheDocument();
-    expect(screen.getByText('Read chapters 3–5')).toBeInTheDocument();
+    expect(screen.getByText('Read chapters 3-5')).toBeInTheDocument();
   });
 });
