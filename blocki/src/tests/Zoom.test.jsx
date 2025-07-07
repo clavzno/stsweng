@@ -1,4 +1,4 @@
-import { getZoomLink } from '../CanvasService';
+import { getZoomLink } from '../vendor/CanvasService';
 
 describe('CanvasService.getZoomLink', () => {
   beforeEach(() => {
