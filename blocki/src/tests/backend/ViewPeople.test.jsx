@@ -1,4 +1,4 @@
-import { getClassRoster } from '../vendor/CanvasService';
+import { getClassRoster } from '../../vendor/CanvasService';
 
 describe('CanvasService - Class Roster', () => {
   const courseId = 123;
