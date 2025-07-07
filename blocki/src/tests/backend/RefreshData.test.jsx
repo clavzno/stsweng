@@ -1,8 +1,8 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import Dashboard from '../src/components/Dashboard';
-import * as CanvasService from '../CanvasService';
+import Dashboard from '../../components/Dashboard';
+import * as CanvasService from '../../vendor/CanvasService';
 
-jest.mock('../CanvasService');
+jest.mock('../../vendor/CanvasService');
 
 describe('Dashboard', () => {
   beforeEach(() => {
