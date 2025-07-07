@@ -1,6 +1,9 @@
-import { getZoomLink } from '../CanvasService';
+import {
+  getAnnouncements,
+  replyToAnnouncement
+} from '../src/vendor/CanvasService';
 
-describe('CanvasService.getZoomLink', () => {
+describe('CanvasService - Announcements', () => {
   beforeEach(() => {
     global.fetch = jest.fn();
   });
@@ -9,42 +12,65 @@ describe('CanvasService.getZoomLink', () => {
     jest.resetAllMocks();
   });
 
-  test('returns Zoom link when Zoom is found in tools list', async () => {
-    const mockTools = [
-      { name: 'Zoom', url: 'https://zoom.us/j/987654321' },
+  test('fetches announcements for a course', async () => {
+    const mockAnnouncements = [
+      {
+        id: 1,
+        title: 'Welcome!',
+        message: 'Welcome to the course!',
+        allow_comments: true
+      },
+      {
+        id: 2,
+        title: 'Exam Info',
+        message: 'Exam on Friday',
+        allow_comments: false
+      }
     ];
 
     fetch.mockResolvedValueOnce({
       ok: true,
-      json: async () => mockTools
+      json: async () => mockAnnouncements
     });
 
-    const result = await getZoomLink('CS101');
+    const result = await getAnnouncements('CS101');
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://canvas.instructure.com/api/v1/courses/CS101/external_tools'
+      'https://canvas.instructure.com/api/v1/announcements?context_codes[]=course_CS101'
     );
-    expect(result).toBe('https://zoom.us/j/987654321');
+    expect(result).toEqual(mockAnnouncements);
   });
 
-  test('returns empty string when Zoom is not found', async () => {
-    const mockTools = [
-      { name: 'NotZoom', url: 'https://other.tool.com' },
-    ];
-
-    fetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockTools
-    });
-
-    const result = await getZoomLink('CS102');
-
-    expect(result).toBe('');
-  });
-
-  test('throws an error if the API request fails', async () => {
+  test('throws error when announcements API fails', async () => {
     fetch.mockResolvedValueOnce({ ok: false });
 
-    await expect(getZoomLink('CS103')).rejects.toThrow('Failed to fetch Zoom link');
+    await expect(getAnnouncements('CS101')).rejects.toThrow('Failed to fetch announcements');
+  });
+
+  test('replies to announcement if allowed', async () => {
+    fetch.mockResolvedValueOnce({ ok: true });
+
+    const result = await replyToAnnouncement(1, 'Thanks for the update!');
+
+    expect(fetch).toHaveBeenCalledWith(
+      'https://canvas.instructure.com/api/v1/discussion_topics/1/entries',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.any(Object),
+        body: JSON.stringify({
+          message: 'Thanks for the update!'
+        })
+      })
+    );
+
+    expect(result).toEqual({ success: true });
+  });
+
+  test('returns failure if reply fails', async () => {
+    fetch.mockResolvedValueOnce({ ok: false });
+
+    const result = await replyToAnnouncement(2, 'Cool.');
+
+    expect(result).toEqual({ success: false });
   });
 });
