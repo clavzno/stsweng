@@ -1,8 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import FileUpload from '../src/components/FileUpload';
-import * as CanvasService from '../CanvasService';
+import FileUpload from '../components/FileUpload';
+import * as CanvasService from '../vendor/CanvasService';
 
-jest.mock('../CanvasService');
+jest.mock('../vendor/CanvasService');
 
 describe('FileUpload component', () => {
   beforeEach(() => {
