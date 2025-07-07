@@ -2,7 +2,7 @@ import {
   subscribeToDiscussion,
   unsubscribeFromDiscussion,
   getSubscriptionStatus,
-} from '../CanvasService';
+} from '../../vendor/CanvasService';
 
 describe('CanvasService - Discussion Board Subscription', () => {
   const courseId = 101;
