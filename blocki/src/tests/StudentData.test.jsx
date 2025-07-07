@@ -1,4 +1,4 @@
-import { fetchStudentData } from '../CanvasService';
+import { fetchStudentData } from '../vendor/CanvasService';
 
 describe('CanvasService', () => {
   test('fetches student data from Canvas API', async () => {
