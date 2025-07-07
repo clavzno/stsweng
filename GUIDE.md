@@ -60,3 +60,5 @@ Follows [NextJS Documentation](https://nextjs.org/docs/app/getting-started/proje
 |-- .env.development (manual, development environment vars)
 |-- middleware.ts or middleware.js (manual)
 ```
+
+TRIGGER
