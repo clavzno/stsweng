@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import AnnouncementPopup from '../components/AnnouncementPopup';
+import AnnouncementPopup from '../../components/AnnouncementPopup';
 
 describe('AnnouncementPopup', () => {
   afterEach(() => {
