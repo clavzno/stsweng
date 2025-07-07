@@ -100,7 +100,7 @@ const otherScopes = [
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
   }],
   // overriding the default configuration below:
-  debug: true, // Enable debug messages in the console if you are having issues
+  //debug: true, // Enable debug messages in the console if you are having issues
   //secret: process.env.AUTH_SECRET, // Optional, used to encrypt the session cookie
 }
 
