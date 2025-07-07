@@ -1,4 +1,4 @@
-import { getAssignmentFeedback } from '../CanvasService';
+import { getAssignmentFeedback } from '../../vendor/CanvasService';
 
 describe('CanvasService - Assignment Feedback', () => {
   const courseId = 123;
