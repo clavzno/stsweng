@@ -85,7 +85,7 @@ export const authOptions = {
   providers: [{
     id: "dlsuinstructure", // signIn("my-provider") and will be part of the callback URL
     name: "DLSU Instructure Canvas", // optional, used on the default login page as the button text.
-    type: "oauth", // or "oauth" for OAuth 2 providers
+    type: "oauth",
     issuer: "ttps://dlsu.instructure.com/.well-known/openid-configuration", // to infer the .well-known/openid-configuration URL
     clientId: process.env.API_KEY, // from the provider's dashboard
     clientSecret: process.env.API_SECRET, // from the provider's dashboard
@@ -100,7 +100,7 @@ export const authOptions = {
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
   }],
   // overriding the default configuration below:
-  debug: true, // Enable debug messages in the console if you are having issues
+  // debug: true,
   // secret: process.env.AUTH_SECRET,
   callbacks: {
     async jwt({ token, account }) {
