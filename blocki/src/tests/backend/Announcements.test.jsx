@@ -1,7 +1,7 @@
 import {
   getAnnouncements,
   replyToAnnouncement
-} from '../src/vendor/CanvasService';
+} from '../vendor/CanvasService';
 
 describe('CanvasService - Announcements', () => {
   beforeEach(() => {
