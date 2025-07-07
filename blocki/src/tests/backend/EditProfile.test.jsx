@@ -2,7 +2,7 @@ import {
   updateProfilePicture,
   updateBio,
   getProfile,
-} from '../CanvasService';
+} from '../../vendor/CanvasService';
 
 describe('CanvasService - Update Profile', () => {
   afterEach(() => {
