@@ -92,7 +92,7 @@ export const authOptions = {
     authorization: {
       url: "https://dlsu.instructure.com/login/oauth2/auth",
       params: {
-        scope: scopes.join(" "),
+        scope: otherScopes.join(" "),
         //scope: 'auth/userinfo', // provides user's name and id, see https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth#oauth2-flow
         response_type: 'code',
         redirect_uri: process.env.NEXTAUTH_URL + "/api/auth/callback/dlsuinstructure", // the URL to redirect to after authorization
