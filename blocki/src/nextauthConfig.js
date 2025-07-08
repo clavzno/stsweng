@@ -93,9 +93,10 @@ export const authOptions = {
       url: "https://dlsu.instructure.com/login/oauth2/auth",
       params: {
         // scope: //scopes.join(" ")
-        scope: '/auth/userinfo', // provides user's name and id, see https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth#oauth2-flow
+        //scope: 'auth/userinfo', // provides user's name and id, see https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth#oauth2-flow
         response_type: 'code',
-        redirect_uri: process.env.NEXTAUTH_URL + "/api/auth/callback/dlsuinstructure" // the URL to redirect to after authorization
+        redirect_uri: process.env.NEXTAUTH_URL + "/api/auth/callback/dlsuinstructure", // the URL to redirect to after authorization
+        purpose: "Blocki Oauth2 Authentication"
       }
     },
     token: "https://dlsu.instructure.com/login/oauth2/token", // the URL to exchange the code for an access token
@@ -105,20 +106,6 @@ export const authOptions = {
   // overriding the default configuration below:
   debug: true,
   // secret: process.env.AUTH_SECRET,
-  callbacks: {
-    async jwt({ token, account }) {
-      // store the token received
-      return { ...token, accessToken: account.access_token }
-    },
-    async session({ session, token }) {
-      // store the access token in the session object
-      session.accessToken = token.accessToken
-      return session
-    }, 
-    async signIn() {
-
-    } 
-  }
 }
 
 export default authOptions;
