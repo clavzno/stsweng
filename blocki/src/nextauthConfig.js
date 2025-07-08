@@ -86,7 +86,7 @@ export const authOptions = {
     id: "dlsuinstructure", // signIn("my-provider") and will be part of the callback URL
     name: "DLSU Instructure Canvas", // optional, used on the default login page as the button text.
     type: "oauth",
-    issuer: "ttps://dlsu.instructure.com/.well-known/openid-configuration", // to infer the .well-known/openid-configuration URL
+    issuer: "https://dlsu.instructure.com/.well-known/openid-configuration", // to infer the .well-known/openid-configuration URL
     clientId: process.env.API_KEY, // from the provider's dashboard
     clientSecret: process.env.API_SECRET, // from the provider's dashboard
     authorization: {
@@ -100,6 +100,7 @@ export const authOptions = {
     },
     token: "https://dlsu.instructure.com/login/oauth2/token", // the URL to exchange the code for an access token
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
+    icon: "@/assets/canvas_logo.png"
   }],
   // overriding the default configuration below:
   debug: true,
@@ -113,7 +114,10 @@ export const authOptions = {
       // store the access token in the session object
       session.accessToken = token.accessToken
       return session
-    }
+    }, 
+    async signIn() {
+
+    } 
   }
 }
 
