@@ -18,3 +18,6 @@ const handlers = NextAuth(authOptions);
 
 export const GET = handlers.handlers.GET;
 export const POST = handlers.handlers.POST;
+
+console.log("POST FUNCTION", POST)
+console.log("GET FUNCTION", GET)
