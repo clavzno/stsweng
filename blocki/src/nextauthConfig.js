@@ -116,8 +116,6 @@ export const authOptions = {
     // surface the jwt token using the session callback
     async session({ session, token }) {
       session.accessToken = token.accessToken // to access the access token do session.accessToken
-      console.log("Session callback triggered:", session);
-      console.log("Access Token:", session.accessToken);
       return session
     }
   }

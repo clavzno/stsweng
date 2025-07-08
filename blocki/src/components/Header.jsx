@@ -6,6 +6,9 @@ import profilePic from '../assets/images/profilepic.png';
 import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
 
+// Added by Jack on 2025-07-09
+import { signOut } from 'next-auth/react'; 
+
 // WIP: icons
 const FiSearch = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,11 +70,14 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
 
     const handleLogout = () => {
         // Remove any stored user data or tokens if needed
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
+        // localStorage.removeItem('user');
+        // localStorage.removeItem('token');
+
+        // Comment from Jack on 2025-07-09: we're not putting these in localStorage
+        signOut({ callbackUrl: '/login' }); // Use NextAuth's signOut function
         
         // Redirect to login page
-        router.push('/login');
+        // router.push('/login');
     };
 
     return (
