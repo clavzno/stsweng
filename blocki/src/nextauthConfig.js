@@ -104,8 +104,23 @@ export const authOptions = {
     icon: "@/assets/canvas_logo.png"
   }],
   // overriding the default configuration below:
-  debug: true,
+  // debug: true,
   // secret: process.env.AUTH_SECRET,
+  callbacks: {
+    jwt({ token, trigger, session, account }) {
+      if (account?.provider === "dlsuinstructure") {
+        return { ...token, accessToken: account.access_token }
+      }
+      return token
+    },
+    // surface the jwt token using the session callback
+    async session({ session, token }) {
+      session.accessToken = token.accessToken // to access the access token do session.accessToken
+      console.log("Session callback triggered:", session);
+      console.log("Access Token:", session.accessToken);
+      return session
+    }
+  }
 }
 
 export default authOptions;
