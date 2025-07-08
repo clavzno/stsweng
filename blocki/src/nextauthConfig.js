@@ -93,14 +93,16 @@ export const authOptions = {
       url: "https://dlsu.instructure.com/login/oauth2/auth",
       params: {
         // scope: //scopes.join(" ")
-        scope: '/auth/userinfo' // provides user's name and id, see https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth#oauth2-flow
+        scope: '/auth/userinfo', // provides user's name and id, see https://developerdocs.instructure.com/services/canvas/oauth2/file.oauth#oauth2-flow
+        response_type: 'code',
+        redirect_uri: process.env.NEXTAUTH_URL + "/api/auth/callback/dlsuinstructure" // the URL to redirect to after authorization
       }
     },
     token: "https://dlsu.instructure.com/login/oauth2/token", // the URL to exchange the code for an access token
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
   }],
   // overriding the default configuration below:
-  // debug: true,
+  debug: true,
   // secret: process.env.AUTH_SECRET,
   callbacks: {
     async jwt({ token, account }) {

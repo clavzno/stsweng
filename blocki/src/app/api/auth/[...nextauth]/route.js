@@ -9,7 +9,7 @@
 // export { auth as middleware } from "../../../../auth" // Optional middleware export, updates session expiry
 
 import NextAuth from "next-auth";
-import authOptions from "../../../../auth";
+import authOptions from "../../../../nextauthConfig";
 
 const handlers = NextAuth(authOptions);
 
