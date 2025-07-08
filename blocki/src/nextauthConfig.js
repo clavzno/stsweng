@@ -13,7 +13,7 @@ import NextAuth from "next-auth"
 const otherScopes = [
   "url:GET|/api/v1/users/:id",
   "url:GET|/api/v1/users/:user_id/profile",
-  "url:GET|/api/v1/groups/:group_id/files/quota",
+  //"url:GET|/api/v1/groups/:group_id/files/quota",
   "url:GET|/api/v1/users/:user_id/files/quota",
   "url:GET|/api/v1/courses/:course_id/files",
   "url:GET|/api/v1/users/:user_id/files",
@@ -58,7 +58,7 @@ const otherScopes = [
   "url:GET|/api/v1/courses/:course_id/calendar_events/timetable",
   "url:POST|/api/v1/courses/:course_id/calendar_events/timetable_events",
   "url:GET|/api/v1/users/self/groups",
-  "url:GET|/api/v1/courses/:course_id/groups",
+  //"url:GET|/api/v1/courses/:course_id/groups",
   "url:GET|/api/v1/groups/:group_id",
   "url:POST|/api/v1/groups",
   "url:POST|/api/v1/group_categories/:group_category_id/groups",
