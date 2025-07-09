@@ -1,5 +1,5 @@
 // Testing
-import { auth } from "../app/api/auth/[...nextauth]/route";
+import { auth } from '../nextauthConfig.js';
 export default async function UserInfo() {
   console.log("entered OauthComponents.jsx");
   const session = await auth();

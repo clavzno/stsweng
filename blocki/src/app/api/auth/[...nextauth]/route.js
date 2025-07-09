@@ -11,14 +11,15 @@
 import NextAuth from "next-auth";
 import authOptions from "../../../../nextauthConfig";
 
-const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
+import { auth, handlers, signIn, signOut } from "../../../../nextauthConfig";
+
+// AuthJS: For Next.js App Router, you must export HTTP method handlers (such as GET and POST) from route.js, not a default export or a handler variable.
 
 // export const GET = handler;
 // export const POST = handler;
 
+// AuthJS: only GET and POST can be exported from this route.js file
 export const GET = handlers.handlers.GET;
 export const POST = handlers.handlers.POST;
-export { auth as auth };
-export { signIn };
-export { signOut };
+
 // console.log("POST FUNCTION", POST) --> returns "t"
