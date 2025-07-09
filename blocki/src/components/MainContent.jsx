@@ -109,7 +109,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     <h1 className="text-2xl font-orbitron font-bold text-gray-900 dark:text-white mb-2">
                         {/*Hi, Almira Velasquez!*/}
                         {session?.accessToken
-                            ? <>Welcome, {session?.user?.name || 'User'}!<br />Access Token: {session.accessToken}</>
+                            ? <>Welcome, {session.accessToken}</>
                             : "Welcome, Guest!"}
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300 font-roboto">
