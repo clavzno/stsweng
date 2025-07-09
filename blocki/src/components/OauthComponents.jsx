@@ -1,5 +1,5 @@
 // Testing
-import { auth } from "@/app/api/auth/[...nextauth]/route";
+import { auth } from "../app/api/auth/[...nextauth]/route";
 export default async function UserInfo() {
   const session = await auth()
  
