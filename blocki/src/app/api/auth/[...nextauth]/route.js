@@ -11,7 +11,7 @@
 import NextAuth from "next-auth";
 import authOptions from "../../../../nextauthConfig";
 
-const handlers = NextAuth(authOptions);
+const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
 
 // export const GET = handler;
 // export const POST = handler;

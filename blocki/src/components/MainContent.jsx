@@ -16,9 +16,6 @@ import { useSession } from 'next-auth/react';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
-    // Added by Jack on 2025-07-09
-    const { data: session, status } = useSession()
-
     const [layout, setLayout] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -107,10 +104,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
             <div className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-gray-200 dark:border-gray-700 p-6">
                 <div className="max-w-4xl">
                     <h1 className="text-2xl font-orbitron font-bold text-gray-900 dark:text-white mb-2">
-                        {/*Hi, Almira Velasquez!*/}
-                        {session?.accessToken
-                            ? <>Welcome, {session.accessToken}</>
-                            : "Welcome, Guest!"}
+                        Hi, Almira Velasquez!
                     </h1>
                     <p className="text-gray-600 dark:text-gray-300 font-roboto">
                         Today is {new Date().toLocaleDateString('en-US', {
