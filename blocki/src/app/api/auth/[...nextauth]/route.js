@@ -18,5 +18,7 @@ const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
 
 export const GET = handlers.handlers.GET;
 export const POST = handlers.handlers.POST;
-export { auth };
+export { auth as auth };
+export { signIn };
+export { signOut };
 // console.log("POST FUNCTION", POST) --> returns "t"

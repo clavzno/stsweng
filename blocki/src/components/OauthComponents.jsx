@@ -1,9 +1,10 @@
 // Testing
 import { auth } from "../app/api/auth/[...nextauth]/route";
 export default async function UserInfo() {
-  const session = await auth()
+  console.log("entered OauthComponents.jsx");
+  const session = await auth();
  
-  if (!session?.user) return null
+  if (!session?.user) return null;
  
   return (
     <div>
