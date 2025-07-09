@@ -122,4 +122,4 @@ export const authOptions = {
 }
 
 const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
-export default { auth, handlers, signIn, signOut };
+export { auth, handlers, signIn, signOut };
