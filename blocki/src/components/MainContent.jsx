@@ -10,9 +10,6 @@ import AddComponentModal from './AddComponentModal';
 import Settings from './Settings';
 import SaveLayoutButton from './SaveLayoutButton';
 
-// Added by Jack on 2025-07-09
-import { useSession } from 'next-auth/react';
-
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
