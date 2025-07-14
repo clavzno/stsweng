@@ -20,7 +20,7 @@ import { auth, handlers, signIn, signOut } from "../../../../nextauthConfig";
  * console.log("POST FUNCTION", POST) --> returns "t"
  */
 
-export const GET = handlers.handlers.GET;
-export const POST = handlers.handlers.POST;
+export const GET = handlers.GET;
+export const POST = handlers.POST;
 
 

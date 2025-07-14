@@ -98,7 +98,8 @@ export const authOptions = {
         redirect_uri: process.env.NEXTAUTH_URL + "/api/auth/callback/dlsuinstructure", // the URL to redirect to after authorization
         purpose: "Blocki Oauth2 Authentication"
       },
-      callbackUrl: process.env.AUTH_REDIRECT_PROXY_URL // proxy
+      redirectProxyUrl: process.env.AUTH_REDIRECT_PROXY_URL, // proxy URL for redirecting to the callback URL
+      // callbackUrl: process.env.AUTH_REDIRECT_PROXY_URL // proxy
     },
     token: "https://dlsu.instructure.com/login/oauth2/token", // the URL to exchange the code for an access token
     userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile", // the URL to get the user information
