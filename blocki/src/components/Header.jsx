@@ -165,4 +165,4 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
             </div>
         </header>
     );
-}
+} 

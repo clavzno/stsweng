@@ -75,7 +75,6 @@ const renderIcon = (iconName, className) => {
 
 const defaultTabs = [
   { id: 'dashboard', name: 'Dashboard', icon: 'home', href: '#dashboard' },
-  { id: 'courses', name: 'Courses', icon: 'book', href: '#courses', hasDropdown: true },
   { id: 'announcements', name: 'Announcements', icon: 'bell', href: '#announcements' },
 ];
 
