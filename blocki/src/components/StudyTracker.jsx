@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, BarChart3, Target, Clock, Book, TrendingUp, Settings, X } from 'lucide-react';
 
-export default function StudyTracker() {
+export default function StudyTracker({ focusSessionData }) {
   const [viewMode, setViewMode] = useState('github'); // 'github', 'courses', 'focus'
   const [studyData, setStudyData] = useState({});
   const [courses, setCourses] = useState([
@@ -12,12 +12,80 @@ export default function StudyTracker() {
     { id: 3, name: 'Chemistry', completed: 3, total: 10, color: 'bg-purple-500' },
     { id: 4, name: 'Biology', completed: 8, total: 12, color: 'bg-orange-500' },
   ]);
+
+  // Get real-time focus session data from localStorage and props
   const [focusSession, setFocusSession] = useState({
     currentStreak: 0,
     totalMinutes: 0,
-    sessionsToday: 3,
+    sessionsToday: 0,
     targetSessions: 8,
+    completedSessions: 0,
   });
+
+  // Load focus session data from localStorage on mount and update when focusSessionData changes
+  useEffect(() => {
+    const updateFocusData = () => {
+      if (typeof window !== 'undefined') {
+        // Get today's date
+        const today = new Date().toISOString().split('T')[0];
+        
+        // Load completed sessions from localStorage (from Pomodoro component)
+        const completedSessions = parseInt(localStorage.getItem('pomodoro-completed-sessions') || '0');
+        
+        // Load daily session data
+        const dailyData = JSON.parse(localStorage.getItem('daily-focus-sessions') || '{}');
+        const todaysSessions = dailyData[today] || 0;
+        
+        // Calculate streak
+        const calculateStreak = () => {
+          let streak = 0;
+          const currentDate = new Date();
+          
+          for (let i = 0; i < 30; i++) { // Check last 30 days
+            const checkDate = new Date(currentDate);
+            checkDate.setDate(currentDate.getDate() - i);
+            const dateStr = checkDate.toISOString().split('T')[0];
+            
+            if (dailyData[dateStr] > 0) {
+              streak++;
+            } else {
+              break;
+            }
+          }
+          return streak;
+        };
+
+        // Calculate total minutes from Pomodoro settings
+        const settings = JSON.parse(localStorage.getItem('pomodoro-settings') || '{"pomodoro": 25}');
+        const totalMinutes = completedSessions * settings.pomodoro;
+
+        setFocusSession({
+          currentStreak: calculateStreak(),
+          totalMinutes: totalMinutes,
+          sessionsToday: todaysSessions,
+          targetSessions: 8,
+          completedSessions: completedSessions,
+        });
+      }
+    };
+
+    // Update on mount
+    updateFocusData();
+
+    // Update when focusSessionData prop changes
+    if (focusSessionData) {
+      const today = new Date().toISOString().split('T')[0];
+      const dailyData = JSON.parse(localStorage.getItem('daily-focus-sessions') || '{}');
+      dailyData[today] = (dailyData[today] || 0) + 1;
+      localStorage.setItem('daily-focus-sessions', JSON.stringify(dailyData));
+      updateFocusData();
+    }
+
+    // Set up an interval to update data every minute
+    const interval = setInterval(updateFocusData, 60000);
+    
+    return () => clearInterval(interval);
+  }, [focusSessionData]);
 
   // Generate GitHub-style grid data (52 weeks * 7 days = 364 days)
   const generateGridData = () => {
@@ -30,18 +98,26 @@ export default function StudyTracker() {
       date.setDate(today.getDate() - i);
       const dateStr = date.toISOString().split('T')[0];
       
-      // Simulate study data with more realistic patterns
+      // Get real study data from localStorage
       let studyMinutes = 0;
       if (studyData[dateStr] !== undefined) {
         studyMinutes = studyData[dateStr];
       } else {
-        // More realistic study patterns - higher chance of study on weekdays
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
-        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
-        const studyChance = isWeekend ? 0.3 : 0.7;
+        // Check if we have real focus session data for this date
+        const dailyData = JSON.parse(localStorage.getItem('daily-focus-sessions') || '{}');
+        const settings = JSON.parse(localStorage.getItem('pomodoro-settings') || '{"pomodoro": 25}');
         
-        if (Math.random() < studyChance) {
-          studyMinutes = [30, 60, 90, 120, 180][Math.floor(Math.random() * 5)];
+        if (dailyData[dateStr]) {
+          studyMinutes = dailyData[dateStr] * settings.pomodoro;
+        } else {
+          // Simulate historical data for dates before we started tracking
+          const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+          const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+          const studyChance = isWeekend ? 0.3 : 0.7;
+          
+          if (Math.random() < studyChance) {
+            studyMinutes = [30, 60, 90, 120, 180][Math.floor(Math.random() * 5)];
+          }
         }
       }
       
@@ -79,7 +155,7 @@ export default function StudyTracker() {
     return colors[level] || colors[0];
   };
 
-  const gridData = useMemo(() => generateGridData(), [studyData]);
+  const gridData = useMemo(() => generateGridData(), [studyData, focusSession]);
 
   const totalStudyDays = gridData.filter(day => day.minutes > 0).length;
   const currentStreak = useMemo(() => {
@@ -103,12 +179,12 @@ export default function StudyTracker() {
           <div className="text-xs text-gray-600 dark:text-gray-400">Study Days</div>
         </div>
         <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <div className="text-xl font-bold text-gray-900 dark:text-white">{currentStreak}</div>
+          <div className="text-xl font-bold text-gray-900 dark:text-white">{focusSession.currentStreak}</div>
           <div className="text-xs text-gray-600 dark:text-gray-400">Current Streak</div>
         </div>
         <div className="text-center p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="text-xl font-bold text-gray-900 dark:text-white">
-            {Math.round(gridData.reduce((sum, day) => sum + day.minutes, 0) / 60)}h
+            {Math.round(focusSession.totalMinutes / 60)}h
           </div>
           <div className="text-xs text-gray-600 dark:text-gray-400">Total Hours</div>
         </div>
@@ -256,6 +332,19 @@ export default function StudyTracker() {
           </div>
         </div>
 
+        {/* Real-time Session Counter */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="text-center">
+            <div className="text-sm font-medium text-gray-900 dark:text-white mb-1">Total Completed Sessions</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              {focusSession.completedSessions}
+            </div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">
+              Next long break after {4 - (focusSession.completedSessions % 4)} more sessions
+            </div>
+          </div>
+        </div>
+
         {/* Weekly Focus Chart */}
         <div className="space-y-2">
           <div className="text-sm font-medium text-gray-900 dark:text-white">This Week's Focus</div>
@@ -266,15 +355,18 @@ export default function StudyTracker() {
               const isPast = date < today;
               const isFuture = date > today;
               
-              // Generate sessions based on the actual date
+              // Get real sessions data from localStorage
+              const dateStr = date.toISOString().split('T')[0];
+              const dailyData = JSON.parse(localStorage.getItem('daily-focus-sessions') || '{}');
+              
               let sessions;
               if (isFuture) {
                 sessions = 0; // Future days have no sessions
               } else if (isToday) {
                 sessions = focusSession.sessionsToday;
               } else {
-                // Past days - simulate realistic data
-                sessions = Math.floor(Math.random() * 9);
+                // Past days - get real data or simulate
+                sessions = dailyData[dateStr] || Math.floor(Math.random() * 9);
               }
               
               const maxHeight = 32;

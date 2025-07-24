@@ -87,7 +87,6 @@ export default function CourseCard({
     }
   };
 
-  const progressPercentage = course.progress || 0;
   const completedAssignments = course.assignments ? course.assignments.filter(a => a.completed).length : 0;
   const totalAssignments = course.assignments ? course.assignments.length : 0;
   const customization = course.customization || {
@@ -231,7 +230,7 @@ export default function CourseCard({
               {activeTab === 'colors' && (
                 <div className="space-y-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Choose an accent color for progress bars and buttons
+                    Choose an accent color for buttons and elements
                   </p>
                   <div className="grid grid-cols-5 gap-2">
                     {accentColorOptions.map((color) => (
@@ -315,23 +314,6 @@ export default function CourseCard({
               {course.description}
             </p>
           )}
-
-          {/* Progress Bar */}
-          <div className="mb-4">
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span className="font-medium text-gray-700 dark:text-gray-300">Progress</span>
-              <span className="font-medium text-gray-900 dark:text-white">{progressPercentage}%</span>
-            </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-              <div
-                className="h-2 rounded-full transition-all duration-500"
-                style={{ 
-                  width: `${progressPercentage}%`,
-                  backgroundColor: customization.accentColor 
-                }}
-              />
-            </div>
-          </div>
 
           {/* Assignments Section */}
           {showAssignments && course.assignments && course.assignments.length > 0 && (

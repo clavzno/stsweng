@@ -1,5 +1,6 @@
-import CoursePage from '../../../pages/CoursePage';
+import CoursePage from '../../../components/CoursePage';
 
 export default async function Course({ params }) {
-  return <CoursePage courseId={params.id} />;
+  const { id } = await params;
+  return <CoursePage courseId={id} />;
 }

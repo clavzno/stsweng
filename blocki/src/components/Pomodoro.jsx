@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Settings, 
   SkipForward, 
@@ -23,36 +23,87 @@ import {
   X
 } from 'lucide-react';
 
-export default function Pomodoro() {
+export default function Pomodoro({ onSessionComplete }) {
   const [mode, setMode] = useState('pomodoro');
   const [time, setTime] = useState(25 * 60);
   const [isActive, setIsActive] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [completedSessions, setCompletedSessions] = useState(0);
-  const [settings, setSettings] = useState({
-    pomodoro: 25,
-    shortBreak: 5,
-    longBreak: 15,
+  const [completedSessions, setCompletedSessions] = useState(() => {
+    // Load from localStorage or default to 0
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pomodoro-completed-sessions');
+      return saved ? parseInt(saved) : 0;
+    }
+    return 0;
+  });
+  const [notificationPermission, setNotificationPermission] = useState('default');
+  const audioRef = useRef(null);
+  const [settings, setSettings] = useState(() => {
+    // Load settings from localStorage
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('pomodoro-settings');
+      return saved ? JSON.parse(saved) : {
+        pomodoro: 25,
+        shortBreak: 5,
+        longBreak: 15,
+      };
+    }
+    return {
+      pomodoro: 25,
+      shortBreak: 5,
+      longBreak: 15,
+    };
   });
 
+  // Save completed sessions to localStorage whenever it changes
   useEffect(() => {
-    setTime(settings[mode] * 60);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pomodoro-completed-sessions', completedSessions.toString());
+    }
+  }, [completedSessions]);
+
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('pomodoro-settings', JSON.stringify(settings));
+    }
+  }, [settings]);
+
+  // Check notification permission on mount
+  useEffect(() => {
+    if ('Notification' in window) {
+      setNotificationPermission(Notification.permission);
+    }
+  }, []);
+
+  // Update time when settings or mode changes
+  useEffect(() => {
+    if (!isActive) {
+      setTime(settings[mode] * 60);
+    }
   }, [settings, mode]);
 
+  // Timer countdown effect
   useEffect(() => {
     let interval = null;
     if (isActive && time > 0) {
       interval = setInterval(() => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
-    } else if (!isActive && time !== 0) {
-      clearInterval(interval);
-    } else if (time === 0) {
+    } else if (time === 0 && isActive) {
       handleSessionComplete();
     }
     return () => clearInterval(interval);
   }, [isActive, time]);
+
+  // Update document title
+  useEffect(() => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    const timeString = `${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
+    document.title = isActive ? `${timeString} - ${getModeDisplayName()}` : 'Pomodoro Timer';
+  }, [time, isActive, mode]);
 
   const toggle = () => setIsActive(!isActive);
 
@@ -63,48 +114,139 @@ export default function Pomodoro() {
 
   const handleSettingsChange = (e) => {
     const { name, value } = e.target;
+    const newValue = Math.max(1, Math.min(60, parseInt(value) || 1));
     setSettings({ 
       ...settings, 
-      [name]: parseInt(value) 
+      [name]: newValue 
     });
   };
 
+  const playNotificationSound = () => {
+    if (soundEnabled) {
+      // Create a simple beep sound using Web Audio API
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = 800;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.5);
+      } catch (error) {
+        console.log('Audio playback not supported');
+      }
+    }
+  };
+
+  const showNotification = (title, body) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const notification = new Notification(title, {
+        body,
+        icon: mode === 'pomodoro' ? '🍅' : mode === 'shortBreak' ? '☕' : '🌙',
+        badge: '🍅'
+      });
+      
+      // Auto close after 5 seconds
+      setTimeout(() => notification.close(), 5000);
+      
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    }
+  };
+
   const handleSessionComplete = () => {
+    setIsActive(false);
+    
+    let newCompletedSessions = completedSessions;
     if (mode === 'pomodoro') {
-      setCompletedSessions(prev => prev + 1);
+      newCompletedSessions = completedSessions + 1;
+      setCompletedSessions(newCompletedSessions);
     }
     
-    // Play notification sound if enabled
-    if (soundEnabled && 'Notification' in window && Notification.permission === 'granted') {
-      new Notification(`${getModeDisplayName()} completed!`, {
-        icon: '🍅',
-        body: 'Time for a break!'
+    // Play notification sound
+    playNotificationSound();
+    
+    // Show notification
+    const modeNames = {
+      pomodoro: 'Focus Session',
+      shortBreak: 'Short Break',
+      longBreak: 'Long Break'
+    };
+    
+    const nextModeNames = {
+      pomodoro: 'Time for a break!',
+      shortBreak: 'Back to work!',
+      longBreak: 'Back to work!'
+    };
+    
+    showNotification(
+      `${modeNames[mode]} Complete!`,
+      nextModeNames[mode]
+    );
+
+    // Call the parent callback to update StudyTracker
+    if (onSessionComplete && mode === 'pomodoro') {
+      onSessionComplete({
+        mode,
+        duration: settings[mode],
+        timestamp: new Date().toISOString(),
+        completedSessions: newCompletedSessions
       });
     }
     
-    handleNextSession();
+    // Auto-switch to next session after 3 seconds
+    setTimeout(() => {
+      handleNextSession();
+    }, 3000);
   };
 
   const handleNextSession = () => {
     let nextMode = 'pomodoro';
+    
     if (mode === 'pomodoro') {
-      nextMode = 'shortBreak';
+      // After every 4 pomodoros, take a long break
+      nextMode = completedSessions % 4 === 0 ? 'longBreak' : 'shortBreak';
     } else {
       nextMode = 'pomodoro';
     }
     
     setMode(nextMode);
-    setIsActive(false);
     setTime(settings[nextMode] * 60);
+  };
+
+  const switchMode = (newMode) => {
+    if (newMode !== mode) {
+      setMode(newMode);
+      setTime(settings[newMode] * 60);
+      setIsActive(false);
+    }
   };
 
   const toggleSettings = () => {
     setShowSettings(!showSettings);
   };
 
-  const requestNotificationPermission = () => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      Notification.requestPermission();
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window) {
+      try {
+        const permission = await Notification.requestPermission();
+        setNotificationPermission(permission);
+        if (permission === 'granted') {
+          showNotification('Notifications Enabled!', 'You\'ll now receive timer notifications.');
+        }
+      } catch (error) {
+        console.log('Notification permission request failed');
+      }
     }
   };
 
@@ -181,6 +323,7 @@ export default function Pomodoro() {
           display: none;
         }
       `}</style>
+      
       {/* Settings Panel */}
       {showSettings && (
         <div className="absolute inset-2 z-20 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 flex flex-col overflow-hidden">
@@ -278,12 +421,31 @@ export default function Pomodoro() {
                     {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
                   </button>
                 </div>
-                <button
-                  onClick={requestNotificationPermission}
-                  className="w-full text-left text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  Enable browser notifications
-                </button>
+                {notificationPermission !== 'granted' && (
+                  <button
+                    onClick={requestNotificationPermission}
+                    className="w-full text-left text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    Enable browser notifications
+                  </button>
+                )}
+                {notificationPermission === 'granted' && (
+                  <div className="text-xs text-green-600 dark:text-green-400">
+                    ✓ Browser notifications enabled
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Session Info */}
+            <div className="mb-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Info className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                <h4 className="font-medium text-gray-900 dark:text-white text-sm">Session Info</h4>
+              </div>
+              <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                <div>Completed focus sessions: {completedSessions}</div>
+                <div>Next long break after: {4 - (completedSessions % 4)} more sessions</div>
               </div>
             </div>
           </div>
@@ -330,7 +492,7 @@ export default function Pomodoro() {
       {/* Mode Switcher */}
       <div className="mb-4 flex space-x-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 flex-shrink-0">
         <button 
-          onClick={() => setMode('pomodoro')} 
+          onClick={() => switchMode('pomodoro')} 
           className={`flex-1 py-2 px-2 rounded-md font-medium transition-colors text-center min-w-0 flex items-center justify-center gap-1 ${
             mode === 'pomodoro' 
               ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
@@ -344,7 +506,7 @@ export default function Pomodoro() {
           <span className="truncate">Focus</span>
         </button>
         <button 
-          onClick={() => setMode('shortBreak')} 
+          onClick={() => switchMode('shortBreak')} 
           className={`flex-1 py-2 px-2 rounded-md font-medium transition-colors text-center min-w-0 flex items-center justify-center gap-1 ${
             mode === 'shortBreak' 
               ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 
@@ -358,7 +520,7 @@ export default function Pomodoro() {
           <span className="truncate">Break</span>
         </button>
         <button 
-          onClick={() => setMode('longBreak')} 
+          onClick={() => switchMode('longBreak')} 
           className={`flex-1 py-2 px-2 rounded-md font-medium transition-colors text-center min-w-0 flex items-center justify-center gap-1 ${
             mode === 'longBreak' 
               ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' 

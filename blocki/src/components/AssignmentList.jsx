@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import FileUploader from './FileUploader';
+import FileUploader from './course/FileUploader';
 
 export default function AssignmentList({ assignments }) {
   const [selectedAssignment, setSelectedAssignment] = useState(null);
