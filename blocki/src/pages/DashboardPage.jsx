@@ -5,11 +5,14 @@ import CustomizableSidebar from '../components/Sidebar';
 import Header from '../components/Header';
 import UpdatedMainContent from '../components/MainContent';
 import { LoadingOverlay, LoadingCard, Spinner } from '../components/LoadingSpinner';
+import WelcomeModal from '../components/WelcomeModal';
 
 export default function UpdatedDashboardPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [hasCompletedWelcome, setHasCompletedWelcome] = useState(false);
 
   useEffect(() => {
     // Simulate dashboard initialization
@@ -18,9 +21,14 @@ export default function UpdatedDashboardPage() {
         // Simulate loading user data, preferences, layout, etc.
         await new Promise(resolve => setTimeout(resolve, 2000));
         setDashboardLoading(false);
+        
+        // Always show welcome modal for now (you can add localStorage logic later if needed)
+        setShowWelcomeModal(true);
       } catch (error) {
         console.error('Failed to load dashboard:', error);
         setDashboardLoading(false);
+        // Still show welcome modal on error
+        setShowWelcomeModal(true);
       }
     };
 
@@ -38,6 +46,11 @@ export default function UpdatedDashboardPage() {
     } finally {
       setSaveLoading(false);
     }
+  };
+
+  const handleCloseWelcomeModal = () => {
+    setShowWelcomeModal(false);
+    setHasCompletedWelcome(true);
   };
 
   // Show loading screen while dashboard initializes
@@ -97,6 +110,21 @@ export default function UpdatedDashboardPage() {
         </div>
       </div>
     );
+  }
+
+  // Show welcome modal if user hasn't completed the welcome flow
+  if (showWelcomeModal) {
+    return (
+      <WelcomeModal 
+        isOpen={showWelcomeModal}
+        onClose={handleCloseWelcomeModal}
+      />
+    );
+  }
+
+  // Show dashboard only after welcome is completed
+  if (!hasCompletedWelcome) {
+    return null; // or a simple loading spinner
   }
 
   return (
