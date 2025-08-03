@@ -6,6 +6,7 @@ import CoursesList from './CoursesList';
 import Calendar from './Calendar';
 import StudyTracker from './StudyTracker';
 import Pomodoro from './Pomodoro';
+import PixelTracker from './PixelTracker';
 import AddComponentModal from './AddComponentModal';
 import Settings from './Settings';
 import SaveLayoutButton from './SaveLayoutButton';
@@ -15,11 +16,16 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
     const [layout, setLayout] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'compact'
 
     useEffect(() => {
         const savedLayout = localStorage.getItem('dashboardLayout');
+        const savedViewMode = localStorage.getItem('dashboardViewMode');
         if (savedLayout) {
             setLayout(JSON.parse(savedLayout));
+        }
+        if (savedViewMode) {
+            setViewMode(savedViewMode);
         }
     }, []);
 
@@ -29,16 +35,34 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
         }
     }, [layout]);
 
+    useEffect(() => {
+        localStorage.setItem('dashboardViewMode', viewMode);
+    }, [viewMode]);
+
     const handleAddComponent = (componentId) => {
         // Generates unique ID to prevent duplicates of the components/widgets
         const timestamp = Date.now();
         const uniqueId = `${componentId}_${timestamp}`;
+        
+        // Different default sizes based on view mode
+        const getDefaultSize = () => {
+            switch (viewMode) {
+                case 'compact':
+                    return { w: 3, h: 1 };
+                case 'list':
+                    return { w: 12, h: 2 };
+                default: // grid
+                    return { w: 4, h: 2 };
+            }
+        };
+
+        const defaultSize = getDefaultSize();
         const newItem = {
             i: uniqueId,
-            x: (layout.length * 4) % 12,
+            x: (layout.length * defaultSize.w) % 12,
             y: Infinity,
-            w: 4,
-            h: 2,
+            w: defaultSize.w,
+            h: defaultSize.h,
             component: componentId,
         };
         setLayout([...layout, newItem]);
@@ -55,12 +79,16 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
             calendar: <Calendar />,
             tracker: <StudyTracker />,
             pomodoro: <Pomodoro />,
+            pixeltracker: <PixelTracker />,
         };
 
         const componentType = item.component || item.i.split('_')[0];
 
         return (
-            <div key={item.i} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md relative overflow-hidden">
+            <div 
+                key={item.i} 
+                className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md relative overflow-hidden"
+            >
                 {isEditMode && (
                     <div className="absolute top-0 right-0 z-50" style={{ pointerEvents: 'auto' }}>
                         <button
@@ -81,7 +109,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                         </button>
                     </div>
                 )}
-                {/* Updated: Added hide-scrollbar-keep-scroll class and better overflow handling */}
+
                 <div className={`h-full w-full hide-scrollbar-keep-scroll ${isEditMode ? 'pt-8 pr-8 pl-2 pb-4' : 'p-4'}`}>
                     {componentMap[componentType]}
                 </div>
@@ -94,30 +122,22 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
         alert('Layout saved!');
     };
 
-    return (
-        // Updated: Enhanced hide-scrollbar class usage
-        <main className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50 dark:bg-gray-900">
-            {/* Welcome Section */}
-            <div className="bg-gradient-to-r from-primary/10 to-accent/10 border-b border-gray-200 dark:border-gray-700 p-6">
-                <div className="max-w-4xl">
-                    <h1 className="text-2xl font-orbitron font-bold text-gray-900 dark:text-white mb-2">
-                        Hi, Almira Velasquez!
-                    </h1>
-                    <p className="text-gray-600 dark:text-gray-300 font-roboto">
-                        Today is {new Date().toLocaleDateString('en-US', {
-                            weekday: 'long',
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                        })} • {new Date().toLocaleTimeString('en-US', {
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        })}
-                    </p>
-                </div>
-            </div>
+    const getGridClassName = () => {
+        switch (viewMode) {
+            case 'compact':
+                return 'layout hide-scrollbar compact-view';
+            case 'list':
+                return 'layout hide-scrollbar list-view';
+            default:
+                return 'layout hide-scrollbar grid-view';
+        }
+    };
 
+    return (
+        <main className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50 dark:bg-gray-900">
             <div className="p-6">
+                {/* View Mode Controls - REMOVED */}
+
                 {/* Settings panel */}
                 {isEditMode && (
                     <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
@@ -128,9 +148,9 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     </div>
                 )}
 
-                {/* Updated: Added hide-scrollbar class to grid layout */}
+                {/* Grid Layout */}
                 <ResponsiveGridLayout
-                    className={`layout hide-scrollbar ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
+                    className={`${getGridClassName()} ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
                     layouts={{ lg: layout }}
                     onLayoutChange={(newLayout) => setLayout(newLayout)}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
@@ -150,10 +170,10 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                             </svg>
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 font-orbitron">
-                            Hi, I'm your first block!
+                            Start Building Your Dashboard
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 mb-6 font-roboto max-w-md mx-auto">
-                            Let's get productive! Click the + button below to add your first component and start building your perfect dashboard.
+                            Add your first component to get started with your personalized dashboard.
                         </p>
                         <button
                             onClick={() => setIsModalOpen(true)}

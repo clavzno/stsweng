@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
-import FileUploader from '../../components/FileUploader'
+import FileUploader from '../course/FileUploader'
 
 describe('FileUploader component', () => {
   test('renders upload instructions and button', () => {
