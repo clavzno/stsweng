@@ -11,7 +11,11 @@ import logoSingle from '../assets/images/logo_single.png';
 // auth2
 import { signIn } from "next-auth/react"
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  //test, + added async above
+  const session = await auth()
+  console.log('LoginPage: ', session?.accessToken)
+
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
 
@@ -101,7 +105,7 @@ export default function LoginPage() {
                * Direct redirect to dashboard
                * router.push('/dashboard');
                */
-              signIn('dlsuinstructure')
+              signIn('dlsuinstructure', {redirectTo: '/dashboard'})
             }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}

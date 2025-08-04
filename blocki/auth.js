@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth from "next-auth";
 
 const otherScopes = [
   "url:GET|/api/v1/users/:id",
@@ -64,35 +64,59 @@ const otherScopes = [
   "url:POST|/api/v1/groups/:group_id/memberships",
   "url:DELETE|/api/v1/groups/:group_id/memberships/:membership_id",
   "url:DELETE|/api/v1/groups/:group_id/users/:user_id",
-  "url:GET|/api/v1/announcements"
-]
+  "url:GET|/api/v1/announcements",
+];
 
 // export const { handlers, signIn, signOut, auth } = NextAuth()
 
 const authOptions = {
-  providers: [{
-    id: "dlsuinstructure", // do not change this ID
-    name: "Instructure",
-    type: "oauth", // "oidc",
-    issuer: "https://dlsu.instructure.com/.well-known/openid-configuration",
-    clientId: process.env.API_KEY,
-    clientSecret: process.env.API_SECRET,
-    // everything below this isn't part of the base configuration
-    authorization: {
-      url: "https://dlsu.instructure.com/login/oauth2/auth",
-      token: "https://dlsu.instructure.com/login/oauth2/token",
-      params: {
-        scope: "openid " + otherScopes.join(" "),
-        purpose: "Blocki Oauth2 Authentication",
-        response_type: 'code',
+  providers: [
+    {
+      id: "dlsuinstructure", // do not change this ID
+      name: "Instructure",
+      type: "oauth", // "oidc",
+      issuer: "https://dlsu.instructure.com/.well-known/openid-configuration",
+      clientId: process.env.API_KEY,
+      clientSecret: process.env.API_SECRET,
+      // everything below this isn't part of the base configuration
+      authorization: {
+        url: "https://dlsu.instructure.com/login/oauth2/auth",
+        token: "https://dlsu.instructure.com/login/oauth2/token",
+        params: {
+          scope: "openid " + otherScopes.join(" "),
+          purpose: "Blocki Oauth2 Authentication",
+          response_type: "code",
+        },
+      },
+    },
+  ],
+  debug: true,
+  callbacks: {
+    jwt({ token, user }) {
+      // in this callback you can add properties to the token
+      /**
+       * if (user) {
+       * token.id = user.id;
+       * }
+       * return token;
+       */
+      if (account?.provider === "my-provider") {
+        return { ...token, accessToken: account.access_token }
       }
     },
-  }],
-  debug: true,
-}
+    async session({ session, token }) {
+      // in this callback you can expose those properties to the client session
+      /**
+       * session.user.id = token.id;
+       * return session;
+       */
+      session.accessToken = token.accessToken
+      return session
+    },
+  },
+};
 
 const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
 export { auth, handlers, signIn, signOut };
-
 
 // callback URL:  https://blocki.vercel.app/api/auth/callback/{id}
