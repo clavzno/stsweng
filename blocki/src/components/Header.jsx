@@ -6,6 +6,9 @@ import profilePic from '../assets/images/profilepic.png';
 import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
 
+//auth
+import { auth } from '../../auth'; // do not change this path
+
 // WIP: icons
 const FiSearch = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -38,7 +41,11 @@ const FiMoon = ({ className }) => (
   </svg>
 );
 
-export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
+export default async function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
+    //test
+    const session = await auth()
+    console.log('LoginPage: ', session?.accessToken)
+
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const router = useRouter();
