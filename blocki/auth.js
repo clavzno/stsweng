@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 
 const otherScopes = [
-  "url:GET|/auth/userinfo", // added for userinfo request
   "url:GET|/api/v1/users/:id",
   "url:GET|/api/v1/users/:user_id/profile",
   //"url:GET|/api/v1/groups/:group_id/files/quota",
@@ -84,7 +83,7 @@ const authOptions = {
         url: "https://dlsu.instructure.com/login/oauth2/auth",
         token: "https://dlsu.instructure.com/login/oauth2/token",
         params: {
-          scope: "openid " + otherScopes.join(" "),
+          scope: otherScopes.join(" "), // removed "openid " + 
           purpose: "Blocki Oauth2 Authentication",
           response_type: "code",
         },
