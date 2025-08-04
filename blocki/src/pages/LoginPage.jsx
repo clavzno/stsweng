@@ -8,6 +8,9 @@ import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
 import logoSingle from '../assets/images/logo_single.png';
 
+// auth2
+import { signIn } from "next-auth/react"
+
 export default function LoginPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
@@ -94,8 +97,11 @@ export default function LoginPage() {
             type="button"
             variant="canvas-login"
             onClick={() => {
-              // Direct redirect to dashboard
-              router.push('/dashboard');
+              /**
+               * Direct redirect to dashboard
+               * router.push('/dashboard');
+               */
+              signIn('dlsuinstructure')
             }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
