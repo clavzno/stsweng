@@ -74,8 +74,8 @@ const authOptions = {
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
-      type: "oidc", // "oidc",
-      issuer: "https://dlsu.instructure.com/.well-known/openid-configuration",
+      type: "oauth", // "oidc",
+      issuer: "https://dlsu.instructure.com",
       clientId: process.env.API_KEY,
       clientSecret: process.env.API_SECRET,
       // everything below this isn't part of the base configuration
@@ -88,6 +88,7 @@ const authOptions = {
           response_type: "code",
         },
       },
+      wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration",
     },
   ],
   debug: true,
@@ -100,7 +101,7 @@ const authOptions = {
        * }
        * return token;
        */
-      if (account?.provider === "my-provider") {
+      if (account?.provider === "dlsuinstructure") {
         return { ...token, accessToken: account.access_token }
       }
     },
