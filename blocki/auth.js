@@ -137,6 +137,7 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
+    async redirect({ url, baseUrl }) { return baseUrl },
   },
 };
 
