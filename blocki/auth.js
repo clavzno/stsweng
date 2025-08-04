@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 
 const otherScopes = [
+  "url:GET|/auth/userinfo", // added for userinfo request
   "url:GET|/api/v1/users/:id",
   "url:GET|/api/v1/users/:user_id/profile",
   //"url:GET|/api/v1/groups/:group_id/files/quota",
@@ -88,7 +89,8 @@ const authOptions = {
           response_type: "code",
         },
       },
-      wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration",
+      // wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration", //only use if using OIDC
+      userinfo: "https://dlsu.instructure.com/auth/userinfo"
     },
   ],
   debug: true,
