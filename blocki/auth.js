@@ -115,7 +115,7 @@ const authOptions = {
   ],
   debug: true,
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, account }) {
       // in this callback you can add properties to the token
       /**
        * if (user) {
