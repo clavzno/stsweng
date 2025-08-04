@@ -89,8 +89,28 @@ const authOptions = {
           response_type: "code",
         },
       },
-      // wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration", //only use if using OIDC
-      userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile"
+      // wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration", //only use if not using a full OIDC provider
+      userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile",
+      profile(profile) {
+        return {
+          id: profile.id,
+          name: profile.name,
+          email: profile.primary_email,
+          short_name: profile.short_name,
+          sortable_name: profile.sortable_name,
+          avatar: profile.avatar_url,
+          pronouns: profile.pronouns,
+          title: profile.title,
+          bio: profile.bio,
+          pronunciation: profile.pronunciation,
+          login_id: profile.login_id,
+          time_zone: profile.time_zone,
+          locale: profile.locale,
+          effective_locale: profile.effective_locale,
+          calendar_ics: profile.calendar?.ics,
+          lti_user_id: profile.lti_user_id,
+        };
+      }
     },
   ],
   debug: true,
