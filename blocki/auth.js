@@ -126,6 +126,7 @@ const authOptions = {
       if (account?.provider === "dlsuinstructure") {
         return { ...token, accessToken: account.access_token }
       }
+      return token
     },
     async session({ session, token }) {
       // in this callback you can expose those properties to the client session
