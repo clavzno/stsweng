@@ -109,7 +109,8 @@ const authOptions = {
           calendar_ics: profile.calendar?.ics,
           lti_user_id: profile.lti_user_id,
         };
-      }
+      },
+      token: "https://dlsu.instructure.com/login/oauth2/token",
     },
   ],
   debug: true,
