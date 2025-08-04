@@ -90,7 +90,7 @@ const authOptions = {
         },
       },
       // wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration", //only use if using OIDC
-      userinfo: "https://dlsu.instructure.com/auth/userinfo"
+      userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile"
     },
   ],
   debug: true,
