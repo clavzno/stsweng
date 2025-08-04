@@ -114,7 +114,7 @@ const authOptions = {
     },
   ],
   // debug: true, // make sure this is commented out in production
-  // checks: ["state", "pkce"], // enable PKCE and state checks because of invalidcheck when on localhost, default is just pkce
+  checks: ["state", "pkce"], // enable PKCE and state checks because of invalidcheck when on localhost, default is just pkce
   callbacks: {
     jwt({ token, user, account }) {
       // in this callback you can add properties to the token
