@@ -74,7 +74,7 @@ const authOptions = {
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
-      type: "oauth", // "oidc",
+      type: "oidc", // "oidc",
       issuer: "https://dlsu.instructure.com/.well-known/openid-configuration",
       clientId: process.env.API_KEY,
       clientSecret: process.env.API_SECRET,
