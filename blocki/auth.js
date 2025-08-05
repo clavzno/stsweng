@@ -112,11 +112,11 @@ const authOptions = {
       },
       token: "https://dlsu.instructure.com/login/oauth2/token",
       // ONLY FOR LOCALHOST, REMOVE THIS IN PRODUCTION
-      checks: ["none"],
+      // checks: ["none"],
     },
   ],
-  useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
-  trustHost: true,
+  //useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
+  //trustHost: true,
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
@@ -141,18 +141,6 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
-    cookies: {
-      state: {
-        name: "next-auth.state",
-        options: {
-          domain: "blocki.vercel.app",
-          path: "/",
-          httpOnly: true,
-          secure: false,
-          sameSite: "lax"
-        }
-      }
-    }
   },
 };
 
