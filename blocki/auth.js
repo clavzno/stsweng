@@ -141,6 +141,18 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
+    cookies: {
+      state: {
+        name: "next-auth.state",
+        options: {
+          domain: "blocki.vercel.app",
+          path: "/",
+          httpOnly: true,
+          secure: false,
+          sameSite: "lax"
+        }
+      }
+    }
   },
 };
 
