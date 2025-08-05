@@ -111,7 +111,10 @@ const authOptions = {
         };
       },
       token: "https://dlsu.instructure.com/login/oauth2/token",
-      checks: ["none"], // REMOVE THIS IN PRODUCTION
+      // ONLY FOR LOCALHOST, REMOVE THIS IN PRODUCTION
+      checks: ["none"],
+      useSecureCookies: false,
+      trustHost: false,
     },
   ],
   debug: true, // REMOVE THIS IN PRODUCTION
@@ -138,19 +141,6 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
-    // callbacks: { async redirect({ url, baseUrl }) { return baseUrl }, },
-    cookies: {
-      state: {
-        name: "next-auth.state",
-        options: {
-          domain: "blocki.vercel.app",
-          path: "/",
-          httpOnly: true,
-          secure: false,
-          sameSite: "lax"
-        }
-      }
-    }
   },
 };
 
