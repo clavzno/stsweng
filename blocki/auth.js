@@ -113,10 +113,10 @@ const authOptions = {
       token: "https://dlsu.instructure.com/login/oauth2/token",
       // ONLY FOR LOCALHOST, REMOVE THIS IN PRODUCTION
       checks: ["none"],
-      useSecureCookies: false,
-      trustHost: false,
     },
   ],
+  useSecureCookies: false,
+  trustHost: false,
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
