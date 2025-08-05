@@ -68,6 +68,8 @@ export default function LoginPage() {
           <img
             src={logoSingle.src}
             alt="Blocki Logo"
+            // new changes hereee
+            onClick={() => router.push('/alt-login')}
             className={`mx-auto h-20 w-20 object-contain mb-3 transition-all duration-1000 ease-out
               ${hasLoadedAnimation
                 ? 'opacity-100 translate-y-0 rotate-0'
