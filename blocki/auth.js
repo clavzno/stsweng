@@ -141,6 +141,12 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
+    async redirect({url, baseUrl}) { 
+      console.log("Final Redirect after login");
+      console.log("URL:", url);
+      console.log("Base URL:", baseUrl);
+      return baseUrl + "/dashboard"; // redirect to the dashboard after login
+    }
   },
 };
 
