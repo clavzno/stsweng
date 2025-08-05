@@ -143,10 +143,10 @@ const authOptions = {
       state: {
         name: "next-auth.state",
         options: {
-          domain:process.env.NODE_ENV === "production" ? "blocki.vercel.app" : undefined,
+          domain: "blocki.vercel.app",
           path: "/",
           httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
+          secure: false,
           sameSite: "lax"
         }
       }
