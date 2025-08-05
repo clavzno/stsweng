@@ -116,7 +116,6 @@ const authOptions = {
     },
   ],
   useSecureCookies: false,
-  trustHost: false,
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
