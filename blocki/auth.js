@@ -111,10 +111,10 @@ const authOptions = {
         };
       },
       token: "https://dlsu.instructure.com/login/oauth2/token",
+      checks: ["none"], // REMOVE THIS IN PRODUCTION
     },
   ],
-  // debug: true, // make sure this is commented out in production
-  // checks: ["none"], // enable PKCE and state checks because of invalidcheck when on localhost, default is just pkce
+  debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
       // in this callback you can add properties to the token
@@ -138,6 +138,7 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
+    callbacks: { async redirect({ url, baseUrl }) { return baseUrl }, },
   },
 };
 
