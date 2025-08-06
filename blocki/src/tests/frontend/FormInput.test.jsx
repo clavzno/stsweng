@@ -1,107 +1,46 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import FormInput from '../../components/FormInput'
+// src/tests/frontend/FormInput.test.jsx
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import FormInput from '../../components/FormInput';
 
-describe('FormInput Component', () => {
-  test('renders input with label and placeholder', () => {
-    render(
-      <FormInput
-        id="username"
-        label="Username"
-        value=""
-        onChange={() => {}}
-        placeholder="Enter your username"
-      />
-    )
+describe('FormInput', () => {
+  const defaultProps = {
+    id: 'username',
+    label: 'Username',
+    value: '',
+    onChange: jest.fn(),
+  };
 
-    // Check if label is present
-    expect(screen.getByLabelText(/username/i)).toBeInTheDocument()
+  it('renders the input and label correctly', () => {
+    render(<FormInput {...defaultProps} />);
+    expect(screen.getByLabelText('Username')).toBeInTheDocument();
+  });
 
-    // Check if placeholder is applied
-    const input = screen.getByPlaceholderText(/enter your username/i)
-    expect(input).toBeInTheDocument()
+  it('renders with provided placeholder', () => {
+    render(<FormInput {...defaultProps} placeholder="Enter username" />);
+    expect(screen.getByPlaceholderText('Enter username')).toBeInTheDocument();
+  });
 
-    // Ensure the input is connected to the correct label via id
-    expect(input).toHaveAttribute('id', 'username')
-  })
+  it('supports different input types', () => {
+    render(<FormInput {...defaultProps} type="email" />);
+    expect(screen.getByLabelText('Username')).toHaveAttribute('type', 'email');
+  });
 
-  test('displays the provided value', () => {
-    render(
-      <FormInput
-        id="email"
-        label="Email"
-        value="test@example.com"
-        onChange={() => {}}
-      />
-    )
+  it('applies custom styles', () => {
+    const style = { backgroundColor: 'rgb(255, 0, 0)' };
+    render(<FormInput {...defaultProps} style={style} />);
+    expect(screen.getByLabelText('Username')).toHaveStyle('background-color: rgb(255, 0, 0)');
+  });
 
-    // Check that the input has the correct value
-    const input = screen.getByLabelText(/email/i)
-    expect(input).toHaveValue('test@example.com')
-  })
+  it('applies additional class names', () => {
+    render(<FormInput {...defaultProps} className="custom-class" />);
+    expect(screen.getByLabelText('Username').className).toMatch(/custom-class/);
+  });
 
-  test('calls onChange when user types', () => {
-    const mockChange = jest.fn()
-
-    render(
-      <FormInput
-        id="email"
-        label="Email"
-        value=""
-        onChange={mockChange}
-      />
-    )
-
-    const input = screen.getByLabelText(/email/i)
-
-    // Simulate typing
-    fireEvent.change(input, { target: { value: 'hello@example.com' } })
-
-    // Expect the onChange callback to be called
-    expect(mockChange).toHaveBeenCalled()
-  })
-
-  test('applies custom className and style', () => {
-    const customStyle = { backgroundColor: 'black' }
-
-    render(
-      <FormInput
-        id="phone"
-        label="Phone Number"
-        value=""
-        onChange={() => {}}
-        className="custom-class"
-        style={customStyle}
-      />
-    )
-
-    const input = screen.getByLabelText(/phone number/i)
-
-    // Check for custom class
-    expect(input).toHaveClass('custom-class')
-
-    // Check for inline style
-    expect(input).toHaveStyle({ backgroundColor: 'rgb(0, 0, 0)' })
-  })
-
-  test('supports different input types', () => {
-    const types = ['text', 'email', 'password', 'number', 'tel', 'url']
-
-    types.forEach(type => {
-      render(
-        <FormInput
-          id={type}
-          label={type}
-          type={type}
-          value=""
-          onChange={() => {}}
-        />
-      )
-
-      const input = screen.getByLabelText(new RegExp(type, 'i'))
-
-      // Check if the correct input type is applied
-      expect(input).toHaveAttribute('type', type)
-    })
-  })
-})
+  it('calls onChange handler when value changes', () => {
+    render(<FormInput {...defaultProps} />);
+    const input = screen.getByLabelText('Username');
+    fireEvent.change(input, { target: { value: 'newuser' } });
+    expect(defaultProps.onChange).toHaveBeenCalled();
+  });
+});

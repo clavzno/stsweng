@@ -2,7 +2,7 @@ import { GripVertical } from 'lucide-react';
 
 const DragHandle = () => {
   return (
-    <div className="cursor-grab active:cursor-grabbing p-1">
+    <div className="cursor-grab active:cursor-grabbing p-1" data-testid="drag-handle">
       <GripVertical className="text-dark-bg dark:text-white" />
     </div>
   );

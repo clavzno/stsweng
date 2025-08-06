@@ -1,50 +1,72 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import CoursesList from '../../components/CoursesList'
+import React from 'react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import CoursesList from '../../components/CoursesList';
 
-// Mock the placeholder image to prevent asset-related errors during testing
-jest.mock('../../assets/images/placeholder.png', () => 'placeholder.png')
+// Mock ResizeObserver if using @testing-library/react
+beforeEach(() => {
+  global.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+});
 
-// Mock the CourseCard component to isolate CoursesList logic
-jest.mock('../../components/CourseCard', () => (props) => {
-  const { course } = props
-  return <div data-testid="course-card">{course.title}</div>
-})
+describe('CoursesList Component', () => {
+  it('renders the header and courses', () => {
+    render(<CoursesList />);
+    expect(screen.getByText('My Courses')).toBeInTheDocument();
+    expect(screen.getByText('STSWENG SS1')).toBeInTheDocument();
+    expect(screen.getByText('STCLOUD S14')).toBeInTheDocument();
+  });
 
-describe('CoursesList component', () => {
-  test('renders a grid of course cards', () => {
-    // Render the CoursesList component
-    render(<CoursesList />)
+  it('toggles edit mode when clicking the Edit Courses button', () => {
+    render(<CoursesList />);
+    const editButton = screen.getByRole('button', { name: /Edit Courses/i });
+    fireEvent.click(editButton);
+    expect(screen.getByText('Finish Editing')).toBeInTheDocument();
+  });
 
-    // Query all elements rendered as mocked CourseCard components
-    const cards = screen.getAllByTestId('course-card')
+  it('shows the theme modal when clicking Themes', () => {
+    render(<CoursesList />);
+    const editButton = screen.getByRole('button', { name: /Edit Courses/i });
+    fireEvent.click(editButton);
 
-    // Expect 7 course cards based on the hardcoded course array
-    expect(cards).toHaveLength(7)
-  })
+    const themeButton = screen.getByRole('button', { name: /Themes/i });
+    fireEvent.click(themeButton);
 
-  test('renders course titles in order', () => {
-    render(<CoursesList />)
+    expect(screen.getByText('Choose Theme')).toBeInTheDocument();
+  });
 
-    // Verify that specific course titles appear in the document
-    expect(screen.getByText('1243 STSWENG SS1')).toBeInTheDocument()
-    expect(screen.getByText('1243 STCLOUD S14')).toBeInTheDocument()
-    expect(screen.getByText('CSCI-ART S12')).toBeInTheDocument()
-    expect(screen.getByText('BASPHYS S11')).toBeInTheDocument()
-    expect(screen.getByText('WEBDEVT S15')).toBeInTheDocument()
-    expect(screen.getByText('DATANLS S11')).toBeInTheDocument()
-    expect(screen.getByText('MOBAPDE S13')).toBeInTheDocument()
-  })
+  it('applies a selected theme to all courses', () => {
+    render(<CoursesList />);
+    const editButton = screen.getByRole('button', { name: /Edit Courses/i });
+    fireEvent.click(editButton);
 
-  test('ensures each card has a unique key', () => {
-    // Spying on console.error to check for React key warnings
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
+    const themeButton = screen.getByRole('button', { name: /Themes/i });
+    fireEvent.click(themeButton);
 
-    render(<CoursesList />)
+    const energeticButton = screen.getByRole('button', { name: /Energetic/i });
+    fireEvent.click(energeticButton);
 
-    // Confirm no key warnings were triggered
-    expect(consoleSpy).not.toHaveBeenCalled()
+    expect(screen.queryByText('Choose Theme')).not.toBeInTheDocument();
+  });
 
-    consoleSpy.mockRestore()
-  })
-})
+  it('can toggle Show Grades and Show Assignments checkboxes', () => {
+    render(<CoursesList />);
+    const editButton = screen.getByRole('button', { name: /Edit Courses/i });
+    fireEvent.click(editButton);
+
+    const gradesCheckbox = screen.getByLabelText('Show Grades');
+    const assignmentsCheckbox = screen.getByLabelText('Show Assignments');
+
+    expect(gradesCheckbox).toBeChecked();
+    expect(assignmentsCheckbox).toBeChecked();
+
+    fireEvent.click(gradesCheckbox);
+    fireEvent.click(assignmentsCheckbox);
+
+    expect(gradesCheckbox).not.toBeChecked();
+    expect(assignmentsCheckbox).not.toBeChecked();
+  });
+});

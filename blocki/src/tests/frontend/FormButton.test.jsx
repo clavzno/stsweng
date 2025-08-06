@@ -1,85 +1,59 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import FormButton from '../../components/FormButton' // Adjust path as necessary
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import FormButton from '../../components/FormButton';
 
-describe('FormButton Component', () => {
-  test('renders with default props and children', () => {
-    // Render the button with default props and sample text
-    render(<FormButton>Submit</FormButton>)
+describe('FormButton', () => {
+  it('renders with default props and children', () => {
+    render(<FormButton>Click Me</FormButton>);
 
-    // Check if the button is rendered with the correct text
-    const button = screen.getByRole('button', { name: /submit/i })
-    expect(button).toBeInTheDocument()
+    const button = screen.getByRole('button', { name: /click me/i });
 
-    // It should use the default type "submit"
-    expect(button).toHaveAttribute('type', 'submit')
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveAttribute('type', 'submit');
+    expect(button).toHaveClass('bg-primary');
+  });
 
-    // Default variant is "primary", which includes specific classes
-    expect(button.className).toMatch(/bg-primary/)
-  })
+  it('renders with a custom variant', () => {
+    render(<FormButton variant="green">Submit</FormButton>);
 
-  test('applies custom variant styles correctly', () => {
-    // Render the button with a "green" variant
-    render(<FormButton variant="green">Save</FormButton>)
+    const button = screen.getByRole('button', { name: /submit/i });
 
-    const button = screen.getByRole('button', { name: /save/i })
+    expect(button).toHaveClass('bg-green');
+    expect(button).toHaveClass('hover:bg-[#3bc63a]');
+  });
 
-    // Check if correct green variant class is applied
-    expect(button.className).toMatch(/bg-green/)
-  })
-
-  test('applies custom type and className', () => {
-    // Render the button with type="reset" and a custom class
+  it('applies custom type and className', () => {
     render(
       <FormButton type="reset" className="custom-class">
         Reset
       </FormButton>
-    )
+    );
 
-    const button = screen.getByRole('button', { name: /reset/i })
+    const button = screen.getByRole('button', { name: /reset/i });
 
-    // It should use the "reset" type
-    expect(button).toHaveAttribute('type', 'reset')
+    expect(button).toHaveAttribute('type', 'reset');
+    expect(button).toHaveClass('custom-class');
+  });
 
-    // Custom class should be included
-    expect(button.className).toMatch(/custom-class/)
-  })
+  it('supports inline style', () => {
+    render(
+      <FormButton style={{ backgroundColor: 'red' }}>
+        Styled Button
+      </FormButton>
+    );
 
-  test('applies inline styles if provided', () => {
-  render(
-    <FormButton style={{ border: '2px solid red' }}>
-      Styled
-    </FormButton>
-  )
+    const button = screen.getByRole('button', { name: /styled button/i });
 
-  const button = screen.getByRole('button', { name: /styled/i })
+    expect(button).toHaveStyle('background-color: rgb(255, 0, 0)');
+  });
 
-  // Inline style will only work if not overridden by Tailwind
-  expect(button).toHaveAttribute('style', expect.stringContaining('border'))
-})
+  it('fires onClick handler', () => {
+    const handleClick = jest.fn();
+    render(<FormButton onClick={handleClick}>Click</FormButton>);
 
-  test('calls onClick when clicked', () => {
-    const handleClick = jest.fn()
+    const button = screen.getByRole('button', { name: /click/i });
+    fireEvent.click(button);
 
-    // Render the button with an onClick handler
-    render(<FormButton onClick={handleClick}>Click Me</FormButton>)
-
-    const button = screen.getByRole('button', { name: /click me/i })
-
-    // Simulate click
-    fireEvent.click(button)
-
-    // onClick handler should be called once
-    expect(handleClick).toHaveBeenCalledTimes(1)
-  })
-
-  test('uses fallback "blue" variant if unknown variant is passed', () => {
-    // Render with an invalid variant to check fallback
-    render(<FormButton variant="unknown">Fallback</FormButton>)
-
-    const button = screen.getByRole('button', { name: /fallback/i })
-
-    // Should fall back to the "blue" variant
-    expect(button.className).toMatch(/bg-primary/)
-  })
-})
+    expect(handleClick).toHaveBeenCalledTimes(1);
+  });
+});

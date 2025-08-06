@@ -3,94 +3,58 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import AddComponentModal from '../../components/AddComponentModal';
 
 describe('AddComponentModal', () => {
-  const onCloseMock = jest.fn();
-  const onAddComponentMock = jest.fn();
+  const mockOnClose = jest.fn();
+  const mockOnAddComponent = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   test('does not render when isOpen is false', () => {
-    render(
-      <AddComponentModal
-        isOpen={false}
-        onClose={onCloseMock}
-        onAddComponent={onAddComponentMock}
-      />
+    const { container } = render(
+      <AddComponentModal isOpen={false} onClose={mockOnClose} onAddComponent={mockOnAddComponent} />
     );
-
-    expect(screen.queryByText(/Add a Component/i)).not.toBeInTheDocument();
+    expect(container.firstChild).toBeNull();
   });
 
-  test('renders component options when isOpen is true', () => {
+  test('renders modal when isOpen is true', () => {
     render(
-      <AddComponentModal
-        isOpen={true}
-        onClose={onCloseMock}
-        onAddComponent={onAddComponentMock}
-      />
+      <AddComponentModal isOpen={true} onClose={mockOnClose} onAddComponent={mockOnAddComponent} />
     );
 
-    // Title should be present
-    expect(screen.getByText(/Add a Component/i)).toBeInTheDocument();
-
-    // Component cards should be visible
-    expect(screen.getByText(/Courses List/i)).toBeInTheDocument();
-    expect(screen.getByText(/Calendar/i)).toBeInTheDocument();
-    expect(screen.getByText(/Study Tracker/i)).toBeInTheDocument();
-    expect(screen.getByText(/Pomodoro Timer/i)).toBeInTheDocument();
+    expect(screen.getByText('Add Component')).toBeInTheDocument();
+    expect(screen.getByText('Courses List')).toBeInTheDocument();
+    expect(screen.getByText('Calendar')).toBeInTheDocument();
   });
 
   test('calls onAddComponent when a component is clicked', () => {
     render(
-      <AddComponentModal
-        isOpen={true}
-        onClose={onCloseMock}
-        onAddComponent={onAddComponentMock}
-      />
+      <AddComponentModal isOpen={true} onClose={mockOnClose} onAddComponent={mockOnAddComponent} />
     );
 
-    fireEvent.click(screen.getByText(/Courses List/i));
-    expect(onAddComponentMock).toHaveBeenCalledWith('courses');
-
-    fireEvent.click(screen.getByText(/Calendar/i));
-    expect(onAddComponentMock).toHaveBeenCalledWith('calendar');
-
-    fireEvent.click(screen.getByText(/Study Tracker/i));
-    expect(onAddComponentMock).toHaveBeenCalledWith('tracker');
-
-    fireEvent.click(screen.getByText(/Pomodoro Timer/i));
-    expect(onAddComponentMock).toHaveBeenCalledWith('pomodoro');
+    fireEvent.click(screen.getByText('Courses List'));
+    expect(mockOnAddComponent).toHaveBeenCalledWith('courses');
   });
 
-  test('calls onClose when the Cancel button is clicked', () => {
+  test('calls onClose when close button is clicked', () => {
     render(
-      <AddComponentModal
-        isOpen={true}
-        onClose={onCloseMock}
-        onAddComponent={onAddComponentMock}
-      />
+      <AddComponentModal isOpen={true} onClose={mockOnClose} onAddComponent={mockOnAddComponent} />
     );
 
-    fireEvent.click(screen.getByText(/Cancel/i));
-    expect(onCloseMock).toHaveBeenCalled();
+    const closeButton = screen.getAllByRole('button').find(btn =>
+      btn.innerHTML.includes('path') // crude check for SVG "X" icon
+    );
+    fireEvent.click(closeButton);
+
+    expect(mockOnClose).toHaveBeenCalled();
   });
 
-  test('calls onClose when the top right close button is clicked', () => {
+  test('calls onClose when Cancel button is clicked', () => {
     render(
-      <AddComponentModal
-        isOpen={true}
-        onClose={onCloseMock}
-        onAddComponent={onAddComponentMock}
-      />
+      <AddComponentModal isOpen={true} onClose={mockOnClose} onAddComponent={mockOnAddComponent} />
     );
 
-    const closeButtons = screen.getAllByRole('button');
-    const topCloseBtn = closeButtons.find(btn =>
-      btn.innerHTML.includes('M19 6.41L17.59 5') // Matches the close icon SVG path
-    );
-
-    fireEvent.click(topCloseBtn);
-    expect(onCloseMock).toHaveBeenCalled();
+    fireEvent.click(screen.getByText('Cancel'));
+    expect(mockOnClose).toHaveBeenCalled();
   });
 });

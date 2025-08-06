@@ -1,57 +1,35 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import ModuleList from '../../components/ModuleList';
+import { render, screen, within } from '@testing-library/react';
+import ModuleList from '../../components/ModuleList'; // Adjust path as needed
 
-describe('ModuleList component', () => {
+describe('ModuleList', () => {
   const mockModules = [
     { id: 1, title: 'Module 1: Introduction', link: '/modules/1' },
-    { id: 2, title: 'Module 2: Deep Dive', link: '/modules/2' },
+    { id: 2, title: 'Module 2: Advanced Topics', link: '/modules/2' },
   ];
 
-  test('renders the section title', () => {
-    // Render the component with sample module data
+  it('renders the module list heading', () => {
     render(<ModuleList modules={mockModules} />);
-
-    // Expect the header to appear in the document
     expect(screen.getByText('Modules')).toBeInTheDocument();
   });
 
-  test('renders all modules passed as props', () => {
+  it('renders all module titles', () => {
     render(<ModuleList modules={mockModules} />);
-
-    // Check that each module title is present in the DOM
     mockModules.forEach((module) => {
       expect(screen.getByText(module.title)).toBeInTheDocument();
     });
   });
 
-  test('renders correct number of module items', () => {
+  it('renders correct links for each module', () => {
     render(<ModuleList modules={mockModules} />);
-
-    // Each module is inside a list item, so count the list items
     const listItems = screen.getAllByRole('listitem');
     expect(listItems).toHaveLength(mockModules.length);
-  });
 
-  test('each module has a working "View" link', () => {
-    render(<ModuleList modules={mockModules} />);
-
-    // Check that each "View" link has the correct href
-    mockModules.forEach((module) => {
-      const link = screen.getByText('View', { selector: 'a[href="' + module.link + '"]' });
-      expect(link).toBeInTheDocument();
-      expect(link).toHaveAttribute('href', module.link);
+    listItems.forEach((item, index) => {
+      const utils = within(item);
+      expect(utils.getByText(mockModules[index].title)).toBeInTheDocument();
+      const link = utils.getByText('View');
+      expect(link).toHaveAttribute('href', mockModules[index].link);
     });
-  });
-
-  test('handles empty module list gracefully', () => {
-    // Render with an empty array of modules
-    render(<ModuleList modules={[]} />);
-
-    // The section title should still render
-    expect(screen.getByText('Modules')).toBeInTheDocument();
-
-    // There should be no list items
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
   });
 });

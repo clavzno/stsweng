@@ -3,11 +3,6 @@
 import React, { useState, useEffect } from 'react';
 
 // For prototyping WIP
-const FiPlus = ({ className }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-  </svg>
-);
 
 const FiX = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,21 +98,10 @@ export default function CustomizableSidebar() {
     }
   }, []);
 
-  const addTab = (tab) => {
-    const newTabs = [...tabs, tab];
-    setTabs(newTabs);
-    localStorage.setItem('sidebarTabs', JSON.stringify(newTabs));
-    setShowAddMenu(false);
-  };
-
   const removeTab = (tabId) => {
     const newTabs = tabs.filter(tab => tab.id !== tabId);
     setTabs(newTabs);
     localStorage.setItem('sidebarTabs', JSON.stringify(newTabs));
-  };
-
-  const getAvailableTabs = () => {
-    return availableTabs.filter(tab => !tabs.find(t => t.id === tab.id));
   };
 
   return (
@@ -182,48 +166,9 @@ export default function CustomizableSidebar() {
                 )}
               </li>
             ))}
-
-            {/* Add Tab Button */}
-            <li className="relative">
-              <button
-                onClick={() => setShowAddMenu(!showAddMenu)}
-                className="w-full flex items-center px-2 py-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg font-roboto transition-colors"
-              >
-                <FiPlus className="flex-shrink-0 w-6 h-6" />
-                <span className="ml-3 text-base whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-                  Add Tab
-                </span>
-              </button>
-
-              {/* Add Tab Modal - Inside Sidebar */}
-              {showAddMenu && getAvailableTabs().length > 0 && (
-                <div className="mt-2 mx-1 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 py-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-600 mb-2">
-                    Available Tabs
-                  </div>
-                  {getAvailableTabs().map((tab) => (
-                    <button
-                      key={tab.id}
-                      onClick={() => addTab(tab)}
-                      className="w-full flex items-center px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors text-sm"
-                    >
-                      {renderIcon(tab.icon, "w-4 h-4 mr-3 text-primary")}
-                      {tab.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </li>
           </ul>
         </div>
       </nav>
-
-      {showAddMenu && (
-        <div 
-          className="fixed inset-0 z-10" 
-          onClick={() => setShowAddMenu(false)}
-        />
-      )}
     </aside>
   );
 }

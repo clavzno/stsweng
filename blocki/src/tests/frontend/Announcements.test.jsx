@@ -1,48 +1,43 @@
-import React from 'react'
-import { render, screen } from '@testing-library/react'
-import Announcements from '../../components/Announcements'
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Announcements from '../../components/Announcements';
 
-test('renders the Announcements header', () => {
-  // Render the component with an empty list to isolate the header
-  render(<Announcements announcements={[]} />)
-
-  // Check that the header is present
-  expect(screen.getByText(/Announcements/i)).toBeInTheDocument()
-})
-
-test('renders a list of announcement items', () => {
-  // Define a sample list of announcements to pass as props
-  const sampleAnnouncements = [
+describe('Announcements component', () => {
+  const mockAnnouncements = [
     {
       id: 1,
-      title: 'Midterm Exam Reminder',
-      content: 'The midterm exam will be held next Monday at 10AM.',
-      date: 'March 20, 2025'
+      title: 'Welcome!',
+      content: 'This is your first announcement.',
+      date: '2025-08-06',
     },
     {
       id: 2,
-      title: 'Project Submission',
-      content: 'Submit your project proposal by Friday via the portal.',
-      date: 'March 22, 2025'
-    }
-  ]
+      title: 'New Feature Released',
+      content: 'Check out the new calendar integration.',
+      date: '2025-08-05',
+    },
+  ];
 
-  // Render the component with sample data
-  render(<Announcements announcements={sampleAnnouncements} />)
+  test('renders the title', () => {
+    render(<Announcements announcements={mockAnnouncements} />);
+    expect(screen.getByText('Announcements')).toBeInTheDocument();
+  });
 
-  // Check that each announcement title, content, and date is rendered
-  sampleAnnouncements.forEach((announcement) => {
-    expect(screen.getByText(announcement.title)).toBeInTheDocument()
-    expect(screen.getByText(announcement.content)).toBeInTheDocument()
-    expect(screen.getByText(announcement.date)).toBeInTheDocument()
-  })
-})
+  test('renders a list of announcements', () => {
+    render(<Announcements announcements={mockAnnouncements} />);
+    expect(screen.getByText('Welcome!')).toBeInTheDocument();
+    expect(screen.getByText('This is your first announcement.')).toBeInTheDocument();
+    expect(screen.getByText('2025-08-06')).toBeInTheDocument();
 
-test('renders no list items if announcements array is empty', () => {
-  // Render the component with no announcements
-  render(<Announcements announcements={[]} />)
+    expect(screen.getByText('New Feature Released')).toBeInTheDocument();
+    expect(screen.getByText('Check out the new calendar integration.')).toBeInTheDocument();
+    expect(screen.getByText('2025-08-05')).toBeInTheDocument();
+  });
 
-  // Try to find list items (li). There should be none.
-  const items = screen.queryAllByRole('listitem')
-  expect(items.length).toBe(0)
-})
+  test('renders no list items if announcements array is empty', () => {
+    render(<Announcements announcements={[]} />);
+    expect(screen.getByText('Announcements')).toBeInTheDocument();
+    const items = screen.queryAllByRole('listitem');
+    expect(items.length).toBe(0);
+  });
+});

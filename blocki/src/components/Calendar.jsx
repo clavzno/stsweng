@@ -384,7 +384,8 @@ function CalendarComponent({
                   <CalendarDays className="w-8 h-8 mx-auto" />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">No tasks for this day</p>
-                <button 
+                <button
+                  aria-label="Add Task" 
                   onClick={() => onAddTask(selectedDate)}
                   className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                 >

@@ -14,6 +14,7 @@ const ColorPalettePicker = ({ onColorChange }) => {
           onClick={() => onColorChange(color.value)}
           className={`w-8 h-8 rounded-full ${color.value} border-2 border-white hover:ring-2 ring-white transition`}
           title={color.name}
+          data-testid={`color-button-${color.value}`}
         />
       ))}
     </div>

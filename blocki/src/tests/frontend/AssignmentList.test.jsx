@@ -1,68 +1,66 @@
-import React from 'react'
-import { render, screen, fireEvent } from '@testing-library/react'
-import AssignmentList from '../../components/AssignmentList'
+import React from 'react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
+import AssignmentList from '../../components/AssignmentList';
 
-// Mock FileUploader to isolate the modal behavior
-jest.mock('../../components/FileUploader', () => () => <div>FileUploader</div>)
+// Mock FileUploader since it's imported from a different module
+jest.mock('../../components/course/FileUploader', () => () => (
+  <div data-testid="file-uploader">Mock FileUploader</div>
+));
 
-// Sample data for testing
-const sampleAssignments = [
-  {
-    id: 1,
-    title: 'MCO1 - Project Proposal',
-    instructions: 'Upload a PDF file outlining your project idea.'
-  },
-  {
-    id: 2,
-    title: 'MCO2 - Project Update',
-    instructions: 'Upload a PDF file with an update on your progress.'
-  }
-]
+// Helper to get the currently open modal by class name
+const getModal = () => {
+  return document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50.flex.items-center.justify-center');
+};
 
-test('renders the Assignments header', () => {
-  render(<AssignmentList assignments={sampleAssignments} />)
+describe('AssignmentList', () => {
+  const mockAssignments = [
+    {
+      id: 1,
+      title: 'Assignment 1',
+      instructions: 'Read chapters 1-3 and submit a summary.',
+    },
+    {
+      id: 2,
+      title: 'Assignment 2',
+      instructions: 'Complete the coding exercise on arrays.',
+    },
+  ];
 
-  // Verify that the Assignments title appears
-  expect(screen.getByText(/Assignments/i)).toBeInTheDocument()
-})
+  test('renders assignment titles', () => {
+    render(<AssignmentList assignments={mockAssignments} />);
 
-test('renders a list of assignment titles as buttons', () => {
-  render(<AssignmentList assignments={sampleAssignments} />)
+    expect(screen.getByText('Assignments')).toBeInTheDocument();
+    expect(screen.getByText('Assignment 1')).toBeInTheDocument();
+    expect(screen.getByText('Assignment 2')).toBeInTheDocument();
+  });
 
-  // Ensure all assignment titles render as clickable buttons
-  sampleAssignments.forEach(assignment => {
-    expect(screen.getByText(assignment.title)).toBeInTheDocument()
-  })
-})
+  test('opens and displays selected assignment details', () => {
+    render(<AssignmentList assignments={mockAssignments} />);
 
-test('opens modal with assignment details when a title is clicked', () => {
-  render(<AssignmentList assignments={sampleAssignments} />)
+    fireEvent.click(screen.getByText('Assignment 1'));
 
-  // Simulate user clicking the first assignment
-  fireEvent.click(screen.getByText('MCO1 - Project Proposal'))
+    const modal = getModal();
+    expect(modal).not.toBeNull();
 
-  // Expect two elements with the title:
-  // 1. The button
-  // 2. The modal heading
-  const matches = screen.getAllByText('MCO1 - Project Proposal')
-  expect(matches).toHaveLength(2)
+    const withinModal = within(modal);
+    expect(withinModal.getByText('Assignment 1')).toBeInTheDocument();
+    expect(withinModal.getByText('Read chapters 1-3 and submit a summary.')).toBeInTheDocument();
+    expect(withinModal.getByTestId('file-uploader')).toBeInTheDocument();
+    expect(withinModal.getByRole('button', { name: /close/i })).toBeInTheDocument();
+  });
 
-  // Verify the instruction text is in the modal
-  expect(screen.getByText('Upload a PDF file outlining your project idea.')).toBeInTheDocument()
+  test('closes the modal when Close button is clicked', () => {
+    render(<AssignmentList assignments={mockAssignments} />);
 
-  // Verify that the FileUploader mock is rendered
-  expect(screen.getByText('FileUploader')).toBeInTheDocument()
-})
+    fireEvent.click(screen.getByText('Assignment 2'));
 
-test('closes modal when the "Close" button is clicked', () => {
-  render(<AssignmentList assignments={sampleAssignments} />)
+    const modal = getModal();
+    expect(modal).not.toBeNull();
 
-  // Open modal
-  fireEvent.click(screen.getByText('MCO1 - Project Proposal'))
+    const closeButton = within(modal).getByRole('button', { name: /close/i });
+    fireEvent.click(closeButton);
 
-  // Close modal
-  fireEvent.click(screen.getByText('Close'))
-
-  // Expect modal content to be removed
-  expect(screen.queryByText('Upload a PDF file outlining your project idea.')).not.toBeInTheDocument()
-})
+    // Modal content should no longer be visible
+    expect(screen.queryByText('Complete the coding exercise on arrays.')).not.toBeInTheDocument();
+  });
+});
