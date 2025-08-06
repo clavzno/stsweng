@@ -8,7 +8,7 @@ import bgImage from '../assets/images/background.png';
 import canvasLogo from '../assets/images/canvas_logo.png';
 import logoSingle from '../assets/images/logo_single.png';
 
-// auth2
+// auth
 import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
@@ -103,7 +103,7 @@ export default function LoginPage() {
                * Direct redirect to dashboard
                * router.push('/dashboard');
                */
-              signIn('dlsuinstructure', {callbackUrl: '/dashboard', redirect: true})
+              signIn('dlsuinstructure', {callbackUrl: '/dashboard', redirect: true}) // use signIn from next-auth, do not remove the options
             }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}

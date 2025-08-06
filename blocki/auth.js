@@ -67,14 +67,12 @@ const otherScopes = [
   "url:GET|/api/v1/announcements",
 ];
 
-// export const { handlers, signIn, signOut, auth } = NextAuth()
-
 const authOptions = {
   providers: [
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
-      type: "oauth", // "oidc",
+      type: "oauth",
       issuer: "https://dlsu.instructure.com",
       clientId: process.env.API_KEY,
       clientSecret: process.env.API_SECRET,
@@ -83,12 +81,11 @@ const authOptions = {
         url: "https://dlsu.instructure.com/login/oauth2/auth",
         token: "https://dlsu.instructure.com/login/oauth2/token",
         params: {
-          scope: otherScopes.join(" "), // removed "openid " + 
+          scope: otherScopes.join(" "),
           purpose: "Blocki Oauth2 Authentication",
           response_type: "code",
         },
       },
-      // wellKnown: "https://dlsu.instructure.com/.well-known/openid-configuration", //only use if not using a full OIDC provider
       userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile",
       profile(profile) {
         return {
@@ -113,17 +110,10 @@ const authOptions = {
       token: "https://dlsu.instructure.com/login/oauth2/token",
     },
   ],
-  // useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
       // in this callback you can add properties to the token
-      /**
-       * if (user) {
-       * token.id = user.id;
-       * }
-       * return token;
-       */
       if (account?.provider === "dlsuinstructure") {
         return { ...token, accessToken: account.access_token }
       }
@@ -154,5 +144,3 @@ const authOptions = {
 
 const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
 export { auth, handlers, signIn, signOut };
-
-// callback URL:  https://blocki.vercel.app/api/auth/callback/{id}

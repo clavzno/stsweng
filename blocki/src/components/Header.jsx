@@ -8,6 +8,7 @@ import blockiLogoLight from '../assets/images/logo_full_light.png';
 
 //auth
 import { auth } from '../../auth'; // do not change this path
+import { signOut } from "next-auth/react";
 
 // WIP: icons
 const FiSearch = ({ className }) => (
@@ -41,11 +42,7 @@ const FiMoon = ({ className }) => (
   </svg>
 );
 
-export default async function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
-    //test
-    const session = await auth()
-    console.log('LoginPage: ', session?.accessToken)
-
+export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const router = useRouter();
@@ -76,9 +73,12 @@ export default async function Header({ isEditMode, setIsEditMode, onSaveLayout }
         // Remove any stored user data or tokens if needed
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        
-        // Redirect to login page
-        router.push('/login');
+        /**
+         * Redirect to login page
+         * router.push('/login');
+         */
+
+        signOut('dlsuinstructure', {callbackUrl: '/login', redirect: true}) // use signOut from next-auth, do not remove the options
     };
 
     return (
