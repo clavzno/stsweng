@@ -115,7 +115,7 @@ const authOptions = {
       // checks: ["none"],
     },
   ],
-  //useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
+  useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
   //trustHost: true,
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
@@ -141,12 +141,12 @@ const authOptions = {
       session.accessToken = token.accessToken
       return session
     },
-    async redirect({url, baseUrl}) { 
+    async redirect({ url, baseUrl }) {
       console.log("Final Redirect after login");
       console.log("URL:", url);
       console.log("Base URL:", baseUrl);
       return baseUrl + "/dashboard"; // redirect to the dashboard after login
-    }
+    },
   },
 };
 
