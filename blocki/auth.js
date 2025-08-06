@@ -111,25 +111,9 @@ const authOptions = {
         };
       },
       token: "https://dlsu.instructure.com/login/oauth2/token",
-      // ONLY FOR LOCALHOST, REMOVE THIS IN PRODUCTION
-      // checks: ["none"],
     },
   ],
-  useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
-  //trustHost: true,
-  /**
-  cookies: {
-    state: {
-      name: `__THIS_IS_THE_STATE_COOKIE__authjs.state`,
-      options: {
-        httpOnly: false,
-        domain: "duckling-cool-mutt.ngrok-free.app", // set to .blocki.vercel.app in production
-        sameSite: "lax",
-        path: "/",
-        secure: true, // https with ngrok
-      }
-    }
-  }, */
+  // useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
@@ -147,10 +131,6 @@ const authOptions = {
     },
     async session({ session, token }) {
       // in this callback you can expose those properties to the client session
-      /**
-       * session.user.id = token.id;
-       * return session;
-       */
       session.accessToken = token.accessToken
       return session
     },
@@ -158,7 +138,16 @@ const authOptions = {
       console.log("Final Redirect after login");
       console.log("URL:", url);
       console.log("Base URL:", baseUrl);
-      return url; // redirect to the dashboard after login
+
+      if (url.endsWith("/dashboard")) {
+        return baseUrl + "/login";
+      }
+
+      if (url.endsWith("/login")) {
+        return baseUrl + "/dashboard";
+      }
+
+      return baseUrl; // default: redirect to base URL
     },
   },
 };
