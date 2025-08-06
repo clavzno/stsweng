@@ -122,10 +122,10 @@ const authOptions = {
       name: `__THIS_IS_THE_STATE_COOKIE__authjs.state`,
       options: {
         httpOnly: false,
-        hostOnly: false,
+        domain: "duckling-cool-mutt.ngrok-free.app", // set to .blocki.vercel.app in production
         sameSite: "lax",
         path: "/",
-        secure: true,
+        secure: false, // true in production
       }
     }
   },
