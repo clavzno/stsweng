@@ -117,6 +117,15 @@ const authOptions = {
   ],
   useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
   //trustHost: true,
+  cookies: {
+    state: {
+      name: `${cookiePrefix}LOOKATMEauthjs.state`,
+      httpOnly: false,
+      sameSite: "lax",
+      path: "/",
+      secure: true,
+    }
+  },
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
