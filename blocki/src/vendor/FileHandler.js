@@ -1,0 +1,3 @@
+/**
+ * Handles file upload.
+ */
