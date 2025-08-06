@@ -20,7 +20,22 @@ export class CanvasAPI {
 
     replaceId(endpoint) {
         // TODO: logic here to replace :id with "self" if it's a users/ endpoint
+        
+        if (endpoint.startsWith('/api/v1/users/')) {
+            // Replace both :id and :user_id with 'self'
+            return endpoint.replace(/:(id|user_id)/g, 'self');
+        }
+        
         // TODO: logic here to replace :id with the class_id if it's a courses/ endpoint
+
+        /**if (endpoint.startsWith('/api/v1/courses/')) {
+            // Replace both :id and :course_id with this.classId
+            if (!this.classId) throw new Error("classId is not set in CanvasAPI");
+            return endpoint.replace(/:(id|course_id)/g, this.classId);
+        } **/
+       
+        // Return endpoint unchanged if no match
+        return endpoint;
     }
 
     async get(endpoint, params = {}) {
