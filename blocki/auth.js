@@ -117,6 +117,7 @@ const authOptions = {
   ],
   useSecureCookies: false, // makes cookies accessible to HTTP and HTTPS
   //trustHost: true,
+  /**
   cookies: {
     state: {
       name: `__THIS_IS_THE_STATE_COOKIE__authjs.state`,
@@ -125,10 +126,10 @@ const authOptions = {
         domain: "duckling-cool-mutt.ngrok-free.app", // set to .blocki.vercel.app in production
         sameSite: "lax",
         path: "/",
-        secure: false, // true in production
+        secure: true, // https with ngrok
       }
     }
-  },
+  }, */
   debug: true, // REMOVE THIS IN PRODUCTION
   callbacks: {
     jwt({ token, user, account }) {
@@ -157,7 +158,7 @@ const authOptions = {
       console.log("Final Redirect after login");
       console.log("URL:", url);
       console.log("Base URL:", baseUrl);
-      return baseUrl + "/dashboard"; // redirect to the dashboard after login
+      return url; // redirect to the dashboard after login
     },
   },
 };
