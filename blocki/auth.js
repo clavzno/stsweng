@@ -89,8 +89,9 @@ const authOptions = {
       userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile",
       profile(profile) {
         // provider's //userinfo response
-        console.log("--- Profile Function: ---", profile)
-        console.log("--- ---")
+        /**
+         * console.log(profile);
+         */
         return {
           id: profile.id, // this is available, but we're not allowed to use it
           name: profile.name,
@@ -115,7 +116,8 @@ const authOptions = {
   ],
   debug: false, // MAKE FALSE IN PRODUCTION
   callbacks: {
-    jwt({ token, user, account }) {
+    async jwt({ token, user, account }) {
+      // don't need to handle refresh because blocki tokens expire never
       console.log("--- JWT CALLBACK ---")
       // in this callback you can add properties to the JSON Web Token (JWT)
       if (account?.provider === "dlsuinstructure") {
@@ -123,26 +125,26 @@ const authOptions = {
         console.log("JWT Token: ", token); // token contains name, email, picture (undefined), sub
         console.log("User: ", user); // contains full profile
         console.log("Account Access Token: ", account.access_token);
-        console.log("Refresh Token: ", account.refresh_token); 
+        console.log("Refresh Token: ", account.refresh_token);
         console.log("--- ---");
         return { ...token, accessToken: account.access_token, refreshToken: account.refresh_token }; // saved in the JWT
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       // refer to https://authjs.dev/reference/core#session
       // in this callback you can expose those properties to the client session
-      session.accessToken = token.accessToken
+      session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       console.log("--- SESSION CALLBACK ---");
       console.log("Session Access Token: ", session.accessToken);
       console.log("Session Refresh Token: ", session.refreshToken);
       console.log("--- ---");
-      return session
+      return session;
     },
     async redirect({ url, baseUrl }) {
-      console.log("URL:", url);  // REMOVE THIS IN PRODUCTION
-      console.log("Base URL:", baseUrl);  // REMOVE THIS IN PRODUCTION
+      console.log("URL:", url); // REMOVE THIS IN PRODUCTION
+      console.log("Base URL:", baseUrl); // REMOVE THIS IN PRODUCTION
 
       if (url.endsWith("/dashboard")) {
         return baseUrl + "/login";
