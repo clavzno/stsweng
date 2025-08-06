@@ -120,11 +120,13 @@ const authOptions = {
   cookies: {
     state: {
       name: `__THIS_IS_THE_STATE_COOKIE__authjs.state`,
-      httpOnly: false,
-      hostOnly: false,
-      sameSite: "lax",
-      path: "/",
-      secure: true,
+      options: {
+        httpOnly: false,
+        hostOnly: false,
+        sameSite: "lax",
+        path: "/",
+        secure: true,
+      }
     }
   },
   debug: true, // REMOVE THIS IN PRODUCTION
