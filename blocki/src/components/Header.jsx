@@ -7,7 +7,6 @@ import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
 
 //auth
-import { auth } from '../../auth'; // do not change this path
 import { signOut } from "next-auth/react";
 
 // WIP: icons
