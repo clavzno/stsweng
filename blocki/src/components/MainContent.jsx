@@ -2,14 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
+
 import CoursesList from './CoursesList';
 import Calendar from './Calendar';
 import StudyTracker from './StudyTracker';
 import Pomodoro from './Pomodoro';
 import PixelTracker from './PixelTracker';
+import ToDoList from './ToDoList';
+
 import AddComponentModal from './AddComponentModal';
 import Settings from './Settings';
 import SaveLayoutButton from './SaveLayoutButton';
+
+// ✅ Collaboration Components
+import UserAvatarList from './UserAvatarList';
+import GroupPicker from './GroupPicker';
+import ProfileEditor from './ProfileEditor';
+import MessageThread from './MessageThread';
+import ExternalLinkButton from './ExternalLinkButton';
+import FeedbackPanel from './FeedbackPanel';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -18,6 +29,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'compact'
 
+    // ✅ Load saved layout & view mode from localStorage
     useEffect(() => {
         const savedLayout = localStorage.getItem('dashboardLayout');
         const savedViewMode = localStorage.getItem('dashboardViewMode');
@@ -29,30 +41,28 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
         }
     }, []);
     
+    // ✅ Save layout whenever it changes
     useEffect(() => {
         if (layout.length > 0) {
             localStorage.setItem('dashboardLayout', JSON.stringify(layout));
         }
     }, [layout]);
 
+    // ✅ Save view mode changes
     useEffect(() => {
         localStorage.setItem('dashboardViewMode', viewMode);
     }, [viewMode]);
 
+    // ✅ Add new component to layout
     const handleAddComponent = (componentId) => {
-        // Generates unique ID to prevent duplicates of the components/widgets
         const timestamp = Date.now();
         const uniqueId = `${componentId}_${timestamp}`;
         
-        // Different default sizes based on view mode
         const getDefaultSize = () => {
             switch (viewMode) {
-                case 'compact':
-                    return { w: 3, h: 1 };
-                case 'list':
-                    return { w: 12, h: 2 };
-                default: // grid
-                    return { w: 4, h: 2 };
+                case 'compact': return { w: 3, h: 1 };
+                case 'list': return { w: 12, h: 2 };
+                default: return { w: 4, h: 2 };
             }
         };
 
@@ -69,10 +79,12 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
         setIsModalOpen(false);
     };
 
+    // ✅ Remove component
     const handleRemoveComponent = (componentId) => {
         setLayout(layout.filter((item) => item.i !== componentId));
     };
 
+    // ✅ Component Map
     const renderComponent = (item) => {
         const componentMap = {
             courses: <CoursesList />,
@@ -80,6 +92,15 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
             tracker: <StudyTracker />,
             pomodoro: <Pomodoro />,
             pixeltracker: <PixelTracker />,
+            todolist: <ToDoList />,
+
+            // Collaboration Components
+            useravatars: <UserAvatarList />,
+            grouppicker: <GroupPicker />,
+            profileeditor: <ProfileEditor />,
+            messagethread: <MessageThread />,
+            externallink: <ExternalLinkButton />,
+            feedbackpanel: <FeedbackPanel />,
         };
 
         const componentType = item.component || item.i.split('_')[0];
@@ -89,6 +110,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                 key={item.i} 
                 className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-md relative overflow-hidden"
             >
+                {/* ✅ Remove Button */}
                 {isEditMode && (
                     <div className="absolute top-0 right-0 z-50" style={{ pointerEvents: 'auto' }}>
                         <button
@@ -97,9 +119,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                                 e.stopPropagation();
                                 handleRemoveComponent(item.i);
                             }}
-                            onMouseDown={(e) => {
-                                e.stopPropagation();
-                            }}
+                            onMouseDown={(e) => e.stopPropagation()}
                             className="bg-red-500 hover:bg-red-600 text-white rounded-bl-lg rounded-tr-lg h-8 w-8 flex items-center justify-center transition-colors shadow-lg cursor-pointer"
                             title="Remove component"
                         >
@@ -110,6 +130,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     </div>
                 )}
 
+                {/* ✅ Render the component */}
                 <div className={`h-full w-full hide-scrollbar-keep-scroll ${isEditMode ? 'pt-8 pr-8 pl-2 pb-4' : 'p-4'}`}>
                     {componentMap[componentType]}
                 </div>
@@ -124,21 +145,16 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
 
     const getGridClassName = () => {
         switch (viewMode) {
-            case 'compact':
-                return 'layout hide-scrollbar compact-view';
-            case 'list':
-                return 'layout hide-scrollbar list-view';
-            default:
-                return 'layout hide-scrollbar grid-view';
+            case 'compact': return 'layout hide-scrollbar compact-view';
+            case 'list': return 'layout hide-scrollbar list-view';
+            default: return 'layout hide-scrollbar grid-view';
         }
     };
 
     return (
         <main className="flex-1 overflow-y-auto hide-scrollbar bg-gray-50 dark:bg-gray-900">
             <div className="p-6">
-                {/* View Mode Controls - REMOVED */}
-
-                {/* Settings panel */}
+                {/* Settings Panel */}
                 {isEditMode && (
                     <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                         <div className="flex items-center justify-between">
@@ -148,7 +164,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     </div>
                 )}
 
-                {/* Grid Layout */}
+                {/* ✅ Grid Layout */}
                 <ResponsiveGridLayout
                     className={`${getGridClassName()} ${isEditMode ? 'border-2 border-dashed border-blue-400 dark:border-blue-500 rounded-lg p-4' : ''}`}
                     layouts={{ lg: layout }}
@@ -162,6 +178,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     {layout.map(renderComponent)}
                 </ResponsiveGridLayout>
 
+                {/* ✅ Empty Dashboard Prompt */}
                 {layout.length === 0 && (
                     <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-8 text-center">
                         <div className="inline-block p-4 bg-primary/10 rounded-full mb-4">
@@ -184,6 +201,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     </div>
                 )}
 
+                {/* Floating Add Button */}
                 <button
                     onClick={() => setIsModalOpen(true)}
                     className="fixed bottom-6 right-6 bg-primary hover:bg-primary/90 text-white p-4 rounded-full shadow-lg transition-colors z-50"
@@ -193,6 +211,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
                     </svg>
                 </button>
 
+                {/* ✅ Add Component Modal */}
                 <AddComponentModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}

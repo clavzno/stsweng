@@ -1,15 +1,27 @@
-import React from 'react';
+"use client";
+import React, { useState } from "react";
 
-export default function FeedbackPanel() {
+export default function FeedbackPanel({ onSubmit }) {
+  const [feedback, setFeedback] = useState("");
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">Feedback</h2>
+    <div className="p-4 space-y-4 border rounded">
+      <h2 className="text-lg font-bold">Feedback</h2>
       <textarea
-        placeholder="Your feedback..."
-        className="w-full p-2 rounded border dark:bg-gray-700 dark:text-white"
-        rows={4}
+        value={feedback}
+        onChange={(e) => setFeedback(e.target.value)}
+        placeholder="Share your feedback..."
+        className="border p-2 rounded w-full"
       />
-      <button className="mt-2 bg-green text-white px-4 py-2 rounded hover:bg-green-600">
+      <button
+        onClick={() => {
+          if (feedback.trim()) {
+            onSubmit && onSubmit(feedback);
+            setFeedback("");
+          }
+        }}
+        className="bg-primary text-white px-4 py-2 rounded"
+      >
         Submit
       </button>
     </div>

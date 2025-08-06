@@ -60,7 +60,7 @@ export default function AddComponentModal({ isOpen, onClose, onAddComponent }) {
       color: 'from-red-500 to-red-600'
     },
     { 
-      id: 'pixeltracker', // Changed from 'PixelTracker' to 'pixeltracker' to match the component mapping
+      id: 'pixeltracker',
       name: 'Pixel Tracker',
       description: 'Reveal an image by completing tasks.',
       icon: (
@@ -73,11 +73,35 @@ export default function AddComponentModal({ isOpen, onClose, onAddComponent }) {
       ),
       color: 'from-yellow-500 to-orange-600'
     },
+
+    // ✅ New Widgets
+    { 
+      id: 'todolist',
+      name: 'To-Do List',
+      description: 'Organize and track your tasks',
+      icon: (
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M9 11l3 3L22 4" />
+          <path d="M2 12h7" />
+          <path d="M2 18h7" />
+          <path d="M2 6h7" />
+        </svg>
+      ),
+      color: 'from-pink-500 to-pink-600'
+    },
+    { id: 'useravatars', name: 'User Avatars', description: 'Show group members visually', color: 'from-indigo-500 to-indigo-600' },
+    { id: 'grouppicker', name: 'Group Picker', description: 'Quickly switch between groups', color: 'from-cyan-500 to-cyan-600' },
+    { id: 'profileeditor', name: 'Profile Editor', description: 'Edit your user details', color: 'from-teal-500 to-teal-600' },
+    { id: 'messagethread', name: 'Message Thread', description: 'Collaborate via threaded messages', color: 'from-emerald-500 to-emerald-600' },
+    { id: 'externallink', name: 'External Link Button', description: 'Open useful links quickly', color: 'from-amber-500 to-amber-600' },
+    { id: 'feedbackpanel', name: 'Feedback Panel', description: 'Share feedback with your team', color: 'from-rose-500 to-rose-600' },
   ];
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        
+        {/* Header */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-roboto font-bold text-gray-800 dark:text-gray-100 mb-1">
@@ -97,35 +121,35 @@ export default function AddComponentModal({ isOpen, onClose, onAddComponent }) {
           </button>
         </div>
         
+        {/* Component Grid */}
         <div className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {components.map((component) => (
               <button
                 key={component.id}
                 onClick={() => onAddComponent(component.id)}
-                className="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-transparent dark:hover:border-transparent transition-all duration-300 hover:shadow-xl hover:scale-105 text-left p-6"
+                className="group relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-600 
+                           bg-white dark:bg-gray-700 hover:border-transparent dark:hover:border-transparent 
+                           transition-all duration-300 hover:shadow-xl hover:scale-105 text-left p-6"
               >
-                {/* Background gradient on hover */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${component.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-                
                 <div className="relative flex flex-col items-start">
-                  {/* Icon container with gradient background */}
-                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${component.color} flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
-                    <div className="text-white">
-                      {component.icon}
-                    </div>
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${component.color} flex items-center justify-center mb-4 
+                                  transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
+                    <div className="text-white">{component.icon}</div>
                   </div>
-                  
-                  <h3 className="text-lg font-roboto font-semibold mb-2 text-gray-800 dark:text-gray-100 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
+                  <h3 className="text-lg font-roboto font-semibold mb-2 text-gray-800 dark:text-gray-100 
+                                 group-hover:text-gray-900 dark:group-hover:text-white transition-colors duration-300">
                     {component.name}
                   </h3>
-                  <p className="text-sm font-roboto text-gray-600 dark:text-gray-300 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
+                  <p className="text-sm font-roboto text-gray-600 dark:text-gray-300 
+                                group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors duration-300">
                     {component.description}
                   </p>
                 </div>
-                
-                {/* Plus icon that appears on hover */}
-                <div className="absolute top-4 right-4 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 shadow-lg border border-gray-200 dark:border-gray-600">
+                <div className="absolute top-4 right-4 w-8 h-8 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center 
+                                opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 
+                                group-hover:translate-x-0 shadow-lg border border-gray-200 dark:border-gray-600">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-600 dark:text-gray-400">
                     <line x1="12" x2="12" y1="5" y2="19"/>
                     <line x1="5" x2="19" y1="12" y2="12"/>
@@ -135,11 +159,13 @@ export default function AddComponentModal({ isOpen, onClose, onAddComponent }) {
             ))}
           </div>
         </div>
-        
+
+        {/* Footer */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
           <button
             onClick={onClose}
-            className="w-full py-3 px-4 rounded-lg font-roboto font-medium transition-colors duration-200 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+            className="w-full py-3 px-4 rounded-lg font-roboto font-medium transition-colors duration-200 
+                       bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
