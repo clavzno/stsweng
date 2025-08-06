@@ -41,4 +41,4 @@ yarn-error.log*
 next-env.d.ts
 
 # feature/auth2_v2
-_OAUTH.md
+_!*.md
