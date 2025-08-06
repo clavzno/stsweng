@@ -119,7 +119,7 @@ const authOptions = {
   //trustHost: true,
   cookies: {
     state: {
-      name: `${cookiePrefix}LOOKATMEauthjs.state`,
+      name: `LOOKATMEauthjs.state`,
       httpOnly: false,
       sameSite: "lax",
       path: "/",
