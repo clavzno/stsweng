@@ -29,8 +29,11 @@ export const metadata = {
   description: "All-in-one productivity app",
 };
 
+import { SessionProvider } from "next-auth/react"; //auth
+
 export default function RootLayout({ children }) {
   return (
+    <SessionProvider>
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${orbitron.variable} ${roboto.variable} antialiased`}
@@ -38,5 +41,6 @@ export default function RootLayout({ children }) {
           {children}
       </body>
     </html>
+    </SessionProvider>
   );
 }
