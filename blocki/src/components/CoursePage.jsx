@@ -1,6 +1,6 @@
 "use client";
-
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { ArrowLeft, FileText, Megaphone, BarChart3, MessageSquare } from 'lucide-react';
 
 // Import components with proper paths - make sure these components exist and are properly exported
@@ -20,7 +20,7 @@ import GradesModal from './course/GradesModal';
 // Import Spinner as named export
 import { Spinner } from './course/LoadingComponents';
 
-export default function CoursePage({ onBackToDashboard = () => window.history.back() }) {
+export default function CoursePage({courseId, onBackToDashboard = () => window.history.back() }) {
   const [activeModal, setActiveModal] = useState(null);
   const [pageLoading, setPageLoading] = useState(true);
   const [courseData, setCourseData] = useState(null);
@@ -36,14 +36,24 @@ export default function CoursePage({ onBackToDashboard = () => window.history.ba
   const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
-    const loadCourseData = async () => {
+    const fetchCourseData = async () => {
+      const res = await fetch('/api/canvas/course_page', {
+        headers: {
+          course_id: courseId
+        }
+      })
+      
+      if (!res.ok) {
+        throw new Error("Failed to fetch courses");
+      }
+
+      const data = await res.json();
       try {
-        await new Promise(resolve => setTimeout(resolve, 1500));
         setCourseData({
-          id: 1,
-          title: '1243 STSWENG SS1',
-          description: 'Advanced Software Engineering with modern practices and methodologies',
-          instructor: 'Jordan Aiko Deja',
+          id: data.id,
+          title: data.course_code,
+          description: data.name,
+          instructor: data.teacher || 'Unknown Instructor',
           progress: 75,
           customization: {
             imageOverlay: 'rgba(0, 0, 0, 0.5)',
@@ -57,7 +67,7 @@ export default function CoursePage({ onBackToDashboard = () => window.history.ba
       }
     };
 
-    loadCourseData();
+    fetchCourseData();
   }, []);
 
   const handleSaveLayout = async () => {
