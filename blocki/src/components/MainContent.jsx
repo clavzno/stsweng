@@ -7,7 +7,7 @@ import Calendar from "./Calendar";
 import StudyTracker from "./StudyTracker";
 import Pomodoro from "./Pomodoro";
 import PixelTracker from "./PixelTracker";
-import ToDoList from "./ToDoList";
+import ToDoList from './TodoList';
 import AddComponentModal from "./AddComponentModal";
 import Settings from "./Settings";
 import SaveLayoutButton from "./SaveLayoutButton";
