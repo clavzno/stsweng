@@ -7,7 +7,7 @@ import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
 
 //auth
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 // WIP: icons
 const FiSearch = ({ className }) => (
@@ -42,6 +42,7 @@ const FiMoon = ({ className }) => (
 );
 
 export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
+    const { data: session } = useSession();
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const router = useRouter();
@@ -55,7 +56,7 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
         }
     }, []);
 
-    const toggleDarkMode = () => {
+    const toggleDarkMode = async () => {
         const newDarkMode = !isDarkMode;
         setIsDarkMode(newDarkMode);
         
@@ -66,6 +67,16 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
             document.documentElement.classList.remove('dark');
             localStorage.setItem('theme', 'light');
         }
+
+        // Get email from session
+        const email = session?.user?.email;
+        if (!email) return; // Optionally handle missing email
+
+        await fetch("/api/updatePreferences", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, darkMode: newDarkMode }),
+        });
     };
 
     const handleLogout = () => {
@@ -171,4 +182,4 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
             </div>
         </header>
     );
-} 
+}

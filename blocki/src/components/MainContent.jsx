@@ -10,6 +10,7 @@ import PixelTracker from './PixelTracker';
 import AddComponentModal from './AddComponentModal';
 import Settings from './Settings';
 import SaveLayoutButton from './SaveLayoutButton';
+import { useSession } from "next-auth/react"; // Add this import
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -17,6 +18,7 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
     const [layout, setLayout] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'compact'
+    const { data: session } = useSession(); // Get session for user email
 
     useEffect(() => {
         const savedLayout = localStorage.getItem('dashboardLayout');
@@ -117,8 +119,19 @@ export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
         );
     };
 
-    const handleSaveLayout = () => {
+    const handleSaveLayout = async () => {
         localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+        // Save to MongoDB via API
+        const email = session?.user?.email;
+        if (!email) {
+            alert("User email not found. Please log in.");
+            return;
+        }
+        await fetch("/api/updatePreferences", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, dashboardLayout: layout }),
+        });
         alert('Layout saved!');
     };
 

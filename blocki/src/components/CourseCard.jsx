@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import placeholderImage from '../assets/images/placeholder.png';
 import { User, BookOpen, ArrowRight, Edit3, GripVertical, CheckCircle, Clock, Palette, Image as ImageIcon, X, Sliders } from 'lucide-react';
+import { useSession } from "next-auth/react";
 
 const getGradeColor = (grade) => {
   const gradeValue = parseFloat(grade);
@@ -56,10 +57,22 @@ export default function CourseCard({
   isEditMode = false, 
   themes = {} 
 }) {
+  const { data: session } = useSession();
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [newImageUrl, setNewImageUrl] = useState(course.imageUrl);
   const [activeTab, setActiveTab] = useState('image');
   const [showAllAssignments, setShowAllAssignments] = useState(false);
+
+  // Helper to update preferences in DB
+  const updatePreferences = async (customization) => {
+    const email = session?.user?.email;
+    if (!email) return;
+    await fetch("/api/updatePreferences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, courseId: course.id, customization }),
+    });
+  };
 
   const handleCardClick = (e) => {
     // Prevent navigation when in edit mode or clicking on customization elements
@@ -80,6 +93,8 @@ export default function CourseCard({
         if (onImageChange) {
           onImageChange(course.id, result);
         }
+        // Update DB
+        updatePreferences({ ...course.customization, imageUrl: result });
       };
       reader.readAsDataURL(file);
     }
@@ -89,12 +104,16 @@ export default function CourseCard({
     if (onCustomizationChange) {
       onCustomizationChange(course.id, { imageOverlay: overlay });
     }
+    // Update DB
+    updatePreferences({ ...course.customization, imageOverlay: overlay });
   };
 
   const handleAccentColorChange = (color) => {
     if (onCustomizationChange) {
       onCustomizationChange(course.id, { accentColor: color });
     }
+    // Update DB
+    updatePreferences({ ...course.customization, accentColor: color });
   };
 
   const completedAssignments = course.assignments ? course.assignments.filter(a => a.completed).length : 0;

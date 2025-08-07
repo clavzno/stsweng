@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { X, ChevronLeft, ChevronRight, Sparkles, Layout, Users, BarChart3, Settings, Calendar, MessageSquare, FileText, Clock, Target, TrendingUp, GripVertical } from 'lucide-react';
 
