@@ -1,5 +1,4 @@
 // This and all Canvas-related stuff will be placed here: blocki/src/vendor (vendor is for third-party APIs and services)
-// import { auth } from "../auth"
 
 /**
  * Handles API requests to Canvas Instructure after the user has authenticated.
@@ -15,77 +14,189 @@ export class CanvasAPI {
         this.accessToken = accessToken;
         this.domain = domain; // dlsu.instructure.com
         this.baseUrl = `https://${domain}`;
-        this.authorization = "Authorization: Bearer " + accessToken;
+        this.authorization = "Bearer " + accessToken;
     }
 
+    /**
+     * Replaces :id or :user_id with self for Instructure ID privacy.
+     * @param {String} endpoint 
+     * @returns either edited or same version of endpoint
+     */
     replaceId(endpoint) {
-        // TODO: logic here to replace :id with "self" if it's a users/ endpoint
-        
+        // sample endpoint 1: GET|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id
+        // sample endpoint 2: POST|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id/files
+        // sample endpoint 3: GET|/api/v1/users/:user_id/courses/:course_id/assignments
+
+        // Replace both :id and :user_id with 'self'
+        if (endpoint === '/api/v1/users' || endpoint.startsWith('/api/v1/users?')) {
+            return endpoint;
+        }
+
         if (endpoint.startsWith('/api/v1/users/')) {
-            // Replace both :id and :user_id with 'self'
             return endpoint.replace(/:(id|user_id)/g, 'self');
         }
-        
-        // TODO: logic here to replace :id with the class_id if it's a courses/ endpoint
 
-        /**if (endpoint.startsWith('/api/v1/courses/')) {
-            // Replace both :id and :course_id with this.classId
-            if (!this.classId) throw new Error("classId is not set in CanvasAPI");
-            return endpoint.replace(/:(id|course_id)/g, this.classId);
-        } **/
-       
+        if (endpoint.startsWith('/api/v1/courses/')) {
+            return endpoint.replace(/:(user_id)/g, 'self');
+        }
+
         // Return endpoint unchanged if no match
         return endpoint;
     }
 
+    /**
+     * Handles GET requests.
+     * @param {*} endpoint 
+     * @param {Object} params query parameters to append to the URL
+     * @returns 
+     */
     async get(endpoint, params = {}) {
         // example endpoint url:GET|/api/v1/users/:id
+        endpoint = this.replaceId(endpoint);
+        const url = new URL(`${this.baseUrl}${endpoint}`);
 
-        const URL = new URL(`${this.baseUrl}${endpoint}`);
-        Object.entries(params).forEach(([key, value]) => URL.searchParams.append(key, value));
-        
-        const RESPONSE = await fetch(URL, {
-            method: 'GET',
-            headers: {
-                'Authorization': this.authorization,
-            },
-        });
-
-        if (!RESPONSE.ok) {
-            throw new Error(`GET ${endpoint} failed: ${RESPONSE.status}`);
+        //handle params where it starts with ?param1=value1&param2=value2
+        if (typeof params == 'string') {
+            // if given is literally "?param1=value1&param2=value2"
+            url.search = params;
+        } else if (typeof params == 'object' && Object.keys(params).length > 0) {
+            // check if params is not empty
+            // if CanvasAPI.get('endpoint', {param1: 'value1', param2: 'value2'})
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.append(key, value);
+            });
         }
 
-        return RESPONSE.json();
+        console.log("CanvasAPI GET URL:", url.toString()); // REMOVE THIS IN PRODUCTION
+
+        let RESPONSE;
+        try {
+            RESPONSE = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    Authorization: this.authorization,
+                },
+            });
+        } catch (error) {
+            throw new Error(`Network error on GET ${endpoint}: ${error.message}`);
+        }
+
+        if (!RESPONSE || !RESPONSE.ok) {
+            throw new Error(`GET ${endpoint} failed: ${RESPONSE?.status}`);
+        }
+
+        return RESPONSE;
     }
+
+    /**
+     * Handles POST requests.
+     * File uploads require Content-Type: multipart/form-data
+     * Form Data require Content-Type: application/json
+     * @param {*} endpoint 
+     * @param {*} data 
+     * @returns 
+     */
 
     async post(endpoint, data = {}) {
         // example endpoint url:POST|/api/v1/users/:user_id/folders
+        endpoint = this.replaceId(endpoint);
+        const url = new URL(`${this.baseUrl}${endpoint}`);
 
+        console.log("CanvasAPI POST URL:", url.toString()); // REMOVE THIS IN PRODUCTION
 
-        const RESPONSE = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'POST',
-            headers: this.authorization,
-            body: data instanceof FormData ? data : new URLSearchParams(data)
-        });
+        let RESPONSE;
+        try {
+            RESPONSE = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    Authorization: this.authorization,
+                },
+                body: data instanceof FormData ? data : new URLSearchParams(data)
+            });
+        } catch (error) {
+            throw new Error(`Network error on POST ${endpoint}: ${error.message}`);
+        }
 
-        if (!RESPONSE.ok) {
-            const errorData = await RESPONSE.json().catch(() => ({}));
-            throw new Error(`POST ${endpoint} failed: ${RESPONSE.status} - ${JSON.stringify(errorData)}`);
+        if (!RESPONSE || !RESPONSE.ok) {
+            throw new Error(`POST ${endpoint} failed: ${RESPONSE?.status}`);
         }
 
         return RESPONSE.json();
     }
 
+    /**
+     * Handles PUT requests.
+     * @param {*} endpoint 
+     * @param {*} data 
+     * @returns 
+     */
     async put(endpoint, data = {}) {
-        const RESPONSE = await fetch(`${this.baseUrl}${endpoint}`, {
-            method: 'PUT',
-            headers: this.authorization,
-            body: new URLSearchParams(data)
-        });
+        // example endpoint URL: url:PUT|/api/v1/groups/:group_id
+        endpoint = this.replaceId(endpoint);
+        const url = new URL(`${this.baseUrl}${endpoint}`);
 
-        if (!RESPONSE.ok) {
-            throw new Error(`PUT ${endpoint} failed: ${RESPONSE.status}`);
-        };
+        console.log("CanvasAPI PUT URL:", url.toString()); // REMOVE THIS IN PRODUCTION
+
+        let RESPONSE;
+        try {
+            RESPONSE = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    Authorization: this.authorization,
+                },
+                body: new URLSearchParams(data)
+            });
+        } catch (error) {
+            throw new Error(`Network error on PUT ${endpoint}: ${error.message}`);
+        }
+
+        if (!RESPONSE || !RESPONSE.ok) {
+            throw new Error(`PUT ${endpoint} failed: ${RESPONSE?.status}`);
+        }
+
+        return RESPONSE.json();
+    }
+
+    /**
+     * Handles DELETE requests.
+     * @param {*} endpoint 
+     * @param {Object} params query parameters to append to the URL 
+     * @returns 
+     */
+    async delete(endpoint, params = {}) {
+        // example endpoint url:DELETE|/api/v1/calendar_events/:id
+        endpoint = this.replaceId(endpoint);
+        const url = new URL(`${this.baseUrl}${endpoint}`);
+
+        console.log("CanvasAPI DELETE URL:", url.toString()); // REMOVE THIS IN PRODUCTION
+
+        //handle params where it starts with ?param1=value1&param2=value2
+        if (typeof params == 'string') {
+            // if given is literally "?param1=value1&param2=value2"
+            url.search = params;
+        } else if (typeof params == 'object' && Object.keys(params).length > 0) {
+            // check if params is not empty
+            // if CanvasAPI.get('endpoint', {param1: 'value1', param2: 'value2'})
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.append(key, value);
+            });
+        }
+
+        let RESPONSE;
+        try {
+            RESPONSE = await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: this.authorization,
+                },
+            });
+        } catch (error) {
+            throw new Error(`Network error on DELETE ${endpoint}: ${error.message}`);
+        }
+
+        if (!RESPONSE || !RESPONSE.ok) {
+            throw new Error(`DELETE ${endpoint} failed: ${RESPONSE?.status}`);
+        }
 
         return RESPONSE.json();
     }

@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import CourseCard from './CourseCard';
 import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
+import { CanvasAPI } from '@/vendor/CanvasAPI';
+import { useSession } from 'next-auth/react';
+
 
 // Theme presets updated with brand colors
 const themes = {
@@ -38,194 +41,243 @@ const themes = {
 };
 
 export default function CoursesList() {
+  const { data: session, status } = useSession();
+  const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
   const [showAssignments, setShowAssignments] = useState(true);
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('default');
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const scrollContainerRef = useRef(null);
   const [courses, setCourses] = useState([
-    {
-      id: 1,
-      title: 'STSWENG SS1',
-      description: 'Advanced Software Engineering with modern practices and methodologies.',
-      instructor: 'Jordan Aiko Deja',
-      imageUrl: placeholderImage,
-      progress: 75,
-      category: 'Software Engineering',
-      difficulty: 'Advanced',
-      grade: 3.0,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'Project Setup', due: '2025-08-15', completed: true },
-        { id: 2, title: 'Requirements Analysis', due: '2025-08-22', completed: false },
-        { id: 3, title: 'System Design', due: '2025-08-29', completed: false }
-      ]
-    },
-    {
-      id: 2,
-      title: 'STCLOUD S14',
-      description: 'Introduction to Cloud Computing, AWS, and distributed systems.',
-      instructor: 'Fritz Kevin Flores',
-      imageUrl: placeholderImage,
-      progress: 45,
-      category: 'Cloud Computing',
-      difficulty: 'Intermediate',
-      grade: 3.5,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'AWS Account Setup', due: '2025-08-10', completed: true },
-        { id: 2, title: 'Lab 1: Introduction to AWS', due: '2025-08-17', completed: false }
-      ]
-    },
-    {
-      id: 3,
-      title: 'CSOPESY S19',
-      description: 'In-depth study of operating systems principles and concepts.',
-      instructor: 'Ren Tristan De La Cruz',
-      imageUrl: placeholderImage,
-      progress: 90,
-      category: 'Computer Science',
-      difficulty: 'Intermediate',
-      grade: 4.0,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'Process Scheduling Lab', due: '2025-08-12', completed: true },
-        { id: 2, title: 'Final Project Proposal', due: '2025-08-25', completed: false }
-      ]
-    },
-    {
-      id: 4,
-      title: 'LCFILIB Y01',
-      description: 'Pagbasa at Pagsulat sa Iba\'t Ibang Disiplina.',
-      instructor: 'Mon Karlo Mangaran',
-      imageUrl: placeholderImage,
-      progress: 30,
-      category: 'Filipino',
-      difficulty: 'Beginner',
-      grade: 2.5,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'Pagsusuri ng Teksto', due: '2025-08-14', completed: true },
-        { id: 2, title: 'Ulat Aklat', due: '2025-08-21', completed: false },
-      ]
-    },
-    {
-      id: 5,
-      title: 'LASARE3 S11',
-      description: 'A recollection course for spiritual and personal development.',
-      instructor: 'Christian Peter Bangcaya',
-      imageUrl: placeholderImage,
-      progress: 60,
-      category: 'Lasallian Studies',
-      difficulty: 'Beginner',
-      grade: 4.0,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'Reflection Paper 1', due: '2025-08-16', completed: true },
-        { id: 2, title: 'Final Reflection', due: '2025-08-23', completed: false }
-      ]
-    },
-    {
-      id: 6,
-      title: 'LCLSTWO Y10',
-      description: 'Exploring the life and works of St. John Baptist de La Salle.',
-      instructor: 'Jefferson Acala',
-      imageUrl: placeholderImage,
-      progress: 85,
-      category: 'Lasallian Studies',
-      difficulty: 'Beginner',
-      grade: 3.5,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'De La Salle Biography Quiz', due: '2025-08-18', completed: true },
-        { id: 2, title: 'Community Engagement Plan', due: '2025-08-26', completed: false }
-      ]
-    },
-    {
-      id: 7,
-      title: 'GERIZAL Z45',
-      description: 'A study of the life, works, and writings of Dr. Jose Rizal.',
-      instructor: 'Angelo Christiane Arriola',
-      imageUrl: placeholderImage,
-      progress: 20,
-      category: 'History',
-      difficulty: 'Beginner',
-      grade: 2.0,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default'
-      },
-      assignments: [
-        { id: 1, title: 'Reading: Noli Me Tángere', due: '2025-08-20', completed: false },
-        { id: 2, title: 'Film Review', due: '2025-08-27', completed: false },
-      ]
-    },
-    {
-        id: 8,
-        title: 'PEDFOUR Z205',
-        description: 'Physical Education 4: Team sports and recreational activities.',
-        instructor: 'Carol Rodriguez',
-        imageUrl: placeholderImage,
-        progress: 50,
-        category: 'Physical Education',
-        difficulty: 'Beginner',
-        grade: 4.0,
-        customization: {
-          imageOverlay: 'rgba(13, 18, 44, 0.5)',
-          accentColor: themes.default.primary,
-          theme: 'default'
-        },
-        assignments: [
-          { id: 1, title: 'Basketball Skills Test', due: '2025-08-22', completed: true },
-          { id: 2, title: 'Volleyball Tournament', due: '2025-09-05', completed: false },
-        ]
-    },
-    {
-        id: 9,
-        title: 'SAS3000 S14',
-        description: 'A non-academic course for university announcements and activities.',
-        instructor: 'Remy Rose Poblete',
-        imageUrl: placeholderImage,
-        progress: 100,
-        category: 'University Requirement',
-        difficulty: 'Beginner',
-        grade: 4.0,
-        customization: {
-          imageOverlay: 'rgba(13, 18, 44, 0.5)',
-          accentColor: themes.default.primary,
-          theme: 'default'
-        },
-        assignments: [
-          { id: 1, title: 'University Survey', due: '2025-07-30', completed: true },
-        ]
-    }
+  //   {
+  //     id: 1,
+  //     title: 'STSWENG SS1',
+  //     description: 'Advanced Software Engineering with modern practices and methodologies.',
+  //     instructor: 'Jordan Aiko Deja',
+  //     imageUrl: placeholderImage,
+  //     progress: 75,
+  //     category: 'Software Engineering',
+  //     difficulty: 'Advanced',
+  //     grade: 3.0,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'Project Setup', due: '2025-08-15', completed: true },
+  //       { id: 2, title: 'Requirements Analysis', due: '2025-08-22', completed: false },
+  //       { id: 3, title: 'System Design', due: '2025-08-29', completed: false }
+  //     ]
+  //   },
+  //   {
+  //     id: 2,
+  //     title: 'STCLOUD S14',
+  //     description: 'Introduction to Cloud Computing, AWS, and distributed systems.',
+  //     instructor: 'Fritz Kevin Flores',
+  //     imageUrl: placeholderImage,
+  //     progress: 45,
+  //     category: 'Cloud Computing',
+  //     difficulty: 'Intermediate',
+  //     grade: 3.5,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'AWS Account Setup', due: '2025-08-10', completed: true },
+  //       { id: 2, title: 'Lab 1: Introduction to AWS', due: '2025-08-17', completed: false }
+  //     ]
+  //   },
+  //   {
+  //     id: 3,
+  //     title: 'CSOPESY S19',
+  //     description: 'In-depth study of operating systems principles and concepts.',
+  //     instructor: 'Ren Tristan De La Cruz',
+  //     imageUrl: placeholderImage,
+  //     progress: 90,
+  //     category: 'Computer Science',
+  //     difficulty: 'Intermediate',
+  //     grade: 4.0,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'Process Scheduling Lab', due: '2025-08-12', completed: true },
+  //       { id: 2, title: 'Final Project Proposal', due: '2025-08-25', completed: false }
+  //     ]
+  //   },
+  //   {
+  //     id: 4,
+  //     title: 'LCFILIB Y01',
+  //     description: 'Pagbasa at Pagsulat sa Iba\'t Ibang Disiplina.',
+  //     instructor: 'Mon Karlo Mangaran',
+  //     imageUrl: placeholderImage,
+  //     progress: 30,
+  //     category: 'Filipino',
+  //     difficulty: 'Beginner',
+  //     grade: 2.5,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'Pagsusuri ng Teksto', due: '2025-08-14', completed: true },
+  //       { id: 2, title: 'Ulat Aklat', due: '2025-08-21', completed: false },
+  //     ]
+  //   },
+  //   {
+  //     id: 5,
+  //     title: 'LASARE3 S11',
+  //     description: 'A recollection course for spiritual and personal development.',
+  //     instructor: 'Christian Peter Bangcaya',
+  //     imageUrl: placeholderImage,
+  //     progress: 60,
+  //     category: 'Lasallian Studies',
+  //     difficulty: 'Beginner',
+  //     grade: 4.0,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'Reflection Paper 1', due: '2025-08-16', completed: true },
+  //       { id: 2, title: 'Final Reflection', due: '2025-08-23', completed: false }
+  //     ]
+  //   },
+  //   {
+  //     id: 6,
+  //     title: 'LCLSTWO Y10',
+  //     description: 'Exploring the life and works of St. John Baptist de La Salle.',
+  //     instructor: 'Jefferson Acala',
+  //     imageUrl: placeholderImage,
+  //     progress: 85,
+  //     category: 'Lasallian Studies',
+  //     difficulty: 'Beginner',
+  //     grade: 3.5,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'De La Salle Biography Quiz', due: '2025-08-18', completed: true },
+  //       { id: 2, title: 'Community Engagement Plan', due: '2025-08-26', completed: false }
+  //     ]
+  //   },
+  //   {
+  //     id: 7,
+  //     title: 'GERIZAL Z45',
+  //     description: 'A study of the life, works, and writings of Dr. Jose Rizal.',
+  //     instructor: 'Angelo Christiane Arriola',
+  //     imageUrl: placeholderImage,
+  //     progress: 20,
+  //     category: 'History',
+  //     difficulty: 'Beginner',
+  //     grade: 2.0,
+  //     customization: {
+  //       imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //       accentColor: themes.default.primary,
+  //       theme: 'default'
+  //     },
+  //     assignments: [
+  //       { id: 1, title: 'Reading: Noli Me Tángere', due: '2025-08-20', completed: false },
+  //       { id: 2, title: 'Film Review', due: '2025-08-27', completed: false },
+  //     ]
+  //   },
+  //   {
+  //       id: 8,
+  //       title: 'PEDFOUR Z205',
+  //       description: 'Physical Education 4: Team sports and recreational activities.',
+  //       instructor: 'Carol Rodriguez',
+  //       imageUrl: placeholderImage,
+  //       progress: 50,
+  //       category: 'Physical Education',
+  //       difficulty: 'Beginner',
+  //       grade: 4.0,
+  //       customization: {
+  //         imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //         accentColor: themes.default.primary,
+  //         theme: 'default'
+  //       },
+  //       assignments: [
+  //         { id: 1, title: 'Basketball Skills Test', due: '2025-08-22', completed: true },
+  //         { id: 2, title: 'Volleyball Tournament', due: '2025-09-05', completed: false },
+  //       ]
+  //   },
+  //   {
+  //       id: 9,
+  //       title: 'SAS3000 S14',
+  //       description: 'A non-academic course for university announcements and activities.',
+  //       instructor: 'Remy Rose Poblete',
+  //       imageUrl: placeholderImage,
+  //       progress: 100,
+  //       category: 'University Requirement',
+  //       difficulty: 'Beginner',
+  //       grade: 4.0,
+  //       customization: {
+  //         imageOverlay: 'rgba(13, 18, 44, 0.5)',
+  //         accentColor: themes.default.primary,
+  //         theme: 'default'
+  //       },
+  //       assignments: [
+  //         { id: 1, title: 'University Survey', due: '2025-07-30', completed: true },
+  //       ]
+  //   }
   ]);
+
+useEffect(() => {
+  const fetchCourses = async () => {
+    const res = await fetch('/api/canvas/courses', {
+      headers: {
+        token: session.accessToken
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch courses");
+    }
+
+    const rawData = await res.json();
+
+  const transformed = rawData
+    .map((course, index) => ({
+      id: course.id || index + 1,
+      title: course.name || 'Untitled Course',
+      description: course.public_description || '',
+      instructor: course.instructor_full_name || 'Unknown Instructor',
+      imageUrl: course.course_image,
+      category: course.category || 'General',
+      difficulty: course.difficulty || 'Beginner',
+      grade: course?.total_scores?.computed_current_grade || 4.0,
+      progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
+      customization: {
+        imageOverlay: 'rgba(13, 18, 44, 0.5)',
+        accentColor: themes.default.primary,
+        theme: 'default',
+      },
+      assignments: (course.assignments || []).map((assignment, idx) => ({
+        id: assignment.id || idx + 1,
+        title: assignment.name || `Untitled Assignment ${idx + 1}`,
+        due: assignment.due_at || '2025-08-30',
+        completed: <assignment className="has_submitted_submissions"></assignment> ?? false,
+      })),
+    }));
+
+    setCourses(transformed);
+  };
+
+  fetchCourses();
+}, []);
+
+
 
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
@@ -235,6 +287,22 @@ export default function CoursesList() {
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const { top, bottom, height } = container.getBoundingClientRect();
+    const mouseY = e.clientY;
+
+    const scrollThreshold = height * 0.2;
+    const scrollSpeed = 15;
+
+    if (mouseY > bottom - scrollThreshold) {
+      container.scrollTop += scrollSpeed;
+    } 
+    else if (mouseY < top + scrollThreshold) {
+      container.scrollTop -= scrollSpeed;
+    }
   };
 
   const handleDrop = (e, dropIndex) => {
@@ -406,7 +474,11 @@ export default function CoursesList() {
       )}
 
       {/* Scrollable Courses Grid */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto scrollbar-hide" 
+        onDragOver={handleDragOver}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-4 px-2 py-2">
           {courses.map((course, index) => (
             <div
@@ -416,7 +488,6 @@ export default function CoursesList() {
               } ${draggedIndex === index ? 'opacity-30' : ''}`}
               draggable={isEditMode}
               onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
             >
