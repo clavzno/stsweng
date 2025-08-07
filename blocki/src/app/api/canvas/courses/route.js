@@ -30,7 +30,7 @@ export async function GET(req) {
             } catch (err) {
                 console.error(
                     `Error fetching assignments for course ${course.id}:`, err
-                );
+                ); // CHANGE THIS IN PRODUCTION
             }
 
             let teacher = {};
@@ -44,9 +44,9 @@ export async function GET(req) {
                 teacher[course.id] = teacherName;
                 fullName = teacherName;
 
-                console.log("Teacher Profile:", fullName);
+                console.log("Teacher Profile:", fullName); // REMOVE THIS IN PRODUCTION
             } catch (err) {
-                console.error("Error fetching teacher profile:", err);
+                console.error("Error fetching teacher profile:", err); // CHANGE THIS IN PRODUCTION
             }
 
             return {

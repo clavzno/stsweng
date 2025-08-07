@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         await updateDashboardLayout(email, dashboardLayout);
       }
       if (courseId && customization) {
-        await updateCourseCustomization(email, courseId, customization);
+        //await updateCourseCustomization(email, courseId, customization); REMOVED FOR NOW
       }
       res.status(200).json({ success: true });
     } catch (error) {

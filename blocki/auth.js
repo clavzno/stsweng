@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import { getDatabase } from "./src/MongoDB/MongoDB";
-import WelcomeModal from "@/components/WelcomeModal";
 
 const otherScopes = [
   "url:GET|/api/v1/users/:id",
@@ -90,9 +89,11 @@ const authOptions = {
       },
       userinfo: "https://dlsu.instructure.com/api/v1/users/self/profile",
       profile(profile) {
-        // provider's //userinfo response
+        // profile = /userinfo response
         /**
-         * console.log(profile);
+         * console.log("--- PROFILE CALLBACK ---");
+         * console.log("Profile: ", profile);
+         * console.log("--- ---");
          */
         return {
           id: profile.id, // this is available, but we're not allowed to use it
@@ -118,7 +119,7 @@ const authOptions = {
   ],
   debug: false, // MAKE FALSE IN PRODUCTION
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, profile }) {
       console.log("--- JWT CALLBACK ---");
       if (account?.provider === "dlsuinstructure") {
         // REMOVE THIS IN PRODUCTION
@@ -128,6 +129,7 @@ const authOptions = {
         console.log("Refresh Token: ", account.refresh_token);
         console.log("--- ---");
 
+        // DB
         // Upsert user in MongoDB if user exists
         if (user) {
           const db = await getDatabase();
@@ -153,23 +155,36 @@ const authOptions = {
           );
 
           console.log("Database connection established and user upserted in all collections.");
-        }
 
-        // Always return the updated token
-        return { ...token, accessToken: account.access_token, refreshToken: account.refresh_token };
+          // profile-related
+          token.shortName = profile.short_name ? profile.short_name : profile.name;
+          token.avatarUrl = profile.avatar_url;
+          token.email = profile.primary_email;
+
+          return {
+            ...token,
+            accessToken: account.access_token,
+            refreshToken: account.refresh_token,
+            shortName: profile.short_name,
+            avatarUrl: profile.avatar_url,
+            email: profile.primary_email
+          };
+        }
       }
 
-      // Default return for other providers
-      return token;
+      return token; // DO NOT CHANGE THIS 
     },
     async session({ session, token }) {
       // refer to https://authjs.dev/reference/core#session
       // in this callback you can expose those properties to the client session
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
+      session.shortName = token.shortName;
+      session.avatarUrl = token.avatarUrl;
+      session.email = token.email;
       console.log("--- SESSION CALLBACK ---");
       console.log("Session Access Token: ", session.accessToken);
-      console.log("Session Refresh Token: ", session.refreshToken);
+      console.log("Session email: ", session.email);
       console.log("--- ---");
       return session;
     },
