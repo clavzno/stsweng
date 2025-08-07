@@ -11,3 +11,5 @@ STSWENG SS1 Grp 3 Project AY 24-25 T3
 |--> /db (mongodb related <-- for plugins)
 |--> /server-actions (handlers)
 |--> /vendor (third-party API calls like Canvas API)
+
+## Trigger for Vercel

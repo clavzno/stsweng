@@ -1,4 +1,6 @@
 import NextAuth from "next-auth";
+import { getDatabase } from "./src/MongoDB/MongoDB";
+import WelcomeModal from "@/components/WelcomeModal";
 
 const otherScopes = [
   "url:GET|/api/v1/users/:id",
@@ -117,18 +119,47 @@ const authOptions = {
   debug: false, // MAKE FALSE IN PRODUCTION
   callbacks: {
     async jwt({ token, user, account }) {
-      // don't need to handle refresh because blocki tokens expire never
-      console.log("--- JWT CALLBACK ---")
-      // in this callback you can add properties to the JSON Web Token (JWT)
+      console.log("--- JWT CALLBACK ---");
       if (account?.provider === "dlsuinstructure") {
         // REMOVE THIS IN PRODUCTION
-        console.log("JWT Token: ", token); // token contains name, email, picture (undefined), sub
-        console.log("User: ", user); // contains full profile
+        console.log("JWT Token: ", token);
+        console.log("User: ", user);
         console.log("Account Access Token: ", account.access_token);
         console.log("Refresh Token: ", account.refresh_token);
         console.log("--- ---");
-        return { ...token, accessToken: account.access_token, refreshToken: account.refresh_token }; // saved in the JWT
+
+        // Upsert user in MongoDB if user exists
+        if (user) {
+          const db = await getDatabase();
+          await db.collection("Students").updateOne(
+            { email: user.email },
+            // if user logs in for the first time, show welcome modal. If not, do not show
+            { $set: { lastLogin: new Date() } },
+            { upsert: true }
+          );
+
+          // Upsert preferences (example: dark mode default)
+          await db.collection("Preferences").updateOne(
+            { email: user.email },
+            { $setOnInsert: { darkMode: true } }, // only sets if new
+            { upsert: true }
+          );
+
+          // Upsert tasks (example: create empty array if new)
+          await db.collection("Tasks").updateOne(
+            { email: user.email },
+            { $setOnInsert: { tasks: [] } }, // only sets if new
+            { upsert: true }
+          );
+
+          console.log("Database connection established and user upserted in all collections.");
+        }
+
+        // Always return the updated token
+        return { ...token, accessToken: account.access_token, refreshToken: account.refresh_token };
       }
+
+      // Default return for other providers
       return token;
     },
     async session({ session, token }) {

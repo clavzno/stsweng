@@ -11,13 +11,15 @@ import ToDoList from './TodoList';
 import AddComponentModal from "./AddComponentModal";
 import Settings from "./Settings";
 import SaveLayoutButton from "./SaveLayoutButton";
+import { useSession } from "next-auth/react"; // Add this import
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export default function MainContent({ isEditMode, setIsEditMode }) {
-  const [layout, setLayout] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState("grid"); // 'grid', 'list', 'compact'
+export default function UpdatedMainContent({ isEditMode, setIsEditMode }) {
+    const [layout, setLayout] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [viewMode, setViewMode] = useState('grid'); // 'grid', 'list', 'compact'
+    const { data: session } = useSession(); // Get session for user email
 
   // ✅ Load saved layout & view mode from localStorage on first mount
   useEffect(() => {
@@ -142,10 +144,21 @@ export default function MainContent({ isEditMode, setIsEditMode }) {
     );
   };
 
-  const handleSaveLayout = () => {
-    localStorage.setItem("dashboardLayout", JSON.stringify(layout));
-    alert("Layout saved!");
-  };
+    const handleSaveLayout = async () => {
+        localStorage.setItem('dashboardLayout', JSON.stringify(layout));
+        // Save to MongoDB via API
+        const email = session?.user?.email;
+        if (!email) {
+            alert("User email not found. Please log in.");
+            return;
+        }
+        await fetch("/api/updatePreferences", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, dashboardLayout: layout }),
+        });
+        alert('Layout saved!');
+    };
 
   const getGridClassName = () => {
     switch (viewMode) {
