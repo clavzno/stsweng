@@ -1,58 +1,48 @@
-/* src/styles/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@400;500&display=swap');
 
-@keyframes fall-and-stack {
-  0% {
-    transform: translateY(-150vh); /* Start well above the viewport */
-    opacity: 0;
-  }
-  20% { 
-    opacity: 0.8; /* Become visible as they enter the screen (can adjust opacity/timing) */
-  }
-  100% {
-    /* 
-      Translate to a position where the bottom of the block 
-      is 'var(--final-bottom-offset)' from the viewport bottom.
-    */
-    transform: translateY(calc(100vh - var(--block-actual-height) - var(--final-bottom-offset)));
-    opacity: 1;
-  }
+/* -------------------------------
+   1. CSS Variables for Dynamic Colors
+------------------------------- */
+:root {
+  --primary: #3B82F6;       /* Tailwind blue-500 */
+  --accent: #10B981;        /* Tailwind green-500 */
+  --background: #F8F9FA;    /* Light mode background */
+  --text: #1F2937;          /* Gray-800 */
+  --secondary: #6B7280;     /* Gray-500 */
 }
 
-/* src/styles/index.css */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+html.dark {
+  --primary: #60A5FA;       /* Lighter blue for dark mode */
+  --accent: #34D399;        /* Lighter green for dark mode */
+  --background: #0D122C;    /* Your dark-bg color */
+  --text: #F9FAFB;          /* Almost white */
+  --secondary: #9CA3AF;     /* Gray-400 */
+}
 
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto:wght@400;500&display=swap');
-
+/* -------------------------------
+   2. Base Styles
+------------------------------- */
 html {
   scroll-behavior: smooth;
 }
 
-/* This is the key section.
-  It tells the browser to apply a different background
-  color when the 'dark' class is on the html tag.
-*/
 body {
-  background-color: #F8F9FA; /* Your light mode off-white color */
-  transition: background-color 300ms ease-in-out;
+  background-color: var(--background);
+  color: var(--text);
+  transition: background-color 300ms ease-in-out, color 300ms ease-in-out;
 }
 
-html.dark body {
-  background-color: #0D122C; /* Your dark-bg color */
-}
-
-/* Ensure the root element doesn't hide the body background */
 #root {
   background-color: transparent !important;
 }
 
-/* Other global styles */
+/* -------------------------------
+   3. Login Animation
+------------------------------- */
 .login-container {
   opacity: 1;
   transform: translateY(-30px);
@@ -62,38 +52,19 @@ html.dark body {
 .login-container.loaded {
   opacity: 1;
   transform: translateY(0);
-}
-
-/* FIX: Added the missing closing brace below */
-
-
-.login-container {
-  opacity: 1;
-  transform: translateY(-30px);
-  transition: all 0.8s ease-out;
-}
-
-.login-container.loaded {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* (Any other global overrides you need) */
-html {
-  scroll-behavior: smooth;
 }
 
 /* -------------------------------
-   2. Your existing scrollbar + animation CSS
-   ------------------------------- */
-/* Minimal purple scrollbar */
+   4. Scrollbar Styling (Dynamic)
+------------------------------- */
 * {
-  scrollbar-width: none;
-  scrollbar-color: purple transparent;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) transparent;
 }
 
 *::-webkit-scrollbar {
-  width: none;
+  width: 6px;
+  height: 6px;
 }
 
 *::-webkit-scrollbar-track {
@@ -101,18 +72,22 @@ html {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: colors.primary;
+  background-color: var(--primary);
   border-radius: 10px;
 }
 
 *::-webkit-scrollbar-thumb:hover {
-  background-color: colors.primary;
+  background-color: var(--accent);
 }
 
+/* -------------------------------
+   5. Animated Bottom Scrollbar Blocks
+------------------------------- */
 @keyframes roll-horizontal {
   0% { transform: translateX(100%); }
   100% { transform: translateX(-100%); }
 }
+
 .custom-scrollbar-bottom {
   position: absolute;
   bottom: 0;
@@ -124,6 +99,7 @@ html {
   align-items: center;
   border-top: 1px solid rgba(0,0,0,0.05);
 }
+
 .custom-scrollbar-bottom .block {
   flex: none;
   width: 40px;
@@ -131,24 +107,31 @@ html {
   margin-right: 8px;
   animation: roll-horizontal 2s linear infinite;
 }
-.custom-scrollbar-bottom .block:nth-child(1) { background: theme('colors.primary'); animation-delay: 0s; }
-.custom-scrollbar-bottom .block:nth-child(2) { background: theme('colors.color-green'); animation-delay: 0.3s; }
-.custom-scrollbar-bottom .block:nth-child(3) { background: theme('colors.off-white'); animation-delay: 0.6s; }
-.custom-scrollbar-bottom .block:nth-child(4) { background: theme('colors.color-red'); animation-delay: 0.9s; }
-.custom-scrollbar-bottom .block:nth-child(5) { background: theme('colors.yellow'); animation-delay: 1.2s; }
-.custom-scrollbar-bottom .block:nth-child(6) { background: theme('colors.dark-blue'); animation-delay: 1.5s; }
 
+.custom-scrollbar-bottom .block:nth-child(1) { background: var(--primary); animation-delay: 0s; }
+.custom-scrollbar-bottom .block:nth-child(2) { background: var(--accent); animation-delay: 0.3s; }
+.custom-scrollbar-bottom .block:nth-child(3) { background: var(--background); animation-delay: 0.6s; }
+.custom-scrollbar-bottom .block:nth-child(4) { background: var(--secondary); animation-delay: 0.9s; }
+.custom-scrollbar-bottom .block:nth-child(5) { background: var(--primary); animation-delay: 1.2s; }
+.custom-scrollbar-bottom .block:nth-child(6) { background: var(--accent); animation-delay: 1.5s; }
+
+/* -------------------------------
+   6. React Grid Layout Styling
+------------------------------- */
 .react-grid-layout {
   position: relative;
   transition: height 200ms ease;
 }
+
 .react-grid-item {
   transition: all 200ms ease;
   transition-property: left, top;
 }
+
 .react-grid-item.cssTransforms {
   transition-property: transform;
 }
+
 .react-grid-item.resizing {
   z-index: 1;
   will-change: width, height;
@@ -161,14 +144,10 @@ html {
 }
 
 .react-grid-item.react-grid-placeholder {
-  background: #3B82F6;
+  background: var(--primary);
   opacity: 0.2;
   transition-duration: 100ms;
   z-index: 2;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
   user-select: none;
 }
 
@@ -192,20 +171,19 @@ html {
   border-bottom: 2px solid rgba(0, 0, 0, 0.4);
 }
 
-/* Add this to your global CSS file (e.g., src/index.css) */
-body {
-  background-color: #F8F9FA; /* Your off-white color */
-  transition: background-color 300ms ease-in-out; /* Match the transition duration */
-}
-
-/* Apply dark mode background when the 'dark' class is present on html */
-html.dark body {
-  background-color: #0D122C; /* Your dark-bg color */
-}
-
-/* Ensure the root element doesn't hide the body background */
-#root {
-  /* Depending on your setup, you might need this */
-  /* min-height: 100vh; */
-  /* background-color: transparent !important; */ /* Ensure root is transparent */
+/* -------------------------------
+   7. Falling Block Animation (Optional)
+------------------------------- */
+@keyframes fall-and-stack {
+  0% {
+    transform: translateY(-150vh);
+    opacity: 0;
+  }
+  20% { 
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(calc(100vh - var(--block-actual-height) - var(--final-bottom-offset)));
+    opacity: 1;
+  }
 }

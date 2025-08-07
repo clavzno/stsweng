@@ -1,15 +1,33 @@
+import { useEffect } from 'react';
 import ThemeToggleSwitch from './ThemeToggleSwitch';
 import ColorPalettePicker from './ColorPalettePicker';
 import SaveLayoutButton from './SaveLayoutButton';
 
 const Settings = () => {
+  // Load saved palette on mount
+  useEffect(() => {
+    const savedPalette = localStorage.getItem('selectedPalette');
+    if (savedPalette) {
+      applyPalette(JSON.parse(savedPalette));
+    }
+  }, []);
+
   const handleSave = () => {
     alert('Layout saved (implement storage logic)');
   };
 
-  const handleColorChange = (color) => {
-    console.log('Selected color:', color);
-    // TODO: Apply or store color choice
+  // ✅ Apply colors dynamically to :root
+  const applyPalette = (palette) => {
+    const root = document.documentElement;
+    Object.entries(palette).forEach(([key, value]) => {
+      root.style.setProperty(`--${key}`, value);
+    });
+  };
+
+  const handleColorChange = (palette) => {
+    console.log('Selected palette:', palette);
+    applyPalette(palette);
+    localStorage.setItem('selectedPalette', JSON.stringify(palette));
   };
 
   return (
