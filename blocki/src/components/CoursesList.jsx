@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import CourseCard from './CourseCard';
 import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
@@ -44,6 +44,7 @@ export default function CoursesList() {
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('default');
   const [draggedIndex, setDraggedIndex] = useState(null);
+  const scrollContainerRef = useRef(null);
   const [courses, setCourses] = useState([
     {
       id: 1,
@@ -235,6 +236,22 @@ export default function CoursesList() {
   const handleDragOver = (e) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
+
+    if (!scrollContainerRef.current) return;
+
+    const container = scrollContainerRef.current;
+    const { top, bottom, height } = container.getBoundingClientRect();
+    const mouseY = e.clientY;
+
+    const scrollThreshold = height * 0.2;
+    const scrollSpeed = 15;
+
+    if (mouseY > bottom - scrollThreshold) {
+      container.scrollTop += scrollSpeed;
+    } 
+    else if (mouseY < top + scrollThreshold) {
+      container.scrollTop -= scrollSpeed;
+    }
   };
 
   const handleDrop = (e, dropIndex) => {
@@ -406,7 +423,11 @@ export default function CoursesList() {
       )}
 
       {/* Scrollable Courses Grid */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto scrollbar-hide" 
+        onDragOver={handleDragOver}
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-4 px-2 py-2">
           {courses.map((course, index) => (
             <div
@@ -416,7 +437,6 @@ export default function CoursesList() {
               } ${draggedIndex === index ? 'opacity-30' : ''}`}
               draggable={isEditMode}
               onDragStart={(e) => handleDragStart(e, index)}
-              onDragOver={handleDragOver}
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
             >
