@@ -4,6 +4,14 @@
 /**
  * Handles API requests to Canvas Instructure after the user has authenticated.
  */
+const HEADER_CORS = {
+    // Source: https://blog.logrocket.com/using-cors-next-js-handle-cross-origin-requests/
+    'Access-Control-Allow-Credentials': true,
+    'Access-Control-Allow-Origin': "*",
+    'Access-Control-Allow-Methods': "GET,DELETE,PATCH,POST,PUT",
+    'Access-Control-Allow-Headers': "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version"
+};
+
 export class CanvasAPI {
     // must pass the session access token here
     // example: const SESSION = await auth(); const TOKEN = SESSION.accessToken;
@@ -15,17 +23,17 @@ export class CanvasAPI {
         this.accessToken = accessToken;
         this.domain = domain; // dlsu.instructure.com
         this.baseUrl = `https://${domain}`;
-        this.authorization = "Authorization: Bearer " + accessToken;
+        this.authorization = "Bearer " + accessToken;
     }
 
     replaceId(endpoint) {
         // TODO: logic here to replace :id with "self" if it's a users/ endpoint
-        
+
         if (endpoint.startsWith('/api/v1/users/')) {
             // Replace both :id and :user_id with 'self'
             return endpoint.replace(/:(id|user_id)/g, 'self');
         }
-        
+
         // TODO: logic here to replace :id with the class_id if it's a courses/ endpoint
 
         /**if (endpoint.startsWith('/api/v1/courses/')) {
@@ -33,21 +41,35 @@ export class CanvasAPI {
             if (!this.classId) throw new Error("classId is not set in CanvasAPI");
             return endpoint.replace(/:(id|course_id)/g, this.classId);
         } **/
-       
+
         // Return endpoint unchanged if no match
         return endpoint;
     }
 
+    /**
+     * @param {Object} params - query parameters to append to the URL.
+     */
     async get(endpoint, params = {}) {
         // example endpoint url:GET|/api/v1/users/:id
+        const url = new URL(`${this.baseUrl}${endpoint}`);
 
-        const URL = new URL(`${this.baseUrl}${endpoint}`);
-        Object.entries(params).forEach(([key, value]) => URL.searchParams.append(key, value));
-        
-        const RESPONSE = await fetch(URL, {
+        //handle params where it starts with ?param1=value1&param2=value2
+        if (typeof params == 'string') {
+            // if given is literally "?param1=value1&param2=value2"
+            url.search = params;
+        } else if (typeof params == 'object' && Object.keys(params).length > 0) {
+            // if CanvasAPI.get('endpoint', {param1: 'value1', param2: 'value2'})
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.append(key, value);
+            });
+        }
+
+        console.log("CanvasAPI GET URL:", url.toString());
+
+        const RESPONSE = await fetch(url, {
             method: 'GET',
             headers: {
-                'Authorization': this.authorization,
+                Authorization: this.authorization,
             },
         });
 
@@ -55,7 +77,7 @@ export class CanvasAPI {
             throw new Error(`GET ${endpoint} failed: ${RESPONSE.status}`);
         }
 
-        return RESPONSE.json();
+        return RESPONSE;
     }
 
     async post(endpoint, data = {}) {

@@ -1,9 +1,11 @@
+"use client"
+
 import React, { use, useEffect, useState } from 'react';
 import CourseCard from './CourseCard';
 import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
 import { CanvasAPI } from '@/vendor/CanvasAPI';
-import {useSession} from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 
 
 // Theme presets updated with brand colors
@@ -42,7 +44,7 @@ const themes = {
 
 export default function CoursesList() {
   const { data: session, status } = useSession();
-
+  const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
   const [showAssignments, setShowAssignments] = useState(true);
@@ -232,23 +234,50 @@ export default function CoursesList() {
   //   }
   ]);
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      const res = await fetch("/api/canvas/courses", {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to fetch courses");
+useEffect(() => {
+  const fetchCourses = async () => {
+    const res = await fetch('/api/canvas/courses', {
+      headers: {
+        token: session.accessToken
       }
+    });
 
-      const data = await res.json();
-      setCourses(data);
+    if (!res.ok) {
+      throw new Error("Failed to fetch courses");
     }
-    fetchCourses();
-  });
+
+    const rawData = await res.json();
+
+  const transformed = rawData
+    .map((course, index) => ({
+      id: course.id || index + 1,
+      title: course.name || 'Untitled Course',
+      description: course.public_description || '',
+      instructor: course.instructor_full_name || 'Unknown Instructor',
+      imageUrl: course.course_image,
+      category: course.category || 'General',
+      difficulty: course.difficulty || 'Beginner',
+      grade: course?.total_scores?.computed_current_grade || 4.0,
+      progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
+      customization: {
+        imageOverlay: 'rgba(13, 18, 44, 0.5)',
+        accentColor: themes.default.primary,
+        theme: 'default',
+      },
+      assignments: (course.assignments || []).map((assignment, idx) => ({
+        id: assignment.id || idx + 1,
+        title: assignment.name || `Untitled Assignment ${idx + 1}`,
+        due: assignment.due_at || '2025-08-30',
+        completed: <assignment className="has_submitted_submissions"></assignment> ?? false,
+      })),
+    }));
+
+    setCourses(transformed);
+  };
+
+  fetchCourses();
+}, []);
+
 
 
   const handleDragStart = (e, index) => {

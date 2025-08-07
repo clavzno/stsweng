@@ -1,41 +1,71 @@
-// app/api/canvas/courses/route.js
+import { CanvasAPI } from '@/vendor/CanvasAPI';
 
 export async function GET(req) {
-    const authHeader = req.headers.get("Authorization");
+    const token = req.headers.get('token');
+    const canvas = new CanvasAPI(token, 'dlsu.instructure.com');
 
-    const canvasRes = await fetch("https://dlsu.instructure.com/api/v1/courses", {
-    headers: {
-        Authorization: authHeader,
-    },
-    });
+    // Step 1: Fetch courses with necessary includes
+    const courseRes = await canvas.get(
+        '/api/v1/courses?enrollment_state=active&include[]=course_progress&include[]=total_scores',
+        { per_page: 100 }
+    );
 
-    console.log("Canvas response status:", canvasRes.status);
-
-    if (!canvasRes.ok) {
-    const errorText = await canvasRes.text();
-    console.log("Canvas error response:", errorText);
-    return new Response(JSON.stringify({ error: errorText }), { status: canvasRes.status });
+    if (!courseRes.ok) {
+        return new Response(JSON.stringify({ error: 'Failed to fetch courses' }), { status: 500 });
     }
 
-    if (!authHeader) {
-        return new Response(JSON.stringify({ error: "Missing Authorization header" }), { status: 401 });
-    }
+    const courses = await courseRes.json();
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
-    }
+    const teacherProfilesCache = {};
 
-    const response = await fetch("https://dlsu.instructure.com/api/v1/courses", {
+    // Step 2: Fetch assignments and full teacher name for each course
+    const enrichedCourses = await Promise.all(
+        courses.map(async course => {
+            let assignments = [];
+            try {
+                const assignmentRes = await canvas.get(`/api/v1/courses/${course.id}/assignments`);
+                assignments = assignmentRes.ok ? await assignmentRes.json() : [];
+            } catch (err) {
+            }
+
+            let teacher = {};
+            let fullName = 'Unknown Instructor';
+            try {
+                const profileRes = await canvas.get(`/api/v1/courses/${course.id}/users?enrollment_role=TeacherEnrollment&per_page=100`);
+
+                const teacherProfile = await profileRes.json();
+                // picks the first name sa array
+                const teacherName = teacherProfile?.[0]?.name || 'Unknown Instructor';
+                teacher[course.id] = teacherName;
+                fullName = teacherName;
+
+                if (!teacherProfile.JSON.name) {
+                    teacher[course.id] = 'Unknown Instructor';
+                } else {
+                    teacher[course.id] = teacherProfile.JSON.name;
+                                        fullName = teacher[course.id]; 
+                }
+
+                console.log("Teacher Profile:", fullName);
+            }   catch (err) {
+              console.error("Error fetching teacher profile:", err);
+            }
+            // 
+
+            return {
+                ...course,
+                assignments,
+                instructor_full_name: fullName,
+                course_image: course.image_download_url || course.card_image || null,
+            };
+        })
+    );
+
+    // Step 3: Return the enriched course data
+    return new Response(JSON.stringify(enrichedCourses), {
+        status: 200,
         headers: {
-        Authorization: authHeader,
+            'Content-Type': 'application/json',
         },
     });
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        return new Response(JSON.stringify({ error: errorText }), { status: response.status });
-    }
-
-    const data = await response.json();
-    return new Response(JSON.stringify(data), { status: 200 });
 }
