@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import CourseCard from './CourseCard';
-import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
-import { CanvasAPI } from '@/vendor/CanvasAPI';
 import { useSession } from 'next-auth/react';
 
 
@@ -42,7 +40,6 @@ const themes = {
 
 export default function CoursesList() {
   const { data: session, status } = useSession();
-  const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
   const [showAssignments, setShowAssignments] = useState(true);
@@ -249,14 +246,14 @@ useEffect(() => {
 
   const transformed = rawData
     .map((course, index) => ({
-      id: course.id || index + 1,
-      title: course.name || 'Untitled Course',
-      description: course.public_description || '',
+      id: course.id,
+      title: course.course_code || 'Untitled Course',
+      description: (course.course_code == course.name) ? '' : course.name ,
       instructor: course.instructor_full_name || 'Unknown Instructor',
       imageUrl: course.course_image,
       category: course.category || 'General',
       difficulty: course.difficulty || 'Beginner',
-      grade: course?.total_scores?.computed_current_grade || 4.0,
+      grade: course.enrollments.computed_current_grade || null,
       progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
       customization: {
         imageOverlay: 'rgba(13, 18, 44, 0.5)',

@@ -43,10 +43,7 @@ export async function GET(req) {
                 const teacherName = teacherProfile?.[0]?.name || "Unknown Instructor";
                 teacher[course.id] = teacherName;
                 fullName = teacherName;
-
-                console.log("Teacher Profile:", fullName);
             } catch (err) {
-                console.error("Error fetching teacher profile:", err);
             }
 
             return {
