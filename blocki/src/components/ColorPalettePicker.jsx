@@ -24,14 +24,19 @@ export default function ColorPalettePicker({ onColorChange }) {
     <div className="space-y-3">
       <h3 className="font-orbitron text-lg text-dark-blue dark:text-white">Popular Palettes</h3>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-        {/* Reset Button */}
-        <button
-          key={color.value}
-          onClick={() => onColorChange(color.value)}
-          className={`w-8 h-8 rounded-full ${color.value} border-2 border-white hover:ring-2 ring-white transition`}
-          title={color.name}
-          data-testid={`color-button-${color.value}`}
-        />
+        {palettes.map((palette) => (
+          <button
+            key={palette.name}
+            onClick={() => handleSelect(palette)}
+            style={{ backgroundColor: palette.colors[0] }} // just to preview the palette
+            className={`w-8 h-8 rounded-full border-2 border-white transition ${
+              selected === palette.name ? "ring-4 ring-white" : "hover:ring-2 ring-white"
+            }`}
+            title={palette.name}
+            data-testid={`color-button-${palette.name}`}
+          />
+        ))}
       </div>
-    </div>)
+    </div>
+  );
 }
