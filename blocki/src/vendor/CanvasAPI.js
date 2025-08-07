@@ -1,5 +1,4 @@
 // This and all Canvas-related stuff will be placed here: blocki/src/vendor (vendor is for third-party APIs and services)
-// import { auth } from "../auth"
 
 /**
  * Handles API requests to Canvas Instructure after the user has authenticated.
@@ -26,21 +25,28 @@ export class CanvasAPI {
         this.authorization = "Bearer " + accessToken;
     }
 
+    /**
+     * Replaces :id or :user_id with self for Instructure ID privacy.
+     * @param {String} endpoint 
+     * @returns either edited or same version of endpoint
+     */
     replaceId(endpoint) {
-        // TODO: logic here to replace :id with "self" if it's a users/ endpoint
+        // sample endpoint 1: GET|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id
+        // sample endpoint 2: POST|/api/v1/courses/:course_id/assignments/:assignment_id/submissions/:user_id/files
+        // sample endpoint 3: GET|/api/v1/users/:user_id/courses/:course_id/assignments
+
+        // Replace both :id and :user_id with 'self'
+        if (endpoint === '/api/v1/users' || endpoint.startsWith('/api/v1/users?')) {
+            return endpoint;
+        }
 
         if (endpoint.startsWith('/api/v1/users/')) {
-            // Replace both :id and :user_id with 'self'
             return endpoint.replace(/:(id|user_id)/g, 'self');
         }
 
-        // TODO: logic here to replace :id with the class_id if it's a courses/ endpoint
-
-        /**if (endpoint.startsWith('/api/v1/courses/')) {
-            // Replace both :id and :course_id with this.classId
-            if (!this.classId) throw new Error("classId is not set in CanvasAPI");
-            return endpoint.replace(/:(id|course_id)/g, this.classId);
-        } **/
+        if (endpoint.startsWith('/api/v1/courses/')) {
+            return endpoint.replace(/:(user_id)/g, 'self');
+        }
 
         // Return endpoint unchanged if no match
         return endpoint;
@@ -50,6 +56,8 @@ export class CanvasAPI {
      * @param {Object} params - query parameters to append to the URL.
      */
     async get(endpoint, params = {}) {
+        endpoint = this.replaceId(endpoint);
+
         // example endpoint url:GET|/api/v1/users/:id
         const url = new URL(`${this.baseUrl}${endpoint}`);
 
@@ -64,7 +72,7 @@ export class CanvasAPI {
             });
         }
 
-        console.log("CanvasAPI GET URL:", url.toString());
+        console.log("CanvasAPI GET URL:", url.toString()); // REMOVE THIS IN PRODUCTION
 
         const RESPONSE = await fetch(url, {
             method: 'GET',
@@ -80,10 +88,17 @@ export class CanvasAPI {
         return RESPONSE;
     }
 
+    /**
+     * File uploads require Content-Type: multipart/form-data
+     * Form Data require Content-Type: application/json
+     * @param {*} endpoint 
+     * @param {*} data 
+     * @returns 
+     */
+
     async post(endpoint, data = {}) {
+        endpoint = this.replaceId(endpoint);
         // example endpoint url:POST|/api/v1/users/:user_id/folders
-
-
         const RESPONSE = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'POST',
             headers: this.authorization,
@@ -99,6 +114,8 @@ export class CanvasAPI {
     }
 
     async put(endpoint, data = {}) {
+        endpoint = this.replaceId(endpoint);
+        // example endpoint URL: 
         const RESPONSE = await fetch(`${this.baseUrl}${endpoint}`, {
             method: 'PUT',
             headers: this.authorization,
