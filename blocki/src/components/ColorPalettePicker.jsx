@@ -26,39 +26,13 @@ export default function ColorPalettePicker({ onColorChange }) {
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
         {/* Reset Button */}
         <button
-          onClick={() => {
-            setSelected(null);
-            if (onColorChange) onColorChange(null);
-          }}
-          className="col-span-3 sm:col-span-4 p-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                     bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition"
-        >
-          Revert to original
-        </button>
-
-        {palettes.map((palette) => (
-          <button
-            key={palette.name}
-            onClick={() => handleSelect(palette)}
-            className={`p-2 rounded-lg border border-gray-300 dark:border-gray-600 
-                        bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 
-                        transition text-left ${
-                          selected === palette.name ? "ring-2 ring-primary" : ""
-                        }`}
-          >
-            <div className="flex space-x-1 mb-1">
-              {palette.colors.map((color, idx) => (
-                <div
-                  key={idx}
-                  className="w-4 h-4 rounded"
-                  style={{ backgroundColor: color }}
-                />
-              ))}
-            </div>
-            <p className="text-xs text-gray-600 dark:text-gray-300">{palette.name}</p>
-          </button>
-        ))}
-      </div>
+          key={color.value}
+          onClick={() => onColorChange(color.value)}
+          className={`w-8 h-8 rounded-full ${color.value} border-2 border-white hover:ring-2 ring-white transition`}
+          title={color.name}
+          data-testid={`color-button-${color.value}`}
+        />
+      ))}
     </div>
   );
 }

@@ -107,6 +107,7 @@ const BentoGrid = ({ bentoItems, setBentoItems, openModal, isEditMode }) => {
         onDrop={(e) => handleDrop(e, item)}
       >
         <div 
+          data-testid={`bento-tile-${item.type}`}
           onClick={config.onClick} 
           className={`h-full flex flex-col cursor-pointer overflow-hidden p-4 md:p-6 transition-colors duration-200 bg-gray-800/50 hover:bg-gray-700/50`}
         >

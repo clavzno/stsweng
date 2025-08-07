@@ -229,7 +229,7 @@ export const LoadingCard = ({ title, lines = 3, showAvatar = false, className = 
 
   return (
     <div className={`bg-white dark:bg-gray-800 rounded-lg p-6 border border-gray-200 dark:border-gray-700 ${className}`}>
-      <div className="animate-pulse">
+      <div className="animate-pulse" role="status" aria-label="Loading">
         {/* Header with optional avatar */}
         <div className="flex items-center space-x-3 mb-4">
           {showAvatar && (
@@ -288,7 +288,6 @@ export const LoadingTable = ({ rows = 5, columns = 4, className = '', seed = 0 }
 
   useEffect(() => {
     setIsClient(true);
-    // Generate consistent widths for all cells
     const totalCells = rows * columns;
     const generatedWidths = Array.from({ length: totalCells }, (_, index) => {
       const value = ((seed + index) * 9301 + 49297) % 233280;
@@ -297,7 +296,6 @@ export const LoadingTable = ({ rows = 5, columns = 4, className = '', seed = 0 }
     setWidths(generatedWidths);
   }, [rows, columns, seed]);
 
-  // Fallback widths for SSR
   const fallbackWidths = Array.from({ length: rows * columns }, (_, index) => {
     const value = ((seed + index) * 9301 + 49297) % 233280;
     return 60 + (value / 233280) * 40;
@@ -307,15 +305,12 @@ export const LoadingTable = ({ rows = 5, columns = 4, className = '', seed = 0 }
 
   return (
     <div className={`overflow-hidden ${className}`}>
-      <div className="animate-pulse">
-        {/* Table Header */}
+      <div className="animate-pulse" role="status" aria-label="Loading table">
         <div className="grid gap-4 p-4 border-b border-gray-200 dark:border-gray-700" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
           {Array.from({ length: columns }).map((_, index) => (
             <div key={index} className="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
           ))}
         </div>
-        
-        {/* Table Rows */}
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className="grid gap-4 p-4 border-b border-gray-100 dark:border-gray-800" style={{ gridTemplateColumns: `repeat(${columns}, 1fr)` }}>
             {Array.from({ length: columns }).map((_, colIndex) => {

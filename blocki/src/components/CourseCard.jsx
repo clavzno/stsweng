@@ -292,12 +292,12 @@ export default function CourseCard({
       {/* Image Container */}
       <div className="relative w-full h-40 overflow-hidden">
         <Image
-          src={newImageUrl || placeholderImage}
-          alt={course.title}
-          layout="fill"
-          objectFit="cover"
-          className="transition-transform duration-300 group-hover:scale-105"
-        />
+        src={newImageUrl || placeholderImage}
+        alt={course.title}
+        fill
+        style={{ objectFit: 'cover' }}
+        className="transition-transform duration-300 group-hover:scale-105"
+      />
         <div 
           className="absolute inset-0 transition-all duration-300"
           style={{ backgroundColor: customization.imageOverlay }}

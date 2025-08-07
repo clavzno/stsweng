@@ -6,6 +6,9 @@ import profilePic from '../assets/images/profilepic.png';
 import blockiLogo from '../assets/images/logo_full.png';
 import blockiLogoLight from '../assets/images/logo_full_light.png';
 
+//auth
+import { signOut } from "next-auth/react";
+
 // WIP: icons
 const FiSearch = ({ className }) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,9 +72,12 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
         // Remove any stored user data or tokens if needed
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        
-        // Redirect to login page
-        router.push('/login');
+        /**
+         * Redirect to login page
+         * router.push('/login');
+         */
+
+        signOut('dlsuinstructure', {callbackUrl: '/login', redirect: true}) // use signOut from next-auth, do not remove the options
     };
 
     return (

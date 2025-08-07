@@ -102,7 +102,7 @@ export default function Pomodoro({ onSessionComplete }) {
     const minutes = Math.floor(time / 60);
     const seconds = time % 60;
     const timeString = `${minutes < 10 ? `0${minutes}` : minutes}:${seconds < 10 ? `0${seconds}` : seconds}`;
-    document.title = isActive ? `${timeString} - ${getModeDisplayName()}` : 'Pomodoro Timer';
+    //document.title = isActive ? `${timeString} - ${getModeDisplayName()}` : 'Pomodoro Timer';
   }, [time, isActive, mode]);
 
   const toggle = () => setIsActive(!isActive);

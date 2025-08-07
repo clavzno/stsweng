@@ -138,6 +138,7 @@ export default function CourseDetail({ course, onBack, onImageChange, onCustomiz
 
           {/* Edit Mode Toggle */}
           <button
+          data-testid="edit-mode"
             onClick={() => setIsEditMode(!isEditMode)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
               isEditMode

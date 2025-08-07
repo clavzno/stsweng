@@ -103,7 +103,8 @@ const CourseHeader = ({ courseData, onImageChange, onCustomizationChange, isEdit
 
   return (
     <>
-      <div 
+      <div
+        data-testid="course-header" 
         className="bg-gray-900 overflow-hidden relative group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
