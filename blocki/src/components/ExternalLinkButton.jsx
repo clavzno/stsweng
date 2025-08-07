@@ -1,14 +1,15 @@
-import React from 'react';
+"use client";
+import React from "react";
 
-export default function ExternalLinkButton({ href, label }) {
+export default function ExternalLinkButton({ url, label }) {
   return (
     <a
-      href={href}
+      href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-block bg-secondary text-white px-4 py-2 rounded hover:bg-orange-600"
+      className="inline-block bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded transition-colors"
     >
-      {label}
+      {label || "Open Link"}
     </a>
   );
 }

@@ -1,15 +1,44 @@
-import React from 'react';
+"use client";
+import React, { useState } from "react";
 
-export default function ProfileEditor() {
+export default function ProfileEditor({ initialProfile = {}, onSave }) {
+  const [profile, setProfile] = useState(initialProfile);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProfile({ ...profile, [name]: value });
+  };
+
   return (
-    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">Edit Profile</h2>
-      <textarea
-        className="w-full h-32 p-2 rounded border dark:bg-gray-700 dark:text-white"
-        placeholder="Write something about yourself..."
+    <div className="p-4 space-y-4">
+      <h2 className="text-xl font-bold">Edit Profile</h2>
+      <input
+        name="name"
+        value={profile.name || ""}
+        onChange={handleChange}
+        placeholder="Full Name"
+        className="border p-2 rounded w-full"
       />
-      <button className="mt-3 bg-primary text-white px-4 py-2 rounded hover:bg-blue-700">
-        Update Bio
+      <input
+        name="email"
+        type="email"
+        value={profile.email || ""}
+        onChange={handleChange}
+        placeholder="Email Address"
+        className="border p-2 rounded w-full"
+      />
+      <textarea
+        name="bio"
+        value={profile.bio || ""}
+        onChange={handleChange}
+        placeholder="Bio"
+        className="border p-2 rounded w-full"
+      />
+      <button
+        onClick={() => onSave && onSave(profile)}
+        className="bg-primary text-white px-4 py-2 rounded"
+      >
+        Save Changes
       </button>
     </div>
   );
