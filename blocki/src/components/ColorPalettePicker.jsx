@@ -32,7 +32,6 @@ export default function ColorPalettePicker({ onColorChange }) {
           title={color.name}
           data-testid={`color-button-${color.value}`}
         />
-      ))}
-    </div>
-  );
+      </div>
+    </div>)
 }
