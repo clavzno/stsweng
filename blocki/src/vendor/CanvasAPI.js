@@ -75,8 +75,13 @@ export class CanvasAPI {
                 method: 'GET',
                 headers: {
                     Authorization: this.authorization,
+
                 },
             });
+            if (!RESPONSE.ok) {
+                const errorText = await RESPONSE.text();
+                console.error("GET failed:", RESPONSE.status, errorText);
+            }
         } catch (error) {
             throw new Error(`Network error on GET ${endpoint}: ${error.message}`);
         }
@@ -113,6 +118,10 @@ export class CanvasAPI {
                 },
                 body: data instanceof FormData ? data : new URLSearchParams(data)
             });
+            if (!RESPONSE.ok) {
+                const errorText = await RESPONSE.text();
+                console.error("Fetch failed:", RESPONSE.status, errorText);
+            }
         } catch (error) {
             throw new Error(`Network error on POST ${endpoint}: ${error.message}`);
         }
@@ -146,6 +155,10 @@ export class CanvasAPI {
                 },
                 body: new URLSearchParams(data)
             });
+            if (!RESPONSE.ok) {
+                const errorText = await RESPONSE.text();
+                console.error("Fetch failed:", RESPONSE.status, errorText);
+            }
         } catch (error) {
             throw new Error(`Network error on PUT ${endpoint}: ${error.message}`);
         }

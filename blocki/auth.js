@@ -1,33 +1,32 @@
 import NextAuth from "next-auth";
-import { getDatabase } from "./src/MongoDB/MongoDB";
+// import { getDatabase } from "./src/MongoDB/MongoDB";
 
 const otherScopes = [
-  "url:GET|/api/v1/users/:id",
-  "url:GET|/api/v1/users/:user_id/profile",
+  "url:GET|/api/v1/users/:id", // userservice: getUserDetails
+  "url:GET|/api/v1/users/:user_id/profile", // userService: getUserProfile
   //"url:GET|/api/v1/groups/:group_id/files/quota",
-  "url:GET|/api/v1/users/:user_id/files/quota",
-  "url:GET|/api/v1/courses/:course_id/files",
-  "url:GET|/api/v1/users/:user_id/files",
-  "url:GET|/api/v1/groups/:group_id/files",
-  "url:GET|/api/v1/folders/:id/files",
-  "url:PUT|/api/v1/files/:id",
-  "url:GET|/api/v1/files/:id",
-  "url:POST|/api/v1/files/:id",
-  "url:GET|/api/v1/courses/:course_id/files/:id",
-  "url:GET|/api/v1/groups/:group_id/files/:id",
-  "url:GET|/api/v1/users/:user_id/files/:id",
-  "url:GET|/api/v1/folders/:id/folders",
-  "url:GET|/api/v1/folders/:id/all",
-  "url:GET|/api/v1/courses/:course_id/folders",
-  "url:GET|/api/v1/users/:user_id/folders",
-  "url:GET|/api/v1/groups/:group_id/folders",
-  "url:GET|/api/v1/courses/:course_id/folders/:id",
-  "url:GET|/api/v1/users/:user_id/folders/:id",
-  "url:GET|/api/v1/groups/:group_id/folders/:id",
-  "url:GET|/api/v1/folders/:id",
-  "url:PUT|/api/v1/folders/:id",
-  "url:POST|/api/v1/users/:user_id/folders",
-  "url:POST|/api/v1/folders/:folder_id/files",
+  "url:GET|/api/v1/users/:user_id/files/quota", // userService: getUserQuotaAndAmountUsed
+  "url:GET|/api/v1/courses/:course_id/files", // fileService: listFilesForACourse
+  "url:GET|/api/v1/users/:user_id/files", // fileService: listFilesForUser
+  "url:GET|/api/v1/groups/:group_id/files",  // fileService: listFilesForGroup
+  "url:GET|/api/v1/folders/:id/files", // fileService: listFilesForFolder
+  "url:PUT|/api/v1/files/:id", // fileService: updateFile
+  "url:GET|/api/v1/files/:id", // fileService: getFile
+  "url:POST|/api/v1/files/:id", // fileService: postFile
+  "url:GET|/api/v1/courses/:course_id/files/:id", // fileService: getFileForCourse
+  "url:GET|/api/v1/groups/:group_id/files/:id", // fileService: getFileForGroup
+  "url:GET|/api/v1/users/:user_id/files/:id", // fileService: getFileForUser
+  "url:GET|/api/v1/folders/:id/folders", // fileService: listFoldersWithinFolder
+  "url:GET|/api/v1/folders/:id/all", // fileService: listFoldersAndFiles
+  "url:GET|/api/v1/courses/:course_id/folders", // fileService: listAllFoldersInCourse
+  "url:GET|/api/v1/users/:user_id/folders", // fileService: listAllFoldersForUser
+  "url:GET|/api/v1/groups/:group_id/folders", // fileService: listAllFoldersForGroup
+  "url:GET|/api/v1/courses/:course_id/folders/:id", // fileService: getFolderWithinCourse
+  "url:GET|/api/v1/users/:user_id/folders/:id", // fileService: getFolderForUser
+  "url:GET|/api/v1/groups/:group_id/folders/:id", // fileService: getFolderForGroup
+  "url:GET|/api/v1/folders/:id", // fileService: getFolder
+  "url:POST|/api/v1/users/:user_id/folders", // fileService: createFolderForUser
+  "url:POST|/api/v1/folders/:folder_id/files", //
   "url:GET|/api/v1/courses",
   "url:GET|/api/v1/courses/:course_id/users",
   "url:GET|/api/v1/courses/:course_id/settings",
@@ -66,6 +65,7 @@ const otherScopes = [
   "url:DELETE|/api/v1/groups/:group_id/memberships/:membership_id",
   "url:DELETE|/api/v1/groups/:group_id/users/:user_id",
   "url:GET|/api/v1/announcements",
+  // url:GET|/api/v1/users/:user_id/folders/root -> allowed
 ];
 
 const authOptions = {
@@ -132,7 +132,7 @@ const authOptions = {
         // DB
         // Upsert user in MongoDB if user exists
         if (user) {
-          const db = await getDatabase();
+          /** const db = await getDatabase();
           await db.collection("Students").updateOne(
             { email: user.email },
             // if user logs in for the first time, show welcome modal. If not, do not show
@@ -154,7 +154,7 @@ const authOptions = {
             { upsert: true }
           );
 
-          console.log("Database connection established and user upserted in all collections.");
+          console.log("Database connection established and user upserted in all collections."); */
 
           // profile-related
           token.shortName = profile.short_name ? profile.short_name : profile.name;
