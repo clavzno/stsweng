@@ -8,6 +8,9 @@ import bgImage from '../assets/images/background.png';
 import logoSingle from '../assets/images/logo_single.png';
 import { IoWarning } from 'react-icons/io5';
 
+import {signIn} from 'next-auth/react';
+import { set } from 'mongoose';
+
 export default function AuthKeyPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
   const [authKey, setAuthKey] = useState('');
@@ -26,10 +29,22 @@ export default function AuthKeyPage() {
     setIsSubmitting(true);
     
     // Simulate API call delay
-    setTimeout(() => {
-      setIsSubmitting(false);
-      router.push('/dashboard');
-    }, 1000)
+    //setTimeout(() => {
+    //  setIsSubmitting(false);
+    //  router.push('/dashboard');
+    //}, 1000)
+    const res = await signIn("manualtoken", {
+      accessToken: authKey,
+      redirect: false,
+    });
+
+    setIsSubmitting(false);
+    if (!res?.ok) {
+      // UI error
+      return;
+    }
+    
+    router.push('/dashboard');
 };
 
   const containerBaseClasses =

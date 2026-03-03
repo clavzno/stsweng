@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import { getDatabase } from "./src/MongoDB/MongoDB";
+import Credentials from "next-auth/providers/credentials";
 
 const otherScopes = [
   "url:GET|/api/v1/users/:id",
@@ -70,6 +71,78 @@ const otherScopes = [
 
 const authOptions = {
   providers: [
+    Credentials({
+      id: "manualtoken",
+      name: "Manual Token",
+      credentials: {
+        accessToken:{ label: "Canvas Access Token", type: "password" }
+      },
+      async authorize(credentials) {
+        const accessToken = credentials.accessToken;
+        if (!accessToken) return null;
+        const res = await fetch("https://dlsu.instructure.com/api/v1/users/self/profile", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
+        if (!res.ok) return null;
+        const profile = await res.json();
+        return {
+          id: profile.id, // this is available, but we're not allowed to use it
+          accessToken: accessToken,
+          name: profile.name,
+          email: profile.primary_email,
+          short_name: profile.short_name,
+          sortable_name: profile.sortable_name,
+          avatar: profile.avatar_url,
+          pronouns: profile.pronouns,
+          title: profile.title,
+          bio: profile.bio,
+          pronunciation: profile.pronunciation,
+          login_id: profile.login_id,
+          time_zone: profile.time_zone,
+          locale: profile.locale,
+          effective_locale: profile.effective_locale,
+          calendar_ics: profile.calendar?.ics,
+          lti_user_id: profile.lti_user_id, 
+        }
+      },
+      async jwt({ token, user, account, profile }){
+        if (user?.accessToken) {
+          token.accessToken = user.accessToken;
+          token.email = user.email;
+          token.shortName = user.shortName;
+          token.avatarUrl = user.avatar;
+        }
+        return token;
+      },
+      async session({ session, token }) {
+      // refer to https://authjs.dev/reference/core#session
+      // in this callback you can expose those properties to the client session
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
+      session.shortName = token.shortName;
+      session.avatarUrl = token.avatarUrl;
+      session.email = token.email;
+      console.log("--- SESSION CALLBACK ---");
+      console.log("Session Access Token: ", session.accessToken);
+      console.log("Session email: ", session.email);
+      console.log("--- ---");
+      return session;
+      },
+      async redirect({ url, baseUrl }) {
+        console.log("URL:", url); // REMOVE THIS IN PRODUCTION
+        console.log("Base URL:", baseUrl); // REMOVE THIS IN PRODUCTION
+
+        if (url.endsWith("/dashboard")) {
+          return baseUrl + "/login";
+        }
+
+        if (url.endsWith("/login")) {
+          return baseUrl + "/dashboard";
+        }
+
+        return baseUrl; // default: redirect to base URL
+      },
+    }),
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
