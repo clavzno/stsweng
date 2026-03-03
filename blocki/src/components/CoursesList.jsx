@@ -42,7 +42,7 @@ const themes = {
 
 export default function CoursesList() {
   const { data: session, status } = useSession();
-  const canvas = new CanvasAPI(session?.accessToken ?? process.env.DEFAULT_TOKEN, 'dlsu.instructure.com'); // const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com')
+  const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com')
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
   const [showAssignments, setShowAssignments] = useState(true);
