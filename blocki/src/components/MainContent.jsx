@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
+import { Responsive } from "react-grid-layout";
+import { WidthProvider } from "react-grid-layout/legacy";
 import CoursesList from "./CoursesList";
 import Calendar from "./Calendar";
 import StudyTracker from "./StudyTracker";

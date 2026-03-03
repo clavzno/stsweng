@@ -158,7 +158,7 @@ export default function Header({ isEditMode, setIsEditMode, onSaveLayout }) {
                             className="flex items-center p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         >
                             <img
-                                src={ session.avatarUrl? session.avatarUrl : profilePic.src}
+                                src={ session?.avatarUrl ?? profilePic.src } // session.avatarUrl? session.avatarUrl : profilePic.src
                                 alt="Profile"
                                 className="h-8 w-8 rounded-full border-2 border-accent"
                             />
