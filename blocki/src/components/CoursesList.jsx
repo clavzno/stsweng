@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useState, useCallback } from 'react';
 import CourseCard from './CourseCard';
 import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
@@ -42,6 +42,7 @@ const themes = {
 
 export default function CoursesList() {
   const { data: session, status } = useSession();
+  const canvasRef = useRef(null);
   const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com')
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
@@ -234,6 +235,11 @@ export default function CoursesList() {
   ]);
 
 useEffect(() => {
+  if (session?.accessToken) {
+      canvasRef.current = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
+    }
+  }, [session]);
+
   const fetchCourses = async () => {
     const res = await fetch('/api/canvas/courses', {
       headers: {
