@@ -8,8 +8,7 @@ import bgImage from '../assets/images/background.png';
 import logoSingle from '../assets/images/logo_single.png';
 import { IoWarning } from 'react-icons/io5';
 
-import {signIn} from 'next-auth/react';
-import { set } from 'mongoose';
+import { signIn } from 'next-auth/react'; //manual authentication
 
 export default function AuthKeyPage() {
   const [hasLoadedAnimation, setHasLoadedAnimation] = useState(false);
@@ -43,7 +42,7 @@ export default function AuthKeyPage() {
       // UI error
       return;
     }
-    
+
     router.push('/dashboard');
 };
 

@@ -143,6 +143,7 @@ const authOptions = {
         return baseUrl; // default: redirect to base URL
       },
     }),
+    // ------------------------- OAUTH2 PROVIDER -------------------------
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
