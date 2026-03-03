@@ -281,9 +281,6 @@ useEffect(() => {
   };
 
   fetchCourses();
-}, []);
-
-
 
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
