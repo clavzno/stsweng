@@ -23,7 +23,7 @@ export default function AuthKeyPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!authKey.trim()) return;
+    if (!authKey.trim()) return;
     
     setIsSubmitting(true);
     
