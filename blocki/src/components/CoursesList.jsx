@@ -56,7 +56,9 @@ export default function CoursesList() {
     session.accessToken = process.env.DEFAULT_TOKEN;
   }
 
-  const [courses, setCourses] = useState([
+  //const [courses, setCourses] = useState([]);
+
+  // const [courses, setCourses] = useState([
   //   {
   //     id: 1,
   //     title: 'STSWENG SS1',
@@ -237,7 +239,7 @@ export default function CoursesList() {
   //         { id: 1, title: 'University Survey', due: '2025-07-30', completed: true },
   //       ]
   //   }
-  ]);
+  //]);
 
   useEffect(() => {
     if (status === 'loading') return; // Wait for session to load
