@@ -72,7 +72,7 @@ const otherScopes = [
 const authOptions = {
   providers: [
     Credentials({
-      id: "manualtoken",
+      id: "manualtoken", // must be the same whenever you do await signIn("manualtoken", ...
       name: "Manual Token",
       credentials: {
         accessToken:{ label: "Canvas Access Token", type: "password" }
