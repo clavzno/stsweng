@@ -85,7 +85,7 @@ const authOptions = {
         });
         if (!res.ok) return null;
         const profile = await res.json();
-        print("profileid: ", profile.id);
+        console.log("profileid: ", profile.id);
         return {
           id: profile.id, // this is available, but we're not allowed to use it
           accessToken,
@@ -144,7 +144,7 @@ const authOptions = {
         return baseUrl; // default: redirect to base URL
       },
     }),
-    // ------------------------- OAUTH2 PROVIDER -------------------------
+    // ------------------------- DLSU OAUTH2 PROVIDER -------------------------
     {
       id: "dlsuinstructure", // do not change this ID
       name: "Instructure",
@@ -192,6 +192,7 @@ const authOptions = {
       token: "https://dlsu.instructure.com/login/oauth2/token",
     },
   ],
+  // ------------------------- DLSU -------------------------
   debug: true, // MAKE FALSE IN PRODUCTION
   callbacks: {
     async jwt({ token, user, account, profile }) {
