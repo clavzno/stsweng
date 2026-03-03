@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useState, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import CourseCard from './CourseCard';
 import placeholderImage from '../assets/images/placeholder.png';
 import { Edit3, Check, Filter, Palette, Settings, X } from 'lucide-react';
