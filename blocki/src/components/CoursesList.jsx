@@ -51,6 +51,11 @@ export default function CoursesList() {
   const [currentTheme, setCurrentTheme] = useState('default');
   const [draggedIndex, setDraggedIndex] = useState(null);
   const scrollContainerRef = useRef(null);
+
+  if (!session?.accessToken) {
+    session.accessToken = process.env.DEFAULT_TOKEN;
+  }
+
   const [courses, setCourses] = useState([
   //   {
   //     id: 1,
