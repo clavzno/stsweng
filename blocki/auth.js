@@ -85,9 +85,10 @@ const authOptions = {
         });
         if (!res.ok) return null;
         const profile = await res.json();
+        print("profileid: ", profile.id);
         return {
           id: profile.id, // this is available, but we're not allowed to use it
-          accessToken: accessToken,
+          accessToken,
           name: profile.name,
           email: profile.primary_email,
           short_name: profile.short_name,
