@@ -21,7 +21,7 @@ export default function AuthKeyPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!authKey.trim()) return;
+    // if (!authKey.trim()) return;
     
     setIsSubmitting(true);
     
@@ -29,8 +29,8 @@ export default function AuthKeyPage() {
     setTimeout(() => {
       setIsSubmitting(false);
       router.push('/dashboard');
-    }, 1000);
-  };
+    }, 1000)
+};
 
   const containerBaseClasses =
     'min-h-screen flex items-center justify-center login-container bg-cover bg-center relative overflow-hidden px-4';
@@ -104,7 +104,7 @@ export default function AuthKeyPage() {
         {/* Warning */}
         <div className={warningClasses}>
             <div className="flex items-center justify-center">
-                <IoWarning className="h-5 w-5 mr-2 flex-shrink-0" aria-hidden="true" />
+                <IoWarning className="h-5 w-5 mr-2 shrink-0" aria-hidden="true" />
                 <p>
                     Warning: This method is against the{' '}
                     <a
