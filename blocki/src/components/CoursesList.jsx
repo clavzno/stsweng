@@ -234,53 +234,52 @@ export default function CoursesList() {
   //   }
   ]);
 
-useEffect(() => {
-  if (session?.accessToken) {
-      canvasRef.current = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
-    }
-  }, [session]);
+  useEffect(() => {
+    if (status === 'loading') return; // Wait for session to load
+    if (!session?.accessToken) return; // Exit if no session
 
-  const fetchCourses = async () => {
-    const res = await fetch('/api/canvas/courses', {
-      headers: {
-        token: session.accessToken
+    const fetchCourses = async () => {
+      const res = await fetch('/api/canvas/courses', {
+        headers: {
+          token: session.accessToken
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch courses");
       }
-    });
 
-    if (!res.ok) {
-      throw new Error("Failed to fetch courses");
-    }
+      const rawData = await res.json();
 
-    const rawData = await res.json();
+      const transformed = rawData
+        .map((course, index) => ({
+          id: course.id || index + 1,
+          title: course.name || 'Untitled Course',
+          description: course.public_description || '',
+          instructor: course.instructor_full_name || 'Unknown Instructor',
+          imageUrl: course.course_image,
+          category: course.category || 'General',
+          difficulty: course.difficulty || 'Beginner',
+          grade: course?.total_scores?.computed_current_grade || 4.0,
+          progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
+          customization: {
+            imageOverlay: 'rgba(13, 18, 44, 0.5)',
+            accentColor: themes.default.primary,
+            theme: 'default',
+          },
+          assignments: (course.assignments || []).map((assignment, idx) => ({
+            id: assignment.id || idx + 1,
+            title: assignment.name || `Untitled Assignment ${idx + 1}`,
+            due: assignment.due_at || '2025-08-30',
+            completed: assignment.has_submitted_submissions ?? false,
+          })),
+        }));
 
-  const transformed = rawData
-    .map((course, index) => ({
-      id: course.id || index + 1,
-      title: course.name || 'Untitled Course',
-      description: course.public_description || '',
-      instructor: course.instructor_full_name || 'Unknown Instructor',
-      imageUrl: course.course_image,
-      category: course.category || 'General',
-      difficulty: course.difficulty || 'Beginner',
-      grade: course?.total_scores?.computed_current_grade || 4.0,
-      progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
-      customization: {
-        imageOverlay: 'rgba(13, 18, 44, 0.5)',
-        accentColor: themes.default.primary,
-        theme: 'default',
-      },
-      assignments: (course.assignments || []).map((assignment, idx) => ({
-        id: assignment.id || idx + 1,
-        title: assignment.name || `Untitled Assignment ${idx + 1}`,
-        due: assignment.due_at || '2025-08-30',
-        completed: <assignment className="has_submitted_submissions"></assignment> ?? false,
-      })),
-    }));
+      setCourses(transformed);
+    };
 
-    setCourses(transformed);
-  };
-
-  fetchCourses();
+    fetchCourses();
+  }, [session, status]);
 
   const handleDragStart = (e, index) => {
     setDraggedIndex(index);
