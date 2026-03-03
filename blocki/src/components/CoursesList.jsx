@@ -43,7 +43,7 @@ const themes = {
 export default function CoursesList() {
   const { data: session, status } = useSession();
   const canvasRef = useRef(null);
-  const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com')
+  // const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com')
   const [isEditMode, setIsEditMode] = useState(false);
   const [showGrades, setShowGrades] = useState(true);
   const [showAssignments, setShowAssignments] = useState(true);
@@ -51,10 +51,7 @@ export default function CoursesList() {
   const [currentTheme, setCurrentTheme] = useState('default');
   const [draggedIndex, setDraggedIndex] = useState(null);
   const scrollContainerRef = useRef(null);
-
-  if (!session?.accessToken) {
-    session.accessToken = process.env.DEFAULT_TOKEN;
-  }
+  const [courses, setCourses] = useState([]);
 
   //const [courses, setCourses] = useState([]);
 
@@ -242,47 +239,55 @@ export default function CoursesList() {
   //]);
 
   useEffect(() => {
-    if (status === 'loading') return; // Wait for session to load
-    if (!session?.accessToken) return; // Exit if no session
+    if (status === 'loading') return;
+    if (!session?.accessToken) return;
+
+    // Initialize canvas here
+    const canvas = new CanvasAPI(session.accessToken, 'dlsu.instructure.com');
+    canvasRef.current = canvas;
 
     const fetchCourses = async () => {
-      const res = await fetch('/api/canvas/courses', {
-        headers: {
-          token: session.accessToken
+      try {
+        const res = await fetch('/api/canvas/courses', {
+          headers: {
+            token: session.accessToken
+          }
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch courses");
         }
-      });
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch courses");
+        const rawData = await res.json();
+
+        const transformed = rawData
+          .map((course, index) => ({
+            id: course.id || index + 1,
+            title: course.name || 'Untitled Course',
+            description: course.public_description || '',
+            instructor: course.instructor_full_name || 'Unknown Instructor',
+            imageUrl: course.course_image,
+            category: course.category || 'General',
+            difficulty: course.difficulty || 'Beginner',
+            grade: course?.total_scores?.computed_current_grade || 4.0,
+            progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
+            customization: {
+              imageOverlay: 'rgba(13, 18, 44, 0.5)',
+              accentColor: themes.default.primary,
+              theme: 'default',
+            },
+            assignments: (course.assignments || []).map((assignment, idx) => ({
+              id: assignment.id || idx + 1,
+              title: assignment.name || `Untitled Assignment ${idx + 1}`,
+              due: assignment.due_at || '2025-08-30',
+              completed: assignment.has_submitted_submissions ?? false,
+            })),
+          }));
+
+        setCourses(transformed);
+      } catch (error) {
+        console.error('Error fetching courses:', error);
       }
-
-      const rawData = await res.json();
-
-      const transformed = rawData
-        .map((course, index) => ({
-          id: course.id || index + 1,
-          title: course.name || 'Untitled Course',
-          description: course.public_description || '',
-          instructor: course.instructor_full_name || 'Unknown Instructor',
-          imageUrl: course.course_image,
-          category: course.category || 'General',
-          difficulty: course.difficulty || 'Beginner',
-          grade: course?.total_scores?.computed_current_grade || 4.0,
-          progress: ((course?.course_progress?.requirement_completed_count / course?.course_progress?.requirement_count) * 100) || 0,
-          customization: {
-            imageOverlay: 'rgba(13, 18, 44, 0.5)',
-            accentColor: themes.default.primary,
-            theme: 'default',
-          },
-          assignments: (course.assignments || []).map((assignment, idx) => ({
-            id: assignment.id || idx + 1,
-            title: assignment.name || `Untitled Assignment ${idx + 1}`,
-            due: assignment.due_at || '2025-08-30',
-            completed: assignment.has_submitted_submissions ?? false,
-          })),
-        }));
-
-      setCourses(transformed);
     };
 
     fetchCourses();
