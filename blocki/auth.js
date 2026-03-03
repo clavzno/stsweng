@@ -117,7 +117,7 @@ const authOptions = {
       token: "https://dlsu.instructure.com/login/oauth2/token",
     },
   ],
-  debug: false, // MAKE FALSE IN PRODUCTION
+  debug: true, // MAKE FALSE IN PRODUCTION
   callbacks: {
     async jwt({ token, user, account, profile }) {
       console.log("--- JWT CALLBACK ---");
