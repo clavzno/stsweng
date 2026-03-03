@@ -354,8 +354,8 @@ useEffect(() => {
 
   return (
     <div className="h-full flex flex-col space-y-6" style={{ fontFamily: 'Roboto, sans-serif' }}>
-      {/* Header Section */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 flex-shrink-0 group">
+      {/* Header Section, changed flex-shrink-0 to shrink-0*/}
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 shrink-0 group">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900 dark:text-white" style={{ fontFamily: 'Orbitron, sans-serif', fontWeight: '600' }}>
             My Courses
@@ -440,7 +440,7 @@ useEffect(() => {
 
       {/* Edit Mode Controls */}
       {isEditMode && (
-        <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex-shrink-0" style={{ backgroundColor: 'rgba(82, 108, 244, 0.05)' }}>
+        <div className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 shrink-0" style={{ backgroundColor: 'rgba(82, 108, 244, 0.05)' }}>
           <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3" style={{ fontFamily: 'Orbitron, sans-serif', fontWeight: '600' }}>
             Customize Your View
           </h3>
